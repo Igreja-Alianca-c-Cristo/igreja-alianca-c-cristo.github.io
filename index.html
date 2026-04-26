@@ -428,6 +428,11 @@ footer {
   .hero { padding-top:210px; }
   .menu { gap:11px; }
 }
+.gallery-media{min-height:220px;border-radius:28px;overflow:hidden;background:rgba(255,255,255,.07);border:1px solid rgba(247,201,72,.20);box-shadow:0 20px 55px rgba(0,0,0,.28);animation:rise .5s ease both;}
+.gallery-media img,.gallery-media video{width:100%;height:260px;object-fit:cover;display:block;}
+.gallery-media video{background:#000;}
+.gallery-card.full{grid-column:1/-1;}
+
 </style>
 </head>
 
@@ -520,15 +525,10 @@ footer {
     <div class="section-head">
       <div class="eyebrow">Fotos e vídeos</div>
       <h2>Galeria da Igreja</h2>
-      <p class="lead">Espaço preparado para fotos e vídeos dos cultos, eventos e da comemoração dos 6 anos do templo.</p>
+      <p class="lead">Galeria automática: tudo que você enviar para a pasta <strong>uploads/aniversario</strong> aparece aqui sozinho.</p>
     </div>
-    <div class="gallery-grid">
-      <div class="gallery-card">Fotos dos cultos<br>em breve</div>
-      <div class="gallery-card">Fotos dos 6 anos<br>em breve</div>
-      <div class="gallery-card video">Vídeos da celebração<br>em breve</div>
-      <div class="gallery-card">Eventos especiais<br>em breve</div>
-      <div class="gallery-card video">Louvores e ministrações<br>em breve</div>
-      <div class="gallery-card">Momentos da igreja<br>em breve</div>
+    <div id="galeriaAutomatica" class="gallery-grid">
+      <div class="gallery-card">Carregando fotos e vídeos...</div>
     </div>
   </div>
 </section>
@@ -598,6 +598,42 @@ const observer=new IntersectionObserver(entries=>{
   });
 },{threshold:.16});
 document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+const usuarioGithub = "Igreja-Alianca-c-Cristo";
+const repositorioGithub = "igreja-alianca-c-cristo.github.io";
+const pastaGaleriaGithub = "uploads/aniversario";
+const apiGaleriaGithub = `https://api.github.com/repos/${usuarioGithub}/${repositorioGithub}/contents/${pastaGaleriaGithub}`;
+
+async function carregarGaleriaAutomatica(){
+  const galeria = document.getElementById("galeriaAutomatica");
+  if(!galeria) return;
+  try{
+    const resposta = await fetch(apiGaleriaGithub);
+    const arquivos = await resposta.json();
+    if(!Array.isArray(arquivos)) throw new Error("Pasta não encontrada");
+    const midias = arquivos.filter(arquivo => /\.(png|jpg|jpeg|webp|gif|mp4|webm|mov)$/i.test(arquivo.name));
+    if(midias.length === 0){
+      galeria.innerHTML = '<div class="gallery-card full">Ainda não há fotos ou vídeos na pasta uploads/aniversario.</div>';
+      return;
+    }
+    galeria.innerHTML = "";
+    midias.forEach(arquivo => {
+      const item = document.createElement("div");
+      item.className = "gallery-media";
+      const url = arquivo.download_url;
+      if(/\.(mp4|webm|mov)$/i.test(arquivo.name)){
+        item.innerHTML = `<video controls src="${url}"></video>`;
+      } else {
+        item.innerHTML = `<img loading="lazy" src="${url}" alt="${arquivo.name}">`;
+      }
+      galeria.appendChild(item);
+    });
+  } catch(e){
+    galeria.innerHTML = '<div class="gallery-card full">Não foi possível carregar a galeria agora. Confira se a pasta uploads/aniversario existe.</div>';
+  }
+}
+carregarGaleriaAutomatica();
+
 </script>
 </body>
 </html>
