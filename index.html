@@ -396,6 +396,43 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
   }
 }
 
+
+
+.gallery-item{
+  position:relative;
+  display:block;
+}
+.gallery-caption{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:16px 14px;
+  text-align:center;
+  font-size:15px;
+  line-height:1.4;
+  font-weight:800;
+  color:#fff6dc;
+  background:linear-gradient(to top, rgba(0,0,0,.82), rgba(0,0,0,.35), transparent);
+  opacity:0;
+  transform:translateY(16px);
+  transition:.28s ease;
+  pointer-events:none;
+}
+.gallery-item:hover .gallery-caption,
+.gallery-item:focus-within .gallery-caption{
+  opacity:1;
+  transform:translateY(0);
+}
+@media(max-width:700px){
+  .gallery-caption{
+    opacity:1;
+    transform:translateY(0);
+    font-size:13px;
+    padding:12px 10px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -432,7 +469,7 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
       <button class="tab-btn" onclick="carregarGaleriaCategoria('santaceia', this)">Santa Ceia</button>
       <button class="tab-btn" onclick="carregarGaleriaCategoria('eventos', this)">Eventos</button>
       <button class="tab-btn" onclick="carregarGaleriaCategoria('aniversario', this)">6 anos</button>
-      <button class="tab-btn video-tab" onclick="carregarGaleriaCategoria('videos', this)">Vídeos</button>
+      
     </div>
 
     <div id="galeriaAutomatica" class="gallery-area">
@@ -514,10 +551,7 @@ async function carregarGaleriaCategoria(categoria = "cultos", botao = null){
     const imagens = arquivos.filter(arquivo => /\.(png|jpg|jpeg|webp|gif)$/i.test(arquivo.name));
     const videos = arquivos.filter(arquivo => /\.(mp4|webm|mov)$/i.test(arquivo.name));
 
-    if(categoria === "videos") {
-      if(videos.length === 0) {
-        galeria.innerHTML = `<div class="gallery-empty">Ainda não há vídeos na pasta uploads/videos.</div>`;
-        return;
+    
       }
       galeria.innerHTML = montarGrupoVideos(videos);
       animarItensGaleria();
@@ -531,26 +565,38 @@ async function carregarGaleriaCategoria(categoria = "cultos", botao = null){
 
     galeria.innerHTML = "";
 
-    const retrato = [];
-    const paisagem = [];
+    
+galeria.innerHTML = "";
 
-    await Promise.all(imagens.map(arquivo => new Promise(resolve => {
-      const img = new Image();
-      img.onload = () => {
-        if(img.naturalHeight >= img.naturalWidth) retrato.push(arquivo);
-        else paisagem.push(arquivo);
-        resolve();
-      };
-      img.onerror = () => {
-        paisagem.push(arquivo);
-        resolve();
-      };
-      img.src = arquivo.download_url;
-    })));
+const todos = [...imagens, ...videos];
 
-    if(retrato.length) galeria.insertAdjacentHTML("beforeend", montarGrupo("Fotos em retrato", retrato, "portrait"));
-    if(paisagem.length) galeria.insertAdjacentHTML("beforeend", montarGrupo("Fotos em paisagem", paisagem, "landscape"));
-    if(videos.length) galeria.insertAdjacentHTML("beforeend", montarGrupoVideos(videos));
+
+todos.forEach(arquivo => {
+  const item = document.createElement("div");
+  item.className = "gallery-item";
+  const url = arquivo.download_url;
+
+  let nome = arquivo.name.replace(/\.[^/.]+$/, "");
+  nome = nome.replace(/[-_]/g, " ");
+
+  if(/\.(mp4|webm|mov)$/i.test(arquivo.name)) {
+    item.innerHTML = `
+      <video controls src="${url}" onclick="abrirMediaLightboxPorSrc(this.src)"></video>
+      <div class="gallery-caption">${nome}</div>
+    `;
+  } else {
+    item.innerHTML = `
+      <img src="${url}" alt="${nome}" onclick="abrirMediaLightboxPorSrc(this.src)">
+      <div class="gallery-caption">${nome}</div>
+    `;
+  }
+
+  galeria.appendChild(item);
+});
+
+
+animarItensGaleria();
+
     animarItensGaleria();
 
   } catch (erro) {
