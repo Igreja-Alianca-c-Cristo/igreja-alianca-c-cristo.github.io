@@ -397,10 +397,63 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
 }
 
 
-
+/* AJUSTE FINAL DA GALERIA */
+.gallery-tabs{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:-18px 0 34px;
+}
+.tab-btn{
+  background:rgba(255,255,255,.08);
+  color:var(--cream);
+  border:1px solid rgba(247,201,72,.35);
+  border-radius:999px;
+  padding:13px 22px;
+  cursor:pointer;
+  font-weight:900;
+  transition:.25s ease;
+}
+.tab-btn:hover,.tab-btn.active{
+  background:linear-gradient(135deg,var(--gold),#ffe58a);
+  color:#07142d;
+  transform:translateY(-3px);
+}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:22px;
+}
 .gallery-item{
   position:relative;
   display:block;
+  border-radius:28px;
+  overflow:hidden;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(247,201,72,.20);
+  box-shadow:0 20px 55px rgba(0,0,0,.28);
+  opacity:0;
+  transform:translateY(34px) scale(.96);
+}
+.gallery-item.foto-aparecer{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  transition:opacity .8s ease, transform .8s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.gallery-item:hover{
+  transform:translateY(-6px) scale(1.015);
+  box-shadow:0 28px 70px rgba(0,0,0,.42);
+  border-color:rgba(247,201,72,.45);
+}
+.gallery-item img,.gallery-item video{
+  width:100%;
+  height:auto;
+  max-height:520px;
+  object-fit:contain;
+  display:block;
+  background:#020817;
+  cursor:pointer;
 }
 .gallery-caption{
   position:absolute;
@@ -423,6 +476,53 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
 .gallery-item:focus-within .gallery-caption{
   opacity:1;
   transform:translateY(0);
+}
+.gallery-empty{
+  display:block;
+  width:100%;
+  border:1px dashed rgba(255,255,255,.30);
+  background:linear-gradient(135deg,rgba(247,201,72,.15),rgba(27,108,236,.15));
+  border-radius:28px;
+  padding:42px 20px;
+  text-align:center;
+  color:#fff3cf;
+  font-weight:800;
+  grid-column:1/-1;
+}
+.galeria-titulo-animado{
+  position:relative;
+  display:inline-block;
+  background:linear-gradient(90deg,#fff6dc,#f7c948,#ffffff,#f7c948,#fff6dc);
+  background-size:300% 100%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent !important;
+  animation:galeriaBrilhoTexto 3s linear infinite, galeriaSubir 900ms ease both;
+}
+.galeria-titulo-animado::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-14px;
+  width:80%;
+  height:4px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,#f7c948,transparent);
+  transform:translateX(-50%);
+  box-shadow:0 0 18px rgba(247,201,72,.9);
+  animation:galeriaLinhaPulse 1.8s ease-in-out infinite;
+}
+@keyframes galeriaBrilhoTexto{
+  0%{background-position:0% 50%}
+  100%{background-position:300% 50%}
+}
+@keyframes galeriaSubir{
+  from{opacity:0;transform:translateY(28px) scale(.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes galeriaLinhaPulse{
+  0%,100%{opacity:.35;width:34%}
+  50%{opacity:1;width:88%}
 }
 @media(max-width:700px){
   .gallery-caption{
@@ -469,10 +569,9 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
       <button class="tab-btn" onclick="carregarGaleriaCategoria('santaceia', this)">Santa Ceia</button>
       <button class="tab-btn" onclick="carregarGaleriaCategoria('eventos', this)">Eventos</button>
       <button class="tab-btn" onclick="carregarGaleriaCategoria('aniversario', this)">6 anos</button>
-      
     </div>
 
-    <div id="galeriaAutomatica" class="gallery-area">
+    <div id="galeriaAutomatica" class="gallery-grid">
       <div class="gallery-empty">Carregando fotos e vídeos...</div>
     </div>
   </div>
@@ -513,14 +612,17 @@ const usuario = "Igreja-Alianca-c-Cristo";
 const repositorio = "igreja-alianca-c-cristo.github.io";
 const baseGaleria = "uploads";
 
+function criarLegenda(nomeArquivo){
+  return nomeArquivo
+    .replace(/\.[^/.]+$/, "")
+    .replace(/[-_]/g, " ");
+}
 
 function animarItensGaleria(){
   const itens = document.querySelectorAll("#galeriaAutomatica .gallery-item");
   itens.forEach((item, index) => {
     item.classList.remove("foto-aparecer");
-    setTimeout(() => {
-      item.classList.add("foto-aparecer");
-    }, 120 + (index * 110));
+    setTimeout(() => item.classList.add("foto-aparecer"), 120 + (index * 90));
   });
 }
 
@@ -534,8 +636,7 @@ async function carregarGaleriaCategoria(categoria = "cultos", botao = null){
     aniversario: "6 anos do templo",
     cultos: "cultos",
     santaceia: "Santa Ceia",
-    eventos: "eventos",
-    videos: "vídeos"
+    eventos: "eventos"
   };
 
   galeria.innerHTML = `<div class="gallery-empty">Carregando ${nomes[categoria] || "galeria"}...</div>`;
@@ -548,90 +649,41 @@ async function carregarGaleriaCategoria(categoria = "cultos", botao = null){
 
     if(!Array.isArray(arquivos)) throw new Error("Pasta não encontrada");
 
-    const imagens = arquivos.filter(arquivo => /\.(png|jpg|jpeg|webp|gif)$/i.test(arquivo.name));
-    const videos = arquivos.filter(arquivo => /\.(mp4|webm|mov)$/i.test(arquivo.name));
+    const midias = arquivos.filter(arquivo => /\.(png|jpg|jpeg|webp|gif|mp4|webm|mov)$/i.test(arquivo.name));
 
-    
-      }
-      galeria.innerHTML = montarGrupoVideos(videos);
-      animarItensGaleria();
-      return;
-    }
-
-    if(imagens.length === 0 && videos.length === 0) {
+    if(midias.length === 0) {
       galeria.innerHTML = `<div class="gallery-empty">Ainda não há fotos ou vídeos em ${nomes[categoria] || "esta categoria"}.</div>`;
       return;
     }
 
     galeria.innerHTML = "";
 
-    
-galeria.innerHTML = "";
+    midias.forEach(arquivo => {
+      const item = document.createElement("div");
+      item.className = "gallery-item";
+      const url = arquivo.download_url;
+      const legenda = criarLegenda(arquivo.name);
 
-const todos = [...imagens, ...videos];
+      if(/\.(mp4|webm|mov)$/i.test(arquivo.name)) {
+        item.innerHTML = `
+          <video controls src="${url}" onclick="abrirMediaLightboxPorSrc(this.src)"></video>
+          <div class="gallery-caption">${legenda}</div>
+        `;
+      } else {
+        item.innerHTML = `
+          <img src="${url}" alt="${legenda}" onclick="abrirMediaLightboxPorSrc(this.src)">
+          <div class="gallery-caption">${legenda}</div>
+        `;
+      }
 
-
-todos.forEach(arquivo => {
-  const item = document.createElement("div");
-  item.className = "gallery-item";
-  const url = arquivo.download_url;
-
-  let nome = arquivo.name.replace(/\.[^/.]+$/, "");
-  nome = nome.replace(/[-_]/g, " ");
-
-  if(/\.(mp4|webm|mov)$/i.test(arquivo.name)) {
-    item.innerHTML = `
-      <video controls src="${url}" onclick="abrirMediaLightboxPorSrc(this.src)"></video>
-      <div class="gallery-caption">${nome}</div>
-    `;
-  } else {
-    item.innerHTML = `
-      <img src="${url}" alt="${nome}" onclick="abrirMediaLightboxPorSrc(this.src)">
-      <div class="gallery-caption">${nome}</div>
-    `;
-  }
-
-  galeria.appendChild(item);
-});
-
-
-animarItensGaleria();
+      galeria.appendChild(item);
+    });
 
     animarItensGaleria();
 
   } catch (erro) {
     galeria.innerHTML = `<div class="gallery-empty">Não foi possível carregar esta categoria. Verifique se a pasta uploads/${categoria} existe.</div>`;
   }
-}
-
-function montarGrupo(titulo, arquivos, tipo){
-  return `
-    <div class="gallery-group">
-      <h3 class="gallery-group-title">${titulo}</h3>
-      <div class="gallery-grid ${tipo}">
-        ${arquivos.map(arquivo => `
-          <div class="gallery-item">
-            <img src="${arquivo.download_url}" alt="${arquivo.name}" onclick="abrirMediaLightboxPorSrc(this.src)">
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  `;
-}
-
-function montarGrupoVideos(arquivos){
-  return `
-    <div class="gallery-group">
-      <h3 class="gallery-group-title">Vídeos</h3>
-      <div class="gallery-grid videos">
-        ${arquivos.map(arquivo => `
-          <div class="gallery-item">
-            <video controls src="${arquivo.download_url}" onclick="abrirMediaLightboxPorSrc(this.src)"></video>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  `;
 }
 
 function abrirGaleriaAniversario(){
