@@ -379,6 +379,96 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
   }
 }
 
+
+/* LIGHTBOX FINAL COM SETAS */
+.media-lightbox{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  background:rgba(0,0,0,.90);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.28s ease;
+  padding:22px;
+}
+.media-lightbox.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.media-lightbox-content{
+  width:min(92vw,1100px);
+  height:min(84vh,780px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.media-lightbox-content img,
+.media-lightbox-content video{
+  max-width:100%;
+  max-height:100%;
+  border-radius:22px;
+  box-shadow:0 0 50px rgba(0,0,0,.65);
+  background:#000;
+}
+.media-lightbox-content video{
+  width:min(100%,1000px);
+}
+.lightbox-close{
+  position:absolute;
+  top:18px;
+  right:24px;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  font-size:34px;
+  line-height:1;
+  cursor:pointer;
+  z-index:100001;
+}
+.lightbox-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:56px;
+  height:56px;
+  border-radius:50%;
+  border:1px solid rgba(247,201,72,.35);
+  background:rgba(247,201,72,.18);
+  color:#fff6dc;
+  font-size:44px;
+  line-height:1;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100001;
+}
+.lightbox-prev{left:22px}
+.lightbox-next{right:22px}
+.lightbox-arrow:hover,.lightbox-close:hover{
+  background:#f7c948;
+  color:#07142d;
+}
+@media(max-width:700px){
+  .lightbox-arrow{
+    width:44px;
+    height:44px;
+    font-size:34px;
+  }
+  .lightbox-prev{left:10px}
+  .lightbox-next{right:10px}
+  .lightbox-close{
+    top:10px;
+    right:10px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -582,6 +672,7 @@ function enviarOracao(event) {
 </script>
 
 
+
 <script>
 let midiasGaleria = [];
 let indiceMidiaAtual = 0;
@@ -591,7 +682,8 @@ function atualizarListaMidias(){
     .map(el => ({
       src: el.currentSrc || el.src,
       tipo: el.tagName.toLowerCase() === "video" ? "video" : "imagem"
-    }));
+    }))
+    .filter(m => m.src);
 }
 
 function abrirMediaLightboxPorSrc(src){
@@ -626,8 +718,8 @@ function mudarMidia(direcao){
 function fecharMediaLightbox(){
   const box = document.getElementById("mediaLightbox");
   const content = document.getElementById("mediaLightboxContent");
-  box.classList.remove("active");
-  content.innerHTML = "";
+  if(box) box.classList.remove("active");
+  if(content) content.innerHTML = "";
 }
 
 document.addEventListener("keydown", function(e){
@@ -638,20 +730,10 @@ document.addEventListener("keydown", function(e){
   if(e.key === "ArrowRight") mudarMidia(1);
 });
 
-document.getElementById("mediaLightbox")?.addEventListener("click", function(e){
-  if(e.target.id === "mediaLightbox") fecharMediaLightbox();
+document.addEventListener("click", function(e){
+  const box = document.getElementById("mediaLightbox");
+  if(box && e.target === box) fecharMediaLightbox();
 });
-
-function copiarPix(){
-  const chave = document.getElementById("pixKey").innerText.trim();
-  const msg = document.getElementById("pixMsg");
-
-  navigator.clipboard.writeText(chave).then(() => {
-    msg.innerText = "Chave PIX copiada!";
-  }).catch(() => {
-    msg.innerText = "Não foi possível copiar automaticamente. Selecione e copie a chave.";
-  });
-}
 </script>
 
 </body>
