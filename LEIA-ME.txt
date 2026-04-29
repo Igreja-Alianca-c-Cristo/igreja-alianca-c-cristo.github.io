@@ -1,0 +1,10 @@
+PAINEL SIMPLES
+
+Arquivos principais:
+- index.html = site público, sem botão Admin
+- editar.html = painel simples
+
+Como acessar:
+https://SEUSITE.netlify.app/editar.html
+
+Esse painel não usa Netlify Identity. Ele abre links do GitHub para editar o site.
