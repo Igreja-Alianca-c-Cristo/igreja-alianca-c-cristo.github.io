@@ -1609,5 +1609,25 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 </script>
 
+
+<audio id="louvorAudio" src="louvor.mp3"></audio>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const audio = document.getElementById("louvorAudio");
+
+  document.querySelectorAll('a[href="#louvor"]').forEach(btn=>{
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      if(audio){
+        audio.currentTime = 0;
+        audio.play();
+      }
+    });
+  });
+});
+</script>
+
 </body>
 </html>
