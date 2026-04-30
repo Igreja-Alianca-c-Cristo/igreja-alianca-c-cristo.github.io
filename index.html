@@ -1549,5 +1549,30 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 </script>
 
+
+<div id="louvor-player" style="display:none; text-align:center; margin-top:20px;">
+  <iframe width="560" height="315" 
+    src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1" 
+    title="Louvor" frameborder="0" 
+    allow="autoplay; encrypted-media" allowfullscreen>
+  </iframe>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  document.querySelectorAll('a[href="#louvor"]').forEach(btn=>{
+    btn.addEventListener("click", function(e){
+      e.preventDefault();
+      const player = document.getElementById("louvor-player");
+      if(player){
+        player.style.display = "block";
+        player.scrollIntoView({behavior:"smooth"});
+      }
+    });
+  });
+});
+</script>
+
 </body>
 </html>
