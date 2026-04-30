@@ -694,200 +694,43 @@ button[data-filter]:hover::after {
 }
 
 
+
 /* ===== GALERIA PROFISSIONAL COM FOTOS E VÍDEOS ===== */
-.gallery-section{
-  padding:90px 6% !important;
-}
+.gallery-section{padding:90px 6%!important}
+.gallery-category-tabs,.gallery-media-tabs{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:22px auto}
+.gallery-category-tabs button,.gallery-media-tabs button{border:1px solid rgba(247,201,72,.35);background:rgba(255,255,255,.055);color:var(--cream,#fff6df);padding:12px 22px;border-radius:999px;font-weight:900;cursor:pointer;transition:.25s ease}
+.gallery-category-tabs button.active,.gallery-category-tabs button:hover,.gallery-media-tabs button.active,.gallery-media-tabs button:hover{background:linear-gradient(135deg,#f7c948,#ffe28a);color:#07111f;transform:translateY(-2px);box-shadow:0 12px 28px rgba(247,201,72,.22)}
+.gallery-title{text-align:center;margin:18px 0 28px;color:var(--cream,#fff6df);font-size:clamp(22px,3vw,34px)}
+.gallery-grid{width:min(1180px,94%);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.gallery-pro-card{position:relative;overflow:hidden;border-radius:22px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);box-shadow:0 18px 45px rgba(0,0,0,.25);min-height:250px}
+.gallery-pro-card img,.gallery-pro-card video{width:100%;height:310px;object-fit:cover;display:block;border-radius:22px;transition:transform .35s ease,filter .35s ease}
+.gallery-pro-card:hover img,.gallery-pro-card:hover video{transform:scale(1.045);filter:brightness(1.08)}
 
-.gallery-category-tabs,
-.gallery-media-tabs{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin:22px auto;
-}
+/* Remove qualquer nome/legenda das fotos e vídeos */
+.gallery-pro-card span,.gallery-pro-card p,.gallery-pro-card figcaption,.video-label-pro,[class*="caption"],[class*="legenda"],[class*="nome-foto"],[class*="titulo-foto"],[class*="photo-title"],[class*="image-title"],[class*="photo-name"],[class*="image-name"],[class*="overlay-title"]{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 
-.gallery-category-tabs button,
-.gallery-media-tabs button{
-  border:1px solid rgba(247,201,72,.35);
-  background:rgba(255,255,255,.055);
-  color:var(--cream, #fff6df);
-  padding:12px 22px;
-  border-radius:999px;
-  font-weight:900;
-  cursor:pointer;
-  transition:.25s ease;
-}
+.video-card-pro{position:relative}
+.play-btn-pro{position:absolute;inset:0;margin:auto;width:74px;height:74px;border-radius:50%;border:2px solid rgba(255,255,255,.8);background:linear-gradient(135deg,#f7c948,#ffe28a);color:#07111f;font-size:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 16px 35px rgba(0,0,0,.45);transition:.25s;z-index:3}
+.play-btn-pro:hover{transform:scale(1.08)}
+.video-card-pro.playing .play-btn-pro{opacity:0;pointer-events:none}
 
-.gallery-category-tabs button.active,
-.gallery-category-tabs button:hover,
-.gallery-media-tabs button.active,
-.gallery-media-tabs button:hover{
-  background:linear-gradient(135deg, #f7c948, #ffe28a);
-  color:#07111f;
-  transform:translateY(-2px);
-  box-shadow:0 12px 28px rgba(247,201,72,.22);
-}
-
-.gallery-title{
-  text-align:center;
-  margin:18px 0 28px;
-  color:var(--cream, #fff6df);
-  font-size:clamp(22px,3vw,34px);
-}
-
-.gallery-grid{
-  width:min(1180px, 94%);
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:18px;
-}
-
-.gallery-pro-card{
-  position:relative;
-  overflow:hidden;
-  border-radius:22px;
-  background:rgba(255,255,255,.045);
-  border:1px solid rgba(255,255,255,.09);
-  box-shadow:0 18px 45px rgba(0,0,0,.25);
-  min-height:250px;
-}
-
-.gallery-pro-card img,
-.gallery-pro-card video{
-  width:100%;
-  height:310px;
-  object-fit:cover;
-  display:block;
-  border-radius:22px;
-  transition:transform .35s ease, filter .35s ease;
-}
-
-.gallery-pro-card:hover img,
-.gallery-pro-card:hover video{
-  transform:scale(1.045);
-  filter:brightness(1.08);
-}
-
-/* remove nomes sobre as fotos */
-.gallery-pro-card span,
-.gallery-pro-card p,
-.gallery-pro-card figcaption,
-[class*="caption"],
-[class*="legenda"],
-[class*="nome-foto"],
-[class*="titulo-foto"],
-[class*="photo-title"],
-[class*="image-title"],
-[class*="photo-name"],
-[class*="image-name"],
-[class*="overlay-title"]{
-  display:none!important;
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-}
-
-.gallery-error{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:250px;
-  padding:22px;
-  text-align:center;
-  color:#ffe9a6;
-  background:rgba(255,255,255,.045);
-  border:1px dashed rgba(247,201,72,.35);
-  border-radius:22px;
-  font-weight:900;
-}
-
-.video-card-pro{
-  position:relative;
-}
-
-.play-btn-pro{
-  position:absolute;
-  inset:0;
-  margin:auto;
-  width:74px;
-  height:74px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.8);
-  background:linear-gradient(135deg,#f7c948,#ffe28a);
-  color:#07111f;
-  font-size:30px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  box-shadow:0 16px 35px rgba(0,0,0,.45);
-  transition:.25s;
-  z-index:3;
-}
-
-.play-btn-pro:hover{
-  transform:scale(1.08);
-}
-
-.video-card-pro.playing .play-btn-pro{
-  opacity:0;
-  pointer-events:none;
-}
-
-.video-label-pro{
-  position:absolute;
-  left:14px;
-  bottom:14px;
-  padding:8px 13px;
-  border-radius:999px;
-  background:rgba(0,0,0,.62);
-  color:#fff;
-  font-weight:900;
-  font-size:13px;
-  z-index:2;
-}
-
-.gallery-lightbox{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.92);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-  padding:20px;
-}
-
-.gallery-lightbox.open{
-  display:flex;
-}
-
-.gallery-lightbox img{
-  max-width:94vw;
-  max-height:90vh;
-  border-radius:18px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-}
-
-.gallery-close{
-  position:fixed;
-  top:18px;
-  right:24px;
-  font-size:38px;
-  color:#fff;
-  cursor:pointer;
-  font-weight:900;
-}
+/* Lightbox estilo Instagram com setas */
+.gallery-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:99999;padding:20px}
+.gallery-lightbox.open{display:flex}
+.gallery-lightbox img{max-width:88vw;max-height:90vh;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.gallery-close{position:fixed;top:18px;right:24px;font-size:38px;color:#fff;cursor:pointer;font-weight:900;z-index:100002}
+.gallery-arrow{position:fixed;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.13);color:#fff;font-size:34px;font-weight:900;cursor:pointer;z-index:100001;display:flex;align-items:center;justify-content:center;transition:.2s}
+.gallery-arrow:hover{background:rgba(247,201,72,.75);color:#07111f}
+.gallery-arrow.prev{left:28px}
+.gallery-arrow.next{right:28px}
 
 @media(max-width:700px){
-  .gallery-section{padding:70px 4%!important;}
-  .gallery-grid{grid-template-columns:1fr;}
-  .gallery-pro-card img,
-  .gallery-pro-card video{height:auto;min-height:220px;}
+  .gallery-section{padding:70px 4%!important}
+  .gallery-grid{grid-template-columns:1fr}
+  .gallery-pro-card img,.gallery-pro-card video{height:auto;min-height:220px}
+  .gallery-arrow{width:44px;height:44px;font-size:28px}
+  .gallery-arrow.prev{left:10px}
+  .gallery-arrow.next{right:10px}
 }
 
 </style>
@@ -1272,9 +1115,14 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 
+
+
+
 <script id="galeria-profissional-js">
 let categoriaGaleriaAtual = "aniversario";
 let tipoGaleriaAtual = "fotos";
+let fotosLightboxAtual = [];
+let indiceLightboxAtual = 0;
 
 const galeriaDados = {
   aniversario: {
@@ -1303,23 +1151,18 @@ const galeriaDados = {
 function abrirCategoriaGaleria(cat, e){
   categoriaGaleriaAtual = cat;
   tipoGaleriaAtual = "fotos";
-
   document.querySelectorAll(".gallery-category-tabs button").forEach(b=>b.classList.remove("active"));
   if(e) e.target.classList.add("active");
-
   document.querySelectorAll(".gallery-media-tabs button").forEach(b=>b.classList.remove("active"));
   const primeiro = document.querySelector(".gallery-media-tabs button");
   if(primeiro) primeiro.classList.add("active");
-
   renderizarGaleriaProfissional();
 }
 
 function abrirTipoGaleria(tipo, e){
   tipoGaleriaAtual = tipo;
-
   document.querySelectorAll(".gallery-media-tabs button").forEach(b=>b.classList.remove("active"));
   if(e) e.target.classList.add("active");
-
   renderizarGaleriaProfissional();
 }
 
@@ -1331,6 +1174,7 @@ function renderizarGaleriaProfissional(){
   const info = galeriaDados[categoriaGaleriaAtual];
   titulo.textContent = `${info.nome} - ${tipoGaleriaAtual === "fotos" ? "Fotos" : "Vídeos"}`;
   area.innerHTML = "";
+  fotosLightboxAtual = [];
 
   document.querySelectorAll("video").forEach(v=>v.pause());
 
@@ -1343,9 +1187,9 @@ function renderizarGaleriaProfissional(){
     info.fotos.forEach(nome=>{
       const card = document.createElement("div");
       card.className = "gallery-pro-card";
-
       const img = document.createElement("img");
       img.alt = "";
+      img.removeAttribute("title");
       img.src = info.fotosBase + nome + ".jpg";
 
       img.onerror = function(){
@@ -1356,8 +1200,12 @@ function renderizarGaleriaProfissional(){
           this.dataset.try = "jpeg";
           this.src = info.fotosBase + nome + ".jpeg";
         } else {
-          card.innerHTML = `<div class="gallery-error">Imagem não encontrada:<br>${nome}</div>`;
+          card.remove(); // Não mostra aviso público quando a imagem não existir
         }
+      };
+
+      img.onload = function(){
+        if(!fotosLightboxAtual.includes(this.src)) fotosLightboxAtual.push(this.src);
       };
 
       img.onclick = function(){ abrirGaleriaLightbox(this.src); };
@@ -1372,13 +1220,13 @@ function renderizarGaleriaProfissional(){
       return;
     }
 
-    info.videos.forEach((arquivo, index)=>{
+    info.videos.forEach((arquivo)=>{
       const card = document.createElement("div");
       card.className = "gallery-pro-card video-card-pro";
-
       const video = document.createElement("video");
       video.preload = "metadata";
       video.playsInline = true;
+      video.removeAttribute("title");
       video.src = info.videosBase + arquivo;
 
       const btn = document.createElement("button");
@@ -1386,17 +1234,12 @@ function renderizarGaleriaProfissional(){
       btn.innerHTML = "▶";
       btn.onclick = function(){ tocarVideoGaleria(this); };
 
-      const label = document.createElement("div");
-      label.className = "video-label-pro";
-      label.textContent = `Vídeo ${String(index+1).padStart(2,"0")}`;
-
       video.addEventListener("error", function(){
-        card.innerHTML = `<div class="gallery-error">Vídeo não encontrado:<br>${arquivo}</div>`;
+        card.remove(); // Não mostra aviso público quando o vídeo não existir
       });
 
       card.appendChild(video);
       card.appendChild(btn);
-      card.appendChild(label);
       area.appendChild(card);
     });
   }
@@ -1405,7 +1248,6 @@ function renderizarGaleriaProfissional(){
 function tocarVideoGaleria(botao){
   const card = botao.closest(".video-card-pro");
   const video = card.querySelector("video");
-
   document.querySelectorAll("video").forEach(v=>{
     if(v !== video){
       v.pause();
@@ -1413,11 +1255,9 @@ function tocarVideoGaleria(botao){
       if(c) c.classList.remove("playing");
     }
   });
-
   video.setAttribute("controls","controls");
   video.play();
   card.classList.add("playing");
-
   video.onpause = () => card.classList.remove("playing");
   video.onended = () => card.classList.remove("playing");
 }
@@ -1426,9 +1266,20 @@ function abrirGaleriaLightbox(src){
   const lb = document.getElementById("galleryLightbox");
   const img = document.getElementById("galleryLightboxImg");
   if(lb && img){
+    indiceLightboxAtual = fotosLightboxAtual.indexOf(src);
+    if(indiceLightboxAtual < 0) indiceLightboxAtual = 0;
     img.src = src;
     lb.classList.add("open");
   }
+}
+
+function mudarFotoLightbox(direcao, event){
+  if(event) event.stopPropagation();
+  if(!fotosLightboxAtual.length) return;
+  indiceLightboxAtual += direcao;
+  if(indiceLightboxAtual < 0) indiceLightboxAtual = fotosLightboxAtual.length - 1;
+  if(indiceLightboxAtual >= fotosLightboxAtual.length) indiceLightboxAtual = 0;
+  document.getElementById("galleryLightboxImg").src = fotosLightboxAtual[indiceLightboxAtual];
 }
 
 function fecharGaleriaLightbox(){
@@ -1439,6 +1290,14 @@ function fecharGaleriaLightbox(){
     img.src = "";
   }
 }
+
+document.addEventListener("keydown", function(e){
+  const lb = document.getElementById("galleryLightbox");
+  if(!lb || !lb.classList.contains("open")) return;
+  if(e.key === "ArrowLeft") mudarFotoLightbox(-1, e);
+  if(e.key === "ArrowRight") mudarFotoLightbox(1, e);
+  if(e.key === "Escape") fecharGaleriaLightbox();
+});
 
 document.addEventListener("DOMContentLoaded", renderizarGaleriaProfissional);
 </script>
