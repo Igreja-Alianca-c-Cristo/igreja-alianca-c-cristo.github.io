@@ -585,6 +585,114 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
   }
 }
 
+
+/* ===== ANIMAÇÃO DOS BOTÕES DA GALERIA ===== */
+.gallery-tabs,
+.categoria-galeria,
+.filtros-galeria,
+.gallery-filter,
+.filter-buttons {
+  animation: entradaGaleriaBotoes .9s ease both;
+}
+
+.gallery-tabs button,
+.categoria-galeria button,
+.filtros-galeria button,
+.gallery-filter button,
+.filter-buttons button,
+button[data-category],
+button[data-filter] {
+  position: relative;
+  overflow: hidden;
+  animation: botaoGaleriaEntrando .75s ease both;
+  transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+}
+
+.gallery-tabs button:nth-child(1),
+.categoria-galeria button:nth-child(1),
+.filtros-galeria button:nth-child(1),
+.gallery-filter button:nth-child(1),
+.filter-buttons button:nth-child(1) {
+  animation-delay: .08s;
+}
+
+.gallery-tabs button:nth-child(2),
+.categoria-galeria button:nth-child(2),
+.filtros-galeria button:nth-child(2),
+.gallery-filter button:nth-child(2),
+.filter-buttons button:nth-child(2) {
+  animation-delay: .20s;
+}
+
+.gallery-tabs button:nth-child(3),
+.categoria-galeria button:nth-child(3),
+.filtros-galeria button:nth-child(3),
+.gallery-filter button:nth-child(3),
+.filter-buttons button:nth-child(3) {
+  animation-delay: .32s;
+}
+
+.gallery-tabs button:hover,
+.categoria-galeria button:hover,
+.filtros-galeria button:hover,
+.gallery-filter button:hover,
+.filter-buttons button:hover,
+button[data-category]:hover,
+button[data-filter]:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 12px 28px rgba(247,201,72,.22);
+}
+
+.gallery-tabs button::after,
+.categoria-galeria button::after,
+.filtros-galeria button::after,
+.gallery-filter button::after,
+.filter-buttons button::after,
+button[data-category]::after,
+button[data-filter]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-20deg);
+  transition: left .65s ease;
+}
+
+.gallery-tabs button:hover::after,
+.categoria-galeria button:hover::after,
+.filtros-galeria button:hover::after,
+.gallery-filter button:hover::after,
+.filter-buttons button:hover::after,
+button[data-category]:hover::after,
+button[data-filter]:hover::after {
+  left: 130%;
+}
+
+@keyframes entradaGaleriaBotoes {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes botaoGaleriaEntrando {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 </style>
 <style>
 
