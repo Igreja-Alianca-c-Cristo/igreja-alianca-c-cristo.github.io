@@ -499,7 +499,7 @@ footer{padding:36px 20px;text-align:center;background:#020713;color:#fff4d1;bord
 [class*="image-title"],
 [class*="photo-name"],
 [class*="image-name"],
-[class*="overlay-title"]{
+{
   display:none !important;
   opacity:0 !important;
   visibility:hidden !important;
@@ -707,7 +707,7 @@ button[data-filter]:hover::after {
 .gallery-pro-card:hover img,.gallery-pro-card:hover video{transform:scale(1.045);filter:brightness(1.08)}
 
 /* Remove qualquer nome/legenda das fotos e vídeos */
-.gallery-pro-card span,.gallery-pro-card p,.gallery-pro-card figcaption,.video-label-pro,[class*="caption"],[class*="legenda"],[class*="nome-foto"],[class*="titulo-foto"],[class*="photo-title"],[class*="image-title"],[class*="photo-name"],[class*="image-name"],[class*="overlay-title"]{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+.gallery-pro-card span,.gallery-pro-card p,.gallery-pro-card figcaption,.video-label-pro,[class*="caption"],[class*="legenda"],[class*="nome-foto"],[class*="titulo-foto"],[class*="photo-name"],[class*="image-name"],{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 
 .video-card-pro{position:relative}
 .play-btn-pro{position:absolute;inset:0;margin:auto;width:74px;height:74px;border-radius:50%;border:2px solid rgba(255,255,255,.8);background:linear-gradient(135deg,#f7c948,#ffe28a);color:#07111f;font-size:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 16px 35px rgba(0,0,0,.45);transition:.25s;z-index:3}
@@ -731,6 +731,87 @@ button[data-filter]:hover::after {
   .gallery-arrow{width:44px;height:44px;font-size:28px}
   .gallery-arrow.prev{left:10px}
   .gallery-arrow.next{right:10px}
+}
+
+
+/* ===== CORREÇÃO FINAL: TÍTULO ANIVERSÁRIO + SETAS BONITAS ===== */
+#galeriaTitulo,
+.gallery-title{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  text-align:center!important;
+  color:var(--cream,#fff6df)!important;
+  font-size:clamp(26px,3vw,42px)!important;
+  margin:22px 0 30px!important;
+  font-weight:900!important;
+}
+
+.gallery-category-tabs button:first-child{
+  min-width:230px!important;
+}
+
+.gallery-arrow{
+  position:fixed!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:58px!important;
+  height:58px!important;
+  border-radius:50%!important;
+  border:2px solid rgba(255,255,255,.7)!important;
+  background:rgba(247,201,72,.92)!important;
+  color:#07111f!important;
+  font-size:0!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+  z-index:100001!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  box-shadow:0 12px 32px rgba(0,0,0,.45)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+
+.gallery-arrow.prev{left:24px!important;}
+.gallery-arrow.next{right:24px!important;}
+
+.gallery-arrow.prev::before{
+  content:"‹";
+  font-size:46px!important;
+  line-height:1!important;
+  margin-top:-4px;
+}
+
+.gallery-arrow.next::before{
+  content:"›";
+  font-size:46px!important;
+  line-height:1!important;
+  margin-top:-4px;
+}
+
+.gallery-arrow:hover{
+  background:#ffd84d!important;
+  transform:translateY(-50%) scale(1.08)!important;
+}
+
+.gallery-lightbox img{
+  max-width:82vw!important;
+  max-height:88vh!important;
+}
+
+@media(max-width:700px){
+  .gallery-arrow{
+    width:46px!important;
+    height:46px!important;
+  }
+  .gallery-arrow.prev{left:10px!important;}
+  .gallery-arrow.next{right:10px!important;}
+  .gallery-arrow.prev::before,
+  .gallery-arrow.next::before{
+    font-size:36px!important;
+  }
 }
 
 </style>
@@ -796,7 +877,7 @@ button[data-filter]:hover::after {
 [class*="image-title"],
 [class*="photo-name"],
 [class*="image-name"],
-[class*="overlay-title"] {
+ {
   display: none !important;
   opacity: 0 !important;
   visibility: hidden !important;
@@ -837,7 +918,7 @@ button[data-filter]:hover::after {
   </div>
 
   <div class="gallery-category-tabs">
-    <button class="active" onclick="abrirCategoriaGaleria('aniversario', event)"></button>
+    <button class="active" onclick="abrirCategoriaGaleria('aniversario', event)">Aniversário de 6 anos</button>
     <button onclick="abrirCategoriaGaleria('cultos', event)">Cultos</button>
     <button onclick="abrirCategoriaGaleria('santaceia', event)">Santa Ceia</button>
   </div>
@@ -847,14 +928,15 @@ button[data-filter]:hover::after {
     <button onclick="abrirTipoGaleria('videos', event)">Vídeos</button>
   </div>
 
-  <h3 id="galeriaTitulo" class="gallery-title">- Fotos</h3>
+  <h3 id="galeriaTitulo" class="gallery-title">Aniversário de 6 anos - Fotos</h3>
   <div id="galeriaGrid" class="gallery-grid"></div>
 </section>
 
 <div class="gallery-lightbox" id="galleryLightbox" onclick="fecharGaleriaLightbox()">
   <span class="gallery-close">×</span>
-  <img class="gallery-arrow prev" onclick="mudarFotoLightbox(-1, event)">‹</button>
-  <img id="galleryLightboxImg" src="" alt="">
+  <button class="gallery-arrow prev" onclick="mudarFotoLightbox(-1, event)" aria-label="Foto anterior"></button>
+  <img id="galleryLightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  <button class="gallery-arrow next" onclick="mudarFotoLightbox(1, event)" aria-label="Próxima foto"></button>
 </div>
 
 <section class="section" id="oracao"><div class="container reveal"><div class="prayer-wrap"><div class="prayer-text glass"><div class="eyebrow">Intercessão</div><h2>Pedidos de Oração</h2><p>Preencha o formulário e envie seu pedido de oração. Nossa equipe estará orando por você e por sua família.</p></div><form class="glass" onsubmit="enviarOracao(event)"><input type="hidden" name="form-name" value="pedido-oracao"><input type="text" name="nome" placeholder="Seu nome" required><input type="tel" name="telefone" placeholder="Telefone/WhatsApp (opcional)"><textarea name="pedido" placeholder="Digite seu pedido de oração" required></textarea><button class="btn btn-primary" type="submit">Enviar pedido de oração</button></form></div></div></section>
