@@ -903,6 +903,42 @@ button[data-filter]:hover::after {
   visibility:hidden!important;
 }
 
+
+/* ===== CORREÇÃO VISUAL FINAL DA GALERIA ===== */
+#galeriaTitulo,
+.gallery-title{
+  display:none !important;
+}
+
+.gallery-description{
+  display:block !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  text-align:center !important;
+  width:min(760px,92%) !important;
+  margin:10px auto 28px !important;
+  color:#dce8ff !important;
+  font-size:18px !important;
+  line-height:1.45 !important;
+  font-weight:600 !important;
+}
+
+.gallery-media-tabs{
+  justify-content:center !important;
+  width:100% !important;
+  margin:22px auto 12px !important;
+}
+
+.gallery-category-tabs{
+  justify-content:center !important;
+  width:100% !important;
+}
+
+/* Deixa a seção de louvor simples e limpa */
+#louvor{
+  scroll-margin-top:120px;
+}
+
 </style>
 <style>
 
@@ -1494,34 +1530,10 @@ document.addEventListener("DOMContentLoaded", renderizarGaleriaProfissional);
 </script>
 
 
-<script id="descricao-galeria-fallback">
-document.addEventListener("click", function(){
-  setTimeout(function(){
-    const titulo = document.getElementById("galeriaTitulo");
-    const desc = document.getElementById("galeriaDescricao");
-    if(!titulo || !desc) return;
-    if(titulo.textContent.toLowerCase().includes("vídeo")){
-      desc.textContent = tipoGaleriaAtual === "fotos"
-      ? `Você está vendo as fotos de ${info.nome}.`
-      : `Você está vendo os vídeos de ${info.nome}.`;
-    } else if(titulo.textContent.toLowerCase().includes("foto")){
-      desc.textContent = tipoGaleriaAtual === "fotos"
-      ? `Você está vendo as fotos de ${info.nome}.`
-      : `Você está vendo os vídeos de ${info.nome}.`;
-    }
-  }, 80);
-});
-</script>
 
 
-<script id="louvor-play-fix">
-function tocarLouvor(){
-  const audio = document.querySelector('#louvor audio, audio');
-  if(audio){
-    audio.play();
-  }
-}
-</script>
+
+
 
 
 <script id="menu-anchor-fix">
@@ -1550,25 +1562,48 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 
-<div id="louvor-player" style="display:none; text-align:center; margin-top:20px;">
-  <iframe width="560" height="315" 
-    src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1" 
-    title="Louvor" frameborder="0" 
-    allow="autoplay; encrypted-media" allowfullscreen>
-  </iframe>
-</div>
 
 
-<script>
+
+<script id="galeria-texto-limpo-fix">
 document.addEventListener("DOMContentLoaded", function(){
-  document.querySelectorAll('a[href="#louvor"]').forEach(btn=>{
-    btn.addEventListener("click", function(e){
-      e.preventDefault();
-      const player = document.getElementById("louvor-player");
-      if(player){
-        player.style.display = "block";
-        player.scrollIntoView({behavior:"smooth"});
-      }
+  function textoCategoria(){
+    const ativo = document.querySelector(".gallery-category-tabs button.active");
+    const texto = ativo ? ativo.textContent.trim().toLowerCase() : "";
+
+    if(texto.includes("cult")) return "Cultos";
+    if(texto.includes("santa")) return "Santa Ceia";
+    return "Aniversário de 6 anos";
+  }
+
+  function tipoAtual(){
+    const ativo = document.querySelector(".gallery-media-tabs button.active");
+    const texto = ativo ? ativo.textContent.trim().toLowerCase() : "";
+    return texto.includes("vídeo") || texto.includes("video") ? "vídeos" : "fotos";
+  }
+
+  function atualizarDescricao(){
+    const desc = document.getElementById("galeriaDescricao");
+    if(!desc) return;
+
+    const categoria = textoCategoria();
+    const tipo = tipoAtual();
+
+    if(tipo === "fotos"){
+      desc.textContent = "Você está vendo as fotos de " + categoria + ".";
+    } else {
+      desc.textContent = "Você está vendo os vídeos de " + categoria + ".";
+    }
+
+    const titulo = document.getElementById("galeriaTitulo");
+    if(titulo) titulo.textContent = "";
+  }
+
+  atualizarDescricao();
+
+  document.querySelectorAll(".gallery-category-tabs button, .gallery-media-tabs button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      setTimeout(atualizarDescricao, 120);
     });
   });
 });
