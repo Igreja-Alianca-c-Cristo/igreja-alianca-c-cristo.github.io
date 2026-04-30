@@ -1013,11 +1013,11 @@ button[data-filter]:hover::after {
     <button class="active" onclick="abrirTipoGaleria('fotos', event)">Fotos</button>
     <button onclick="abrirTipoGaleria('videos', event)">Vídeos</button>
   
-  <p id="galeriaDescricao" class="gallery-description">Você está vendo as fotos do Aniversário de 6 anos.</p>
+  <p id="galeriaDescricao" class="gallery-description"></p>
 
   </div>
 
-  <h3 id="galeriaTitulo" class="gallery-title">Aniversário de 6 anos - Fotos</h3>
+  <h3 id="galeriaTitulo" class="gallery-title">Aniversário de 6 anos</h3>
   <div id="galeriaGrid" class="gallery-grid"></div>
 </section>
 
@@ -1349,8 +1349,8 @@ function renderizarGaleriaProfissional(){
   const desc = document.getElementById("galeriaDescricao");
   if(desc){
     desc.textContent = tipoGaleriaAtual === "fotos"
-      ? `Você está vendo as fotos do ${info.nome}.`
-      : `Você está vendo os vídeos do ${info.nome}.`;
+      ? `Você está vendo as fotos de ${info.nome}.`
+      : `Você está vendo os vídeos de ${info.nome}.`;
   }
   area.innerHTML = "";
   fotosLightboxAtual = [];
@@ -1489,9 +1489,13 @@ document.addEventListener("click", function(){
     const desc = document.getElementById("galeriaDescricao");
     if(!titulo || !desc) return;
     if(titulo.textContent.toLowerCase().includes("vídeo")){
-      desc.textContent = "Você está vendo os vídeos do Aniversário de 6 anos.";
+      desc.textContent = tipoGaleriaAtual === "fotos"
+      ? `Você está vendo as fotos de ${info.nome}.`
+      : `Você está vendo os vídeos de ${info.nome}.`;
     } else if(titulo.textContent.toLowerCase().includes("foto")){
-      desc.textContent = "Você está vendo as fotos do Aniversário de 6 anos.";
+      desc.textContent = tipoGaleriaAtual === "fotos"
+      ? `Você está vendo as fotos de ${info.nome}.`
+      : `Você está vendo os vídeos de ${info.nome}.`;
     }
   }, 80);
 });
