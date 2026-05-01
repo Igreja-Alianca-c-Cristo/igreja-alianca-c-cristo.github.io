@@ -999,6 +999,16 @@ button[data-filter]:hover::after {
   opacity:.92;
 }
 
+
+/* AJUSTE FINAL GALERIA E LOUVOR */
+#galeriaDescricao:empty{
+  display:none !important;
+}
+
+#louvorBox{
+  z-index:99999 !important;
+}
+
 </style>
 <style>
 
@@ -1195,8 +1205,10 @@ function toggleLouvor(event){
   const abrindo = !box.classList.contains('show');
   box.classList.toggle('show');
 
-  if(abrindo && !iframe.src){
-    iframe.src = 'https://www.youtube.com/embed/4W5TTuJg3Xc?autoplay=1&mute=1&rel=0&playsinline=1';
+  if(abrindo){
+    if(!iframe.src || iframe.src.trim() === ""){
+      iframe.src = 'https://www.youtube.com/embed/4W5TTuJg3Xc?autoplay=1&mute=1&rel=0&playsinline=1';
+    }
   }
 
   return false;
@@ -1787,14 +1799,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
   if(grid){
     grid.innerHTML = `
-      <div class="gallery-error" style="grid-column:1/-1;">
-        Escolha uma categoria acima para ver as fotos ou vídeos.
-      </div>
+      <div class="gallery-error" style="grid-column:1/-1;">Escolha uma categoria acima para ver as fotos ou vídeos.</div>
     `;
   }
 
   if(desc){
-    desc.textContent = "Escolha Aniversário de 6 anos, Cultos ou Santa Ceia para visualizar a galeria.";
+    desc.textContent = "";
   }
 
   if(titulo){
@@ -1809,6 +1819,54 @@ document.addEventListener("DOMContentLoaded", function(){
     btn.classList.remove("active");
   });
 });
+</script>
+
+
+<script id="louvor-fechar-segundo-plano">
+document.addEventListener("DOMContentLoaded", function(){
+  const box = document.getElementById("louvorBox");
+
+  document.querySelectorAll("#louvorBox button, #louvorBox .fechar, #louvorBox [class*='fechar']").forEach(function(btn){
+    const texto = (btn.textContent || "").toLowerCase();
+    if(texto.includes("fechar") || texto.includes("×") || texto.includes("x")){
+      btn.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        const b = document.getElementById("louvorBox");
+        if(b) b.classList.remove("show");
+        return false;
+      }, true);
+    }
+  });
+});
+</script>
+
+
+<script id="galeria-fechar-fora">
+document.addEventListener("click", function(e){
+  const galeriaSection = document.getElementById("galeria");
+  const grid = document.getElementById("galeriaGrid");
+  const desc = document.getElementById("galeriaDescricao");
+  const titulo = document.getElementById("galeriaTitulo");
+  const clicouNaGaleria = e.target.closest("#galeria");
+
+  // Se clicou fora da seção da galeria e existe galeria aberta, fecha.
+  if(galeriaSection && grid && !clicouNaGaleria){
+    grid.innerHTML = `
+      <div class="gallery-error" style="grid-column:1/-1;">
+        Escolha uma categoria acima para ver as fotos ou vídeos.
+      </div>
+    `;
+
+    if(desc) desc.textContent = "";
+    if(titulo) titulo.textContent = "";
+
+    document.querySelectorAll(".gallery-category-tabs button, .gallery-media-tabs button")
+      .forEach(function(btn){ btn.classList.remove("active"); });
+
+    document.querySelectorAll("video").forEach(function(v){ v.pause(); });
+  }
+}, true);
 </script>
 
 </body>
