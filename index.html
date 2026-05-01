@@ -1010,9 +1010,196 @@ button[data-filter]:hover::after {
 }
 
 
-/* Correção final: Louvor abre direto no YouTube sem travar o site */
-#louvorModal{
-  display:none !important;
+/* ===== PLAYER LOUVOR ESTILO SPOTIFY ===== */
+#spotifyLouvor{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%) translateY(140%);
+  width:min(760px, calc(100vw - 28px));
+  background:linear-gradient(135deg, rgba(5,18,34,.98), rgba(2,8,18,.98));
+  border:1px solid rgba(247,201,72,.35);
+  border-radius:24px;
+  box-shadow:0 22px 70px rgba(0,0,0,.65);
+  z-index:2147483647;
+  opacity:0;
+  pointer-events:none;
+  transition:transform .35s ease, opacity .35s ease;
+  overflow:hidden;
+}
+
+#spotifyLouvor.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+  pointer-events:auto;
+}
+
+.spotify-row{
+  display:grid;
+  grid-template-columns:72px 1fr auto;
+  gap:14px;
+  align-items:center;
+  padding:14px;
+}
+
+.spotify-cover{
+  width:72px;
+  height:72px;
+  border-radius:18px;
+  background:radial-gradient(circle at 35% 25%, #ffe28a, #f7c948 45%, #0b1a2a 46%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  box-shadow:0 10px 25px rgba(247,201,72,.22);
+}
+
+.spotify-info{
+  min-width:0;
+}
+
+.spotify-label{
+  color:#f7c948;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+
+.spotify-title{
+  color:#fff6df;
+  font-size:18px;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.spotify-sub{
+  color:#c9d9f2;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.spotify-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.spotify-btn{
+  border:1px solid rgba(247,201,72,.35);
+  background:rgba(255,255,255,.06);
+  color:#fff6df;
+  border-radius:999px;
+  height:42px;
+  padding:0 14px;
+  font-weight:900;
+  cursor:pointer;
+  transition:.22s ease;
+}
+
+.spotify-btn:hover{
+  background:#f7c948;
+  color:#061426;
+  transform:translateY(-2px);
+}
+
+.spotify-play{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  border:0;
+  background:linear-gradient(135deg,#f7c948,#ffe28a);
+  color:#061426;
+  font-size:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 10px 28px rgba(247,201,72,.25);
+}
+
+.spotify-frame-wrap{
+  display:none;
+  padding:0 14px 14px;
+}
+
+#spotifyLouvor.expandido .spotify-frame-wrap{
+  display:block;
+}
+
+.spotify-frame{
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  background:#000;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.spotify-frame iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+
+.spotify-wave{
+  display:flex;
+  gap:3px;
+  align-items:end;
+  height:20px;
+  margin-top:8px;
+}
+
+.spotify-wave span{
+  width:4px;
+  height:7px;
+  background:#f7c948;
+  border-radius:999px;
+  animation:waveLouvor .85s ease-in-out infinite;
+}
+
+.spotify-wave span:nth-child(2){animation-delay:.12s}
+.spotify-wave span:nth-child(3){animation-delay:.24s}
+.spotify-wave span:nth-child(4){animation-delay:.36s}
+.spotify-wave span:nth-child(5){animation-delay:.48s}
+
+#spotifyLouvor:not(.tocando) .spotify-wave span{
+  animation:none;
+  opacity:.45;
+}
+
+@keyframes waveLouvor{
+  0%,100%{height:6px}
+  50%{height:20px}
+}
+
+@media(max-width:680px){
+  .spotify-row{
+    grid-template-columns:56px 1fr;
+  }
+
+  .spotify-cover{
+    width:56px;
+    height:56px;
+    border-radius:14px;
+    font-size:24px;
+  }
+
+  .spotify-actions{
+    grid-column:1/-1;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .spotify-title{
+    font-size:16px;
+  }
 }
 
 </style>
@@ -1127,7 +1314,7 @@ button[data-filter]:hover::after {
     <a href="#oracao">Oração</a>
     <a href="#localizacao">Localização</a>
     <a href="#ofertas">Dízimos e Ofertas</a>
-    <a href="https://www.youtube.com/watch?v=4W5TTuJg3Xc" target="_blank" rel="noopener">Louvor 🎵</a>
+    <a href="#" onclick="return abrirSpotifyLouvor(event)">Louvor 🎵</a>
   </div>
   </div>
 </nav>
@@ -1726,9 +1913,6 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 
-<audio id="louvorAudio" src="louvor.mp3"></audio>
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   const audio = document.getElementById("louvorAudio");
@@ -1853,6 +2037,156 @@ document.addEventListener("click", function(e){
     document.querySelectorAll("video").forEach(function(v){ v.pause(); });
   }
 }, true);
+</script>
+
+
+<div id="spotifyLouvor" aria-hidden="true">
+  <div class="spotify-row">
+    <div class="spotify-cover">🎵</div>
+
+    <div class="spotify-info">
+      <div class="spotify-label">Louvor tocando</div>
+      <div class="spotify-title">Momento de Louvor</div>
+      <div class="spotify-sub">Igreja Renovada Aliança com Cristo</div>
+      <div class="spotify-wave">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="spotify-actions">
+      <button class="spotify-play" onclick="return iniciarLouvorSpotify(event)" title="Tocar">▶</button>
+      <button class="spotify-btn" onclick="return alternarVideoLouvor(event)">Ver vídeo</button>
+      <button class="spotify-btn" onclick="return ocultarLouvorSpotify(event)">Ocultar</button>
+      <button class="spotify-btn" onclick="return pararLouvorSpotify(event)">Parar</button>
+    </div>
+  </div>
+
+  <div class="spotify-frame-wrap">
+    <div class="spotify-frame">
+      <iframe id="spotifyLouvorIframe"
+        src=""
+        title="Louvor"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+
+<script id="spotify-louvor-js">
+(function(){
+  const VIDEO = "https://www.youtube.com/embed/4W5TTuJg3Xc?autoplay=1&rel=0&playsinline=1";
+  let iniciado = false;
+
+  function player(){
+    return document.getElementById("spotifyLouvor");
+  }
+
+  function iframe(){
+    return document.getElementById("spotifyLouvorIframe");
+  }
+
+  window.abrirSpotifyLouvor = function(event){
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const box = player();
+    if(!box) return false;
+
+    box.classList.add("show");
+    box.setAttribute("aria-hidden", "false");
+
+    iniciarLouvorSpotify(event);
+    return false;
+  };
+
+  window.iniciarLouvorSpotify = function(event){
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const box = player();
+    const frame = iframe();
+    if(!box || !frame) return false;
+
+    box.classList.add("show", "tocando");
+    box.setAttribute("aria-hidden", "false");
+
+    if(!iniciado || !frame.src){
+      frame.src = VIDEO + "&cache=" + Date.now();
+      iniciado = true;
+    }
+
+    return false;
+  };
+
+  window.ocultarLouvorSpotify = function(event){
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const box = player();
+    if(box){
+      box.classList.remove("show", "expandido");
+      box.setAttribute("aria-hidden", "true");
+    }
+
+    // Não limpa o iframe: continua tocando em segundo plano.
+    return false;
+  };
+
+  window.pararLouvorSpotify = function(event){
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const box = player();
+    const frame = iframe();
+
+    if(frame) frame.src = "";
+    iniciado = false;
+
+    if(box){
+      box.classList.remove("show", "expandido", "tocando");
+      box.setAttribute("aria-hidden", "true");
+    }
+
+    return false;
+  };
+
+  window.alternarVideoLouvor = function(event){
+    if(event){
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    const box = player();
+    if(!box) return false;
+
+    box.classList.add("show");
+    box.classList.toggle("expandido");
+
+    iniciarLouvorSpotify(event);
+    return false;
+  };
+
+  document.addEventListener("DOMContentLoaded", function(){
+    document.querySelectorAll("a, button").forEach(function(el){
+      const texto = (el.textContent || "").trim().toLowerCase();
+      if(texto.includes("louvor")){
+        el.addEventListener("click", window.abrirSpotifyLouvor, true);
+        if(el.tagName.toLowerCase() === "a"){
+          el.setAttribute("href", "#");
+        }
+      }
+    });
+  });
+})();
 </script>
 
 </body>
