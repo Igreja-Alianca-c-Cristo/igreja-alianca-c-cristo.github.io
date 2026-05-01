@@ -1892,6 +1892,65 @@ button.loc-btn{
   }
 }
 
+
+/* AJUSTE FINAL: remover tarja de Igreja Renovada e restaurar galeria dourada */
+.igreja-topo{
+  background:none !important;
+  background-image:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  outline:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin-bottom:14px !important;
+  color:#f7c948 !important;
+  text-shadow:0 0 20px rgba(247,201,72,.35) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after{
+  content:none !important;
+  display:none !important;
+}
+
+#galeria .section-head h2,
+#galeria h2.galeria-titulo-animado,
+.galeria-titulo-animado{
+  position:relative !important;
+  display:inline-block !important;
+  background:linear-gradient(90deg,#fff6dc,#f7c948,#ffffff,#f7c948,#fff6dc) !important;
+  background-size:260% 100% !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+  animation:galeriaGoldMove 4s linear infinite !important;
+  text-shadow:none !important;
+}
+#galeria .section-head h2::after,
+#galeria h2.galeria-titulo-animado::after,
+.galeria-titulo-animado::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  bottom:-12px !important;
+  width:78% !important;
+  height:3px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,transparent,#f7c948,#ffffff,#f7c948,transparent) !important;
+  background-size:220% 100% !important;
+  transform:translateX(-50%) !important;
+  box-shadow:0 0 18px rgba(247,201,72,.65) !important;
+  animation:galeriaLineMove 3.2s linear infinite !important;
+}
+@keyframes galeriaGoldMove{
+  0%{background-position:0% 50%}
+  100%{background-position:260% 50%}
+}
+@keyframes galeriaLineMove{
+  0%{background-position:0% 50%; opacity:.65}
+  50%{opacity:1}
+  100%{background-position:220% 50%; opacity:.65}
+}
+
 </style>
 <style>
 
@@ -2469,6 +2528,65 @@ button.loc-btn{
   .logo-hero{
     transform:translateX(0) !important;
   }
+}
+
+
+/* AJUSTE FINAL: remover tarja de Igreja Renovada e restaurar galeria dourada */
+.igreja-topo{
+  background:none !important;
+  background-image:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  outline:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin-bottom:14px !important;
+  color:#f7c948 !important;
+  text-shadow:0 0 20px rgba(247,201,72,.35) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after{
+  content:none !important;
+  display:none !important;
+}
+
+#galeria .section-head h2,
+#galeria h2.galeria-titulo-animado,
+.galeria-titulo-animado{
+  position:relative !important;
+  display:inline-block !important;
+  background:linear-gradient(90deg,#fff6dc,#f7c948,#ffffff,#f7c948,#fff6dc) !important;
+  background-size:260% 100% !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+  animation:galeriaGoldMove 4s linear infinite !important;
+  text-shadow:none !important;
+}
+#galeria .section-head h2::after,
+#galeria h2.galeria-titulo-animado::after,
+.galeria-titulo-animado::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  bottom:-12px !important;
+  width:78% !important;
+  height:3px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,transparent,#f7c948,#ffffff,#f7c948,transparent) !important;
+  background-size:220% 100% !important;
+  transform:translateX(-50%) !important;
+  box-shadow:0 0 18px rgba(247,201,72,.65) !important;
+  animation:galeriaLineMove 3.2s linear infinite !important;
+}
+@keyframes galeriaGoldMove{
+  0%{background-position:0% 50%}
+  100%{background-position:260% 50%}
+}
+@keyframes galeriaLineMove{
+  0%{background-position:0% 50%; opacity:.65}
+  50%{opacity:1}
+  100%{background-position:220% 50%; opacity:.65}
 }
 
 </style>
@@ -3057,6 +3175,65 @@ button.loc-btn{
   }
 }
 
+
+/* AJUSTE FINAL: remover tarja de Igreja Renovada e restaurar galeria dourada */
+.igreja-topo{
+  background:none !important;
+  background-image:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  outline:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin-bottom:14px !important;
+  color:#f7c948 !important;
+  text-shadow:0 0 20px rgba(247,201,72,.35) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after{
+  content:none !important;
+  display:none !important;
+}
+
+#galeria .section-head h2,
+#galeria h2.galeria-titulo-animado,
+.galeria-titulo-animado{
+  position:relative !important;
+  display:inline-block !important;
+  background:linear-gradient(90deg,#fff6dc,#f7c948,#ffffff,#f7c948,#fff6dc) !important;
+  background-size:260% 100% !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+  animation:galeriaGoldMove 4s linear infinite !important;
+  text-shadow:none !important;
+}
+#galeria .section-head h2::after,
+#galeria h2.galeria-titulo-animado::after,
+.galeria-titulo-animado::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  bottom:-12px !important;
+  width:78% !important;
+  height:3px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,transparent,#f7c948,#ffffff,#f7c948,transparent) !important;
+  background-size:220% 100% !important;
+  transform:translateX(-50%) !important;
+  box-shadow:0 0 18px rgba(247,201,72,.65) !important;
+  animation:galeriaLineMove 3.2s linear infinite !important;
+}
+@keyframes galeriaGoldMove{
+  0%{background-position:0% 50%}
+  100%{background-position:260% 50%}
+}
+@keyframes galeriaLineMove{
+  0%{background-position:0% 50%; opacity:.65}
+  50%{opacity:1}
+  100%{background-position:220% 50%; opacity:.65}
+}
+
 </style>
 
 
@@ -3622,6 +3799,65 @@ button.loc-btn{
   .logo-hero{
     transform:translateX(0) !important;
   }
+}
+
+
+/* AJUSTE FINAL: remover tarja de Igreja Renovada e restaurar galeria dourada */
+.igreja-topo{
+  background:none !important;
+  background-image:none !important;
+  border:none !important;
+  box-shadow:none !important;
+  outline:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin-bottom:14px !important;
+  color:#f7c948 !important;
+  text-shadow:0 0 20px rgba(247,201,72,.35) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after{
+  content:none !important;
+  display:none !important;
+}
+
+#galeria .section-head h2,
+#galeria h2.galeria-titulo-animado,
+.galeria-titulo-animado{
+  position:relative !important;
+  display:inline-block !important;
+  background:linear-gradient(90deg,#fff6dc,#f7c948,#ffffff,#f7c948,#fff6dc) !important;
+  background-size:260% 100% !important;
+  -webkit-background-clip:text !important;
+  background-clip:text !important;
+  color:transparent !important;
+  animation:galeriaGoldMove 4s linear infinite !important;
+  text-shadow:none !important;
+}
+#galeria .section-head h2::after,
+#galeria h2.galeria-titulo-animado::after,
+.galeria-titulo-animado::after{
+  content:"" !important;
+  position:absolute !important;
+  left:50% !important;
+  bottom:-12px !important;
+  width:78% !important;
+  height:3px !important;
+  border-radius:999px !important;
+  background:linear-gradient(90deg,transparent,#f7c948,#ffffff,#f7c948,transparent) !important;
+  background-size:220% 100% !important;
+  transform:translateX(-50%) !important;
+  box-shadow:0 0 18px rgba(247,201,72,.65) !important;
+  animation:galeriaLineMove 3.2s linear infinite !important;
+}
+@keyframes galeriaGoldMove{
+  0%{background-position:0% 50%}
+  100%{background-position:260% 50%}
+}
+@keyframes galeriaLineMove{
+  0%{background-position:0% 50%; opacity:.65}
+  50%{opacity:1}
+  100%{background-position:220% 50%; opacity:.65}
 }
 
 </style>
