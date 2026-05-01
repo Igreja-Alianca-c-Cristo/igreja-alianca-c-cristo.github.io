@@ -1349,6 +1349,14 @@ button[data-filter]:hover::after {
   pointer-events:none !important;
 }
 
+
+/* Correção botão 99 */
+button.loc-btn{
+  font-family:inherit;
+  font-size:inherit;
+  cursor:pointer;
+}
+
 </style>
 <style>
 
@@ -1567,10 +1575,9 @@ button[data-filter]:hover::after {
       🚗 Ir de Uber
     </a>
 
-    <a class="loc-btn loc-99" target="_blank" rel="noopener"
-       href="https://99app.com/ride?address=Rua%20Passo%20da%20Santa%20Cruz%2C%20N%C2%BA%20417%20%E2%80%93%20Jiqui%C3%A1%20%E2%80%93%20Recife/PE">
+    <button class="loc-btn loc-99" type="button" onclick="abrir99Premium(event)">
       🚕 Ir de 99
-    </a>
+    </button>
 
     <button class="loc-btn loc-copy" type="button" onclick="copiarEnderecoPremium(event)">
       📋 Copiar endereço
@@ -2466,6 +2473,55 @@ document.addEventListener("DOMContentLoaded", function(){
     el.remove();
   });
 });
+</script>
+
+
+<script id="fix-99-premium">
+function copiarEnderecoSilencioso99(){
+  const endereco = 'Rua Passo da Santa Cruz, Nº 417 – Jiquiá – Recife/PE';
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(endereco).catch(function(){});
+  }
+}
+
+function abrir99Premium(event){
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  copiarEnderecoSilencioso99();
+
+  const endereco = 'Rua Passo da Santa Cruz, Nº 417 – Jiquiá – Recife/PE';
+  const encoded = encodeURIComponent(endereco);
+
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // A 99 não mantém um link web público confiável para já abrir corrida com destino.
+  // Então tentamos abrir o app; se não abrir, cai para a página oficial.
+  if(isAndroid){
+    window.location.href = "intent://call#Intent;scheme=taxis99;package=com.taxis99;end";
+    setTimeout(function(){
+      window.location.href = "https://play.google.com/store/apps/details?id=com.taxis99";
+    }, 1400);
+  } else if(isIOS){
+    window.location.href = "taxis99://call";
+    setTimeout(function(){
+      window.location.href = "https://apps.apple.com/br/app/99-corridas-food-pay/id553663691";
+    }, 1400);
+  } else {
+    window.open("https://99app.com/passageiro/baixe-o-app-da-99/", "_blank");
+  }
+
+  const msg = document.getElementById("locCopyMsg");
+  if(msg){
+    msg.textContent = "Abrindo 99... endereço copiado para facilitar.";
+    setTimeout(function(){ msg.textContent = ""; }, 2800);
+  }
+
+  return false;
+}
 </script>
 
 </body>
