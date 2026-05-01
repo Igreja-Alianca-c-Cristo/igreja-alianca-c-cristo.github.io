@@ -1022,6 +1022,38 @@ button[data-filter]:hover::after {
   color:#061426;
 }
 
+
+/* ===== LOUVOR YOUTUBE MODAL CORRIGIDO ===== */
+#louvorModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.92);
+  z-index:9999999;
+  align-items:center;
+  justify-content:center;
+  padding:22px;
+}
+#louvorModal.ativo{display:flex!important;}
+.louvor-box{
+  width:min(920px,94vw);
+  background:#061426;
+  border:1px solid rgba(247,201,72,.35);
+  border-radius:22px;
+  padding:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,.65);
+  position:relative;
+}
+.louvor-box h2{margin:0 45px 16px 0;color:#fff6df;font-size:24px;}
+.louvor-frame{position:relative;width:100%;padding-top:56.25%;border-radius:16px;overflow:hidden;background:#000;}
+.louvor-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.louvor-fechar{
+  position:absolute;top:12px;right:14px;width:38px;height:38px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);
+  color:white;font-size:22px;font-weight:900;cursor:pointer;z-index:2;
+}
+.louvor-fechar:hover{background:#f7c948;color:#061426;}
+
 </style>
 <style>
 
@@ -1134,7 +1166,7 @@ button[data-filter]:hover::after {
     <a href="#oracao">Oração</a>
     <a href="#localizacao">Localização</a>
     <a href="#ofertas">Dízimos e Ofertas</a>
-    <a href="javascript:void(0)" onclick="abrirLouvor(event)">Louvor 🎵</a>
+    <a href="#" id="btnLouvorMenu">Louvor 🎵</a>
   </div>
   </div>
 </nav>
@@ -1691,9 +1723,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 
-<div id="louvorModal" onclick="fecharLouvor()">
+
+<div id="louvorModal" aria-hidden="true">
   <div class="louvor-box" onclick="event.stopPropagation()">
-    <button class="louvor-fechar" onclick="fecharLouvor()">×</button>
+    <button type="button" class="louvor-fechar" id="fecharLouvorBtn">×</button>
     <h2>Louvor 🎵</h2>
     <div class="louvor-frame">
       <iframe id="louvorYoutube"
@@ -1708,33 +1741,60 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 <script id="louvor-youtube-fix">
-function abrirLouvor(event){
-  if(event) event.preventDefault();
+(function(){
+  const YOUTUBE_URL = "https://www.youtube.com/embed/4W5TTuJg3Xc?autoplay=1&mute=1&rel=0&playsinline=1";
 
-  const modal = document.getElementById("louvorModal");
-  const iframe = document.getElementById("louvorYoutube");
+  function abrirLouvor(e){
+    if(e) e.preventDefault();
+    const modal = document.getElementById("louvorModal");
+    const iframe = document.getElementById("louvorYoutube");
+    if(!modal || !iframe) return false;
+    modal.classList.add("ativo");
+    modal.setAttribute("aria-hidden", "false");
+    iframe.src = YOUTUBE_URL;
+    return false;
+  }
 
-  if(!modal || !iframe) return false;
+  function fecharLouvor(e){
+    if(e) e.preventDefault();
+    const modal = document.getElementById("louvorModal");
+    const iframe = document.getElementById("louvorYoutube");
+    if(modal){
+      modal.classList.remove("ativo");
+      modal.setAttribute("aria-hidden", "true");
+    }
+    if(iframe) iframe.src = "";
+  }
 
-  modal.classList.add("ativo");
+  window.abrirLouvor = abrirLouvor;
+  window.fecharLouvor = fecharLouvor;
 
-  // Autoplay no YouTube: para iniciar automaticamente, precisa ficar mutado.
-  iframe.src = "https://www.youtube.com/embed/4W5TTuJg3Xc?autoplay=1&mute=1&rel=0&playsinline=1";
+  document.addEventListener("DOMContentLoaded", function(){
+    const btn = document.getElementById("btnLouvorMenu");
+    if(btn) btn.addEventListener("click", abrirLouvor);
 
-  return false;
-}
+    document.querySelectorAll("a").forEach(function(a){
+      if((a.textContent || "").toLowerCase().includes("louvor")){
+        a.addEventListener("click", abrirLouvor);
+        a.setAttribute("href", "#");
+      }
+    });
 
-function fecharLouvor(){
-  const modal = document.getElementById("louvorModal");
-  const iframe = document.getElementById("louvorYoutube");
+    const fechar = document.getElementById("fecharLouvorBtn");
+    if(fechar) fechar.addEventListener("click", fecharLouvor);
 
-  if(modal) modal.classList.remove("ativo");
-  if(iframe) iframe.src = ""; // para o vídeo ao fechar
-}
+    const modal = document.getElementById("louvorModal");
+    if(modal){
+      modal.addEventListener("click", function(e){
+        if(e.target === modal) fecharLouvor(e);
+      });
+    }
+  });
 
-document.addEventListener("keydown", function(e){
-  if(e.key === "Escape") fecharLouvor();
-});
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") fecharLouvor(e);
+  });
+})();
 </script>
 
 </body>
