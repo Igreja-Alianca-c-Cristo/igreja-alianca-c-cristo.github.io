@@ -986,6 +986,19 @@ button[data-filter]:hover::after {
   margin-top:8px;
 }
 
+
+/* GALERIA: INÍCIO SEM FOTOS VISÍVEIS */
+.gallery-error{
+  text-align:center !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+.gallery-category-tabs button:not(.active),
+.gallery-media-tabs button:not(.active){
+  opacity:.92;
+}
+
 </style>
 <style>
 
@@ -1179,12 +1192,11 @@ function toggleLouvor(event){
 
   if(!box || !iframe) return false;
 
+  const abrindo = !box.classList.contains('show');
   box.classList.toggle('show');
 
-  if(box.classList.contains('show')) {
+  if(abrindo && !iframe.src){
     iframe.src = 'https://www.youtube.com/embed/4W5TTuJg3Xc?autoplay=1&mute=1&rel=0&playsinline=1';
-  } else {
-    iframe.src = '';
   }
 
   return false;
@@ -1762,6 +1774,39 @@ document.addEventListener("DOMContentLoaded", function(){
     if(texto.includes("copiar") && texto.includes("pix")){
       el.addEventListener("click", copiarPix, true);
     }
+  });
+});
+</script>
+
+
+<script id="galeria-inicial-oculta-fix">
+document.addEventListener("DOMContentLoaded", function(){
+  const grid = document.getElementById("galeriaGrid");
+  const desc = document.getElementById("galeriaDescricao");
+  const titulo = document.getElementById("galeriaTitulo");
+
+  if(grid){
+    grid.innerHTML = `
+      <div class="gallery-error" style="grid-column:1/-1;">
+        Escolha uma categoria acima para ver as fotos ou vídeos.
+      </div>
+    `;
+  }
+
+  if(desc){
+    desc.textContent = "Escolha Aniversário de 6 anos, Cultos ou Santa Ceia para visualizar a galeria.";
+  }
+
+  if(titulo){
+    titulo.textContent = "";
+  }
+
+  document.querySelectorAll(".gallery-category-tabs button").forEach(function(btn){
+    btn.classList.remove("active");
+  });
+
+  document.querySelectorAll(".gallery-media-tabs button").forEach(function(btn){
+    btn.classList.remove("active");
   });
 });
 </script>
