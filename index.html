@@ -1325,6 +1325,30 @@ button[data-filter]:hover::after {
   max-width:700px !important;
 }
 
+
+/* ===== LOUVOR: SOMENTE PLAYER ESTILO SPOTIFY ===== */
+#louvorBox,
+#louvorModal,
+.louvor-box,
+.louvor-player-area{
+  display:none !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+/* O iframe do YouTube fica invisível, só para manter o áudio tocando */
+#spotifyLouvor .spotify-frame-wrap,
+#spotifyLouvor.expandido .spotify-frame-wrap{
+  display:block !important;
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  overflow:hidden !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
 </style>
 <style>
 
@@ -1564,7 +1588,7 @@ button[data-filter]:hover::after {
       <small id="pixMsg"></small>
     </div></div></section>
 <div id="louvorBox" class="louvor-box"><div id="louvor" class="anchor-fix"></div>
-<h3>Louvor 🎵</h3><p>Clique no vídeo para tocar.</p><iframe id="youtubeLouvor" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><button class="btn btn-secondary" onclick="toggleLouvor()">Fechar</button></div>
+<h3>Louvor 🎵</h3><p></p><iframe id="youtubeLouvor" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><button class="btn btn-secondary" onclick="toggleLouvor()">Fechar</button></div>
 
 <div id="mediaLightbox" class="media-lightbox">
   <button class="lightbox-close" onclick="fecharMediaLightbox()">×</button>
@@ -2427,6 +2451,21 @@ function copiarEnderecoPremium(event){
 
   return false;
 }
+</script>
+
+
+<script id="remove-caixa-preta-louvor">
+document.addEventListener("DOMContentLoaded", function(){
+  const antigo = document.getElementById("louvorBox");
+  if(antigo) antigo.remove();
+
+  const modal = document.getElementById("louvorModal");
+  if(modal) modal.remove();
+
+  document.querySelectorAll(".louvor-box, .louvor-player-area").forEach(function(el){
+    el.remove();
+  });
+});
 </script>
 
 </body>
