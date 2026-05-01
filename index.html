@@ -1009,6 +1009,12 @@ button[data-filter]:hover::after {
   z-index:99999 !important;
 }
 
+
+/* Correção final: Louvor abre direto no YouTube sem travar o site */
+#louvorModal{
+  display:none !important;
+}
+
 </style>
 <style>
 
@@ -1121,7 +1127,7 @@ button[data-filter]:hover::after {
     <a href="#oracao">Oração</a>
     <a href="#localizacao">Localização</a>
     <a href="#ofertas">Dízimos e Ofertas</a>
-    <a href="#" onclick="return toggleLouvor(event)">Louvor 🎵</a>
+    <a href="https://www.youtube.com/watch?v=4W5TTuJg3Xc" target="_blank" rel="noopener">Louvor 🎵</a>
   </div>
   </div>
 </nav>
@@ -1817,26 +1823,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
   document.querySelectorAll(".gallery-media-tabs button").forEach(function(btn){
     btn.classList.remove("active");
-  });
-});
-</script>
-
-
-<script id="louvor-fechar-segundo-plano">
-document.addEventListener("DOMContentLoaded", function(){
-  const box = document.getElementById("louvorBox");
-
-  document.querySelectorAll("#louvorBox button, #louvorBox .fechar, #louvorBox [class*='fechar']").forEach(function(btn){
-    const texto = (btn.textContent || "").toLowerCase();
-    if(texto.includes("fechar") || texto.includes("×") || texto.includes("x")){
-      btn.addEventListener("click", function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        const b = document.getElementById("louvorBox");
-        if(b) b.classList.remove("show");
-        return false;
-      }, true);
-    }
   });
 });
 </script>
