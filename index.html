@@ -1137,7 +1137,7 @@ button[data-filter]:hover::after {
     <a href="#oracao">Oração</a>
     <a href="#localizacao">Localização</a>
     <a href="#ofertas">Dízimos e Ofertas</a>
-    <a href="#" id="btnLouvorMenu" onclick="abrirLouvor(event)">Louvor 🎵</a>
+    <a href="#" onclick="return abrirLouvor(event)" class="menu-louvor-fix">Louvor 🎵</a>
   </div>
   </div>
 </nav>
@@ -1769,6 +1769,23 @@ document.addEventListener("DOMContentLoaded", function(){
 
 document.addEventListener("keydown", function(e){
   if(e.key === "Escape") fecharLouvor(e);
+});
+</script>
+
+
+<script id="fix-menu-louvor-click">
+document.addEventListener("DOMContentLoaded", function(){
+  document.querySelectorAll("a, button").forEach(function(el){
+    const texto = (el.textContent || "").trim().toLowerCase();
+    if(texto.includes("louvor")){
+      el.addEventListener("click", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        abrirLouvor(e);
+        return false;
+      }, true);
+    }
+  });
 });
 </script>
 
