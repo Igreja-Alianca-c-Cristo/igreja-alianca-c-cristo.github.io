@@ -1951,6 +1951,73 @@ button.loc-btn{
   100%{background-position:220% 50%; opacity:.65}
 }
 
+
+/* CORREÇÃO DEFINITIVA: IGREJA RENOVADA SEM TARJA + LOGO ANIMADA */
+.igreja-topo,
+.kicker.igreja-topo,
+.hero .igreja-topo{
+  background:transparent !important;
+  background-image:none !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 auto 16px !important;
+  color:#f7c948 !important;
+  display:block !important;
+  width:auto !important;
+  max-width:none !important;
+  text-align:center !important;
+  animation:none !important;
+  text-shadow:0 0 18px rgba(247,201,72,.28) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after,
+.kicker.igreja-topo::before,
+.kicker.igreja-topo::after,
+.hero .igreja-topo::before,
+.hero .igreja-topo::after{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+/* Mantém a tarja amarela Casa de oração pulsando */
+.premium-badge.move-right{
+  animation:pulseGoldSoft 4s ease-in-out infinite !important;
+}
+
+/* Volta a animação da logo principal */
+.logo-hero{
+  animation:logoFloatPremium 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  transform:translateX(-18px) !important;
+}
+@keyframes logoFloatPremium{
+  0%,100%{transform:translateX(-18px) translateY(0)}
+  50%{transform:translateX(-18px) translateY(-14px)}
+}
+@keyframes logoGlowPremium{
+  0%,100%{
+    filter:drop-shadow(0 0 26px rgba(255,255,255,.32)) drop-shadow(0 0 52px rgba(247,201,72,.20));
+  }
+  50%{
+    filter:drop-shadow(0 0 38px rgba(255,255,255,.48)) drop-shadow(0 0 82px rgba(247,201,72,.38));
+  }
+}
+@media(max-width:800px){
+  .logo-hero{
+    transform:translateX(0) !important;
+    animation:logoFloatMobile 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  }
+  @keyframes logoFloatMobile{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+  }
+}
+
 </style>
 <style>
 
@@ -2587,6 +2654,73 @@ button.loc-btn{
   0%{background-position:0% 50%; opacity:.65}
   50%{opacity:1}
   100%{background-position:220% 50%; opacity:.65}
+}
+
+
+/* CORREÇÃO DEFINITIVA: IGREJA RENOVADA SEM TARJA + LOGO ANIMADA */
+.igreja-topo,
+.kicker.igreja-topo,
+.hero .igreja-topo{
+  background:transparent !important;
+  background-image:none !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 auto 16px !important;
+  color:#f7c948 !important;
+  display:block !important;
+  width:auto !important;
+  max-width:none !important;
+  text-align:center !important;
+  animation:none !important;
+  text-shadow:0 0 18px rgba(247,201,72,.28) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after,
+.kicker.igreja-topo::before,
+.kicker.igreja-topo::after,
+.hero .igreja-topo::before,
+.hero .igreja-topo::after{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+/* Mantém a tarja amarela Casa de oração pulsando */
+.premium-badge.move-right{
+  animation:pulseGoldSoft 4s ease-in-out infinite !important;
+}
+
+/* Volta a animação da logo principal */
+.logo-hero{
+  animation:logoFloatPremium 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  transform:translateX(-18px) !important;
+}
+@keyframes logoFloatPremium{
+  0%,100%{transform:translateX(-18px) translateY(0)}
+  50%{transform:translateX(-18px) translateY(-14px)}
+}
+@keyframes logoGlowPremium{
+  0%,100%{
+    filter:drop-shadow(0 0 26px rgba(255,255,255,.32)) drop-shadow(0 0 52px rgba(247,201,72,.20));
+  }
+  50%{
+    filter:drop-shadow(0 0 38px rgba(255,255,255,.48)) drop-shadow(0 0 82px rgba(247,201,72,.38));
+  }
+}
+@media(max-width:800px){
+  .logo-hero{
+    transform:translateX(0) !important;
+    animation:logoFloatMobile 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  }
+  @keyframes logoFloatMobile{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+  }
 }
 
 </style>
@@ -3234,6 +3368,73 @@ button.loc-btn{
   100%{background-position:220% 50%; opacity:.65}
 }
 
+
+/* CORREÇÃO DEFINITIVA: IGREJA RENOVADA SEM TARJA + LOGO ANIMADA */
+.igreja-topo,
+.kicker.igreja-topo,
+.hero .igreja-topo{
+  background:transparent !important;
+  background-image:none !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 auto 16px !important;
+  color:#f7c948 !important;
+  display:block !important;
+  width:auto !important;
+  max-width:none !important;
+  text-align:center !important;
+  animation:none !important;
+  text-shadow:0 0 18px rgba(247,201,72,.28) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after,
+.kicker.igreja-topo::before,
+.kicker.igreja-topo::after,
+.hero .igreja-topo::before,
+.hero .igreja-topo::after{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+/* Mantém a tarja amarela Casa de oração pulsando */
+.premium-badge.move-right{
+  animation:pulseGoldSoft 4s ease-in-out infinite !important;
+}
+
+/* Volta a animação da logo principal */
+.logo-hero{
+  animation:logoFloatPremium 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  transform:translateX(-18px) !important;
+}
+@keyframes logoFloatPremium{
+  0%,100%{transform:translateX(-18px) translateY(0)}
+  50%{transform:translateX(-18px) translateY(-14px)}
+}
+@keyframes logoGlowPremium{
+  0%,100%{
+    filter:drop-shadow(0 0 26px rgba(255,255,255,.32)) drop-shadow(0 0 52px rgba(247,201,72,.20));
+  }
+  50%{
+    filter:drop-shadow(0 0 38px rgba(255,255,255,.48)) drop-shadow(0 0 82px rgba(247,201,72,.38));
+  }
+}
+@media(max-width:800px){
+  .logo-hero{
+    transform:translateX(0) !important;
+    animation:logoFloatMobile 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  }
+  @keyframes logoFloatMobile{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+  }
+}
+
 </style>
 
 
@@ -3858,6 +4059,73 @@ button.loc-btn{
   0%{background-position:0% 50%; opacity:.65}
   50%{opacity:1}
   100%{background-position:220% 50%; opacity:.65}
+}
+
+
+/* CORREÇÃO DEFINITIVA: IGREJA RENOVADA SEM TARJA + LOGO ANIMADA */
+.igreja-topo,
+.kicker.igreja-topo,
+.hero .igreja-topo{
+  background:transparent !important;
+  background-image:none !important;
+  border:none !important;
+  outline:none !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 !important;
+  margin:0 auto 16px !important;
+  color:#f7c948 !important;
+  display:block !important;
+  width:auto !important;
+  max-width:none !important;
+  text-align:center !important;
+  animation:none !important;
+  text-shadow:0 0 18px rgba(247,201,72,.28) !important;
+}
+.igreja-topo::before,
+.igreja-topo::after,
+.kicker.igreja-topo::before,
+.kicker.igreja-topo::after,
+.hero .igreja-topo::before,
+.hero .igreja-topo::after{
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+/* Mantém a tarja amarela Casa de oração pulsando */
+.premium-badge.move-right{
+  animation:pulseGoldSoft 4s ease-in-out infinite !important;
+}
+
+/* Volta a animação da logo principal */
+.logo-hero{
+  animation:logoFloatPremium 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  transform:translateX(-18px) !important;
+}
+@keyframes logoFloatPremium{
+  0%,100%{transform:translateX(-18px) translateY(0)}
+  50%{transform:translateX(-18px) translateY(-14px)}
+}
+@keyframes logoGlowPremium{
+  0%,100%{
+    filter:drop-shadow(0 0 26px rgba(255,255,255,.32)) drop-shadow(0 0 52px rgba(247,201,72,.20));
+  }
+  50%{
+    filter:drop-shadow(0 0 38px rgba(255,255,255,.48)) drop-shadow(0 0 82px rgba(247,201,72,.38));
+  }
+}
+@media(max-width:800px){
+  .logo-hero{
+    transform:translateX(0) !important;
+    animation:logoFloatMobile 4.8s ease-in-out infinite, logoGlowPremium 3.8s ease-in-out infinite !important;
+  }
+  @keyframes logoFloatMobile{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+  }
 }
 
 </style>
