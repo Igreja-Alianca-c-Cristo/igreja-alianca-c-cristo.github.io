@@ -52,7 +52,32 @@ font-weight:900;
 cursor:pointer;
 }
 .error{color:#ff9db1;margin-top:12px;display:none}
-iframe{width:100%;height:100vh;border:none;display:none}
+
+.topbar{
+display:none;
+position:fixed;
+top:16px;
+right:16px;
+z-index:99999;
+}
+
+.logout-btn{
+padding:12px 18px;
+border:none;
+border-radius:999px;
+background:#ff5c7a;
+color:white;
+font-weight:900;
+cursor:pointer;
+box-shadow:0 12px 35px rgba(0,0,0,.35);
+}
+
+iframe{
+width:100%;
+height:100vh;
+border:none;
+display:none;
+}
 </style>
 </head>
 <body>
@@ -69,12 +94,16 @@ iframe{width:100%;height:100vh;border:none;display:none}
 </div>
 </div>
 
+<div class="topbar" id="topbar">
+<button class="logout-btn" onclick="sair()">Sair</button>
+</div>
+
 <iframe id="painel" src="painel-alianca-2026.html"></iframe>
 
 <script>
 const SENHA = "Alianca2026";
 
-if(localStorage.getItem("tesouraria_logada") === "sim"){
+if(sessionStorage.getItem("tesouraria_logada") === "sim"){
 liberar();
 }
 
@@ -82,7 +111,7 @@ function entrar(){
 const senha = document.getElementById("senha").value;
 
 if(senha === SENHA){
-localStorage.setItem("tesouraria_logada","sim");
+sessionStorage.setItem("tesouraria_logada","sim");
 liberar();
 }else{
 document.getElementById("erro").style.display = "block";
@@ -92,7 +121,19 @@ document.getElementById("erro").style.display = "block";
 function liberar(){
 document.getElementById("loginScreen").style.display = "none";
 document.getElementById("painel").style.display = "block";
+document.getElementById("topbar").style.display = "block";
 }
+
+function sair(){
+sessionStorage.removeItem("tesouraria_logada");
+location.reload();
+}
+
+document.getElementById("senha").addEventListener("keydown", function(e){
+if(e.key === "Enter"){
+entrar();
+}
+});
 </script>
 
 </body>
