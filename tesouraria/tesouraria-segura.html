@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesouraria Segura - Igreja Renovada Aliança com Cristo</title>
+
+<link rel="icon" type="image/png" href="logo-igreja.png">
+<link rel="shortcut icon" href="logo-igreja.png">
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#020812,#071c3d 55%,#020812);
+color:white;
+}
+.login-screen{
+position:fixed;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(0,0,0,.5);
+backdrop-filter:blur(8px);
+z-index:999;
+}
+.login-box{
+width:min(420px,100%);
+background:#08152b;
+padding:30px;
+border-radius:25px;
+text-align:center;
+border:1px solid rgba(247,201,72,.3);
+}
+.login-box h1{
+color:#f7c948;
+}
+.login-box input{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+margin-top:15px;
+font-size:16px;
+}
+.login-box button{
+margin-top:15px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:999px;
+background:#f7c948;
+font-weight:900;
+cursor:pointer;
+}
+#painel{
+display:none;
+padding:30px;
+}
+.topo{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(255,255,255,.06);
+padding:20px;
+border-radius:25px;
+border:1px solid rgba(247,201,72,.25);
+}
+.topo h1{
+color:#f7c948;
+margin:0;
+}
+.sair{
+background:#ff5c7a;
+border:none;
+padding:12px 20px;
+border-radius:999px;
+color:white;
+font-weight:900;
+cursor:pointer;
+}
+.card{
+margin-top:20px;
+background:rgba(255,255,255,.05);
+padding:20px;
+border-radius:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+<div class="login-box">
+<h1>🔒 Área Administrativa</h1>
+<p>Painel interno da tesouraria.</p>
+<input type="password" id="senha" placeholder="Digite a senha">
+<button onclick="entrar()">Entrar</button>
+</div>
+</div>
+
+<div id="painel">
+
+<div class="topo">
+<div>
+<h1>Painel da Tesouraria</h1>
+<p>Igreja Renovada Aliança com Cristo</p>
+</div>
+
+<button class="sair" onclick="sair()">Sair</button>
+</div>
+
+<div class="card">
+<h2>✅ Sistema funcionando</h2>
+<p>Agora essa versão já está com a logo na aba do navegador.</p>
+<p>Use a mesma imagem/logo do site principal com o nome:</p>
+
+<b>logo-igreja.png</b>
+
+<p>Coloque essa imagem na mesma pasta do arquivo HTML.</p>
+</div>
+
+</div>
+
+<script>
+const SENHA="Alianca2026";
+
+function entrar(){
+const senha=document.getElementById("senha").value;
+
+if(senha===SENHA){
+sessionStorage.setItem("tesouraria_logada","sim");
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("painel").style.display="block";
+}else{
+alert("Senha incorreta");
+}
+}
+
+function sair(){
+sessionStorage.removeItem("tesouraria_logada");
+location.reload();
+}
+
+if(sessionStorage.getItem("tesouraria_logada")==="sim"){
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("painel").style.display="block";
+}
+</script>
+
+</body>
+</html>
