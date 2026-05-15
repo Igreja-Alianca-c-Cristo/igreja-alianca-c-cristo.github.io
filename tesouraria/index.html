@@ -129,6 +129,7 @@ td{color:#eef3ff}
   .logout-btn{top:10px;right:10px}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -325,8 +326,40 @@ if(sessionStorage.getItem("tesouraria_logada")==="sim"){
   liberar();
 }
 
-const STORAGE_KEY="tesouraria_igreja_renovada_v1";
-let lancamentos=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
+
+const supabaseClient = supabase.createClient(
+"https://zewiultocwegxkfiufcm.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpld2l1bHRvY3dlZ3hrZml1ZmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzEwMjksImV4cCI6MjA5NDQ0NzAyOX0.ybD53GGVYnPx9kZViSvs63tLxlVEqhOllTdDDq40lF0"
+);
+
+let lancamentos=[];
+
+async function carregarLancamentos(){
+const { data, error } = await supabaseClient
+.from("tesouraria")
+.select("*")
+.order("id", { ascending:false });
+
+if(error){
+console.error(error);
+alert("Erro ao carregar dados.");
+return;
+}
+
+lancamentos=(data||[]).map(l=>({
+id:l.id,
+tipo:l.tipo,
+data:l.data,
+categoria:l.categoria,
+descricao:l.descricao,
+valor:Number(l.valor),
+forma:l.forma,
+obs:l.observacao||""
+}));
+
+carregarLancamentos();
+}
+
 
 function iniciarDatas(){
   document.getElementById("data").valueAsDate=new Date();
@@ -334,9 +367,7 @@ function iniciarDatas(){
 }
 iniciarDatas();
 
-function salvarStorage(){
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(lancamentos));
-}
+
 
 function moeda(v){
   return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -346,25 +377,34 @@ function mesAtual(){
   return new Date().toISOString().slice(0,7);
 }
 
-document.getElementById("formLancamento").addEventListener("submit",e=>{
-  e.preventDefault();
 
-  const l={
-    id:Date.now(),
-    tipo:document.getElementById("tipo").value,
-    data:document.getElementById("data").value,
-    categoria:document.getElementById("categoria").value,
-    descricao:document.getElementById("descricao").value.trim(),
-    valor:Number(document.getElementById("valor").value),
-    forma:document.getElementById("forma").value,
-    obs:document.getElementById("obs").value.trim()
-  };
+document.getElementById("formLancamento").addEventListener("submit", async e=>{
+e.preventDefault();
 
-  lancamentos.unshift(l);
-  salvarStorage();
-  limparFormulario();
-  renderizar();
+const l={
+tipo:document.getElementById("tipo").value,
+data:document.getElementById("data").value,
+categoria:document.getElementById("categoria").value,
+descricao:document.getElementById("descricao").value.trim(),
+valor:Number(document.getElementById("valor").value),
+forma:document.getElementById("forma").value,
+observacao:document.getElementById("obs").value.trim()
+};
+
+const { error } = await supabaseClient
+.from("tesouraria")
+.insert([l]);
+
+if(error){
+console.error(error);
+alert("Erro ao salvar.");
+return;
+}
+
+limparFormulario();
+carregarLancamentos();
 });
+
 
 function limparFormulario(){
   document.getElementById("formLancamento").reset();
@@ -436,19 +476,30 @@ function atualizarResumo(){
   document.getElementById("saldoGeral").textContent=moeda(entradasGeral-saidasGeral);
 }
 
-function excluir(id){
-  if(confirm("Deseja excluir este lançamento?")){
-    lancamentos=lancamentos.filter(l=>l.id!==id);
-    salvarStorage();
-    renderizar();
-  }
+
+async function excluir(id){
+if(confirm("Deseja excluir este lançamento?")){
+
+const { error } = await supabaseClient
+.from("tesouraria")
+.delete()
+.eq("id", id);
+
+if(error){
+alert("Erro ao excluir.");
+return;
 }
+
+carregarLancamentos();
+}
+}
+
 
 function limparFiltros(){
   document.getElementById("filtroTipo").value="";
   document.getElementById("filtroCategoria").value="";
   document.getElementById("filtroMes").value="";
-  renderizar();
+  carregarLancamentos();
 }
 
 function exportarCSV(){
@@ -475,15 +526,26 @@ function imprimirRelatorio(){
   window.print();
 }
 
-function apagarTudo(){
-  if(confirm("ATENÇÃO: isso vai apagar todos os lançamentos salvos neste navegador. Deseja continuar?")){
-    lancamentos=[];
-    salvarStorage();
-    renderizar();
-  }
+
+async function apagarTudo(){
+if(confirm("ATENÇÃO: apagar todos os lançamentos online?")){
+
+const { error } = await supabaseClient
+.from("tesouraria")
+.delete()
+.neq("id",0);
+
+if(error){
+alert("Erro ao apagar.");
+return;
 }
 
-renderizar();
+carregarLancamentos();
+}
+}
+
+
+carregarLancamentos();
 </script>
 </body>
 </html>
