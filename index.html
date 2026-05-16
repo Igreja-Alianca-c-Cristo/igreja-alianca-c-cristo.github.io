@@ -4574,40 +4574,6 @@ button.loc-btn{
 
 </style>
 
-
-<style id="creditos-maximylian-css">
-.dev-creditos-max{
-  width:100%;
-  text-align:center;
-  padding:34px 20px 18px;
-  margin-top:28px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-}
-.dev-creditos-max span{
-  color:rgba(255,255,255,.72);
-  font-size:13px;
-  letter-spacing:1.2px;
-  font-weight:700;
-}
-.dev-creditos-max img{
-  width:115px;
-  max-width:36vw;
-  height:auto;
-  opacity:.96;
-  transition:transform .3s ease, filter .3s ease, opacity .3s ease;
-  filter:drop-shadow(0 0 14px rgba(247,201,72,.25));
-}
-.dev-creditos-max img:hover{
-  transform:scale(1.07);
-  opacity:1;
-  filter:drop-shadow(0 0 24px rgba(247,201,72,.45));
-}
-</style>
-
 </head>
 <body>
 <nav class="navbar">
@@ -4734,10 +4700,15 @@ button.loc-btn{
 </div>
 
 <footer>© Igreja Renovada Aliança com Cristo — Recife/PE
-<div class="dev-creditos-max">
-  <span>Desenvolvido por</span>
-  <a href="https://maximylian-nascimento.github.io/webdesingnergrafico/" target="_blank" rel="noopener noreferrer" title="Maximylian Nascimento">
-    <img src="logo-maximylian.png" alt="Maximylian Nascimento">
+<div style="margin-top:40px;text-align:center;padding:30px 20px;">
+  <p style="color:#d4af37;font-size:14px;margin-bottom:14px;">
+    Desenvolvido por
+  </p>
+
+  <a href="https://maximylian-nascimento.github.io/webdesingnergrafico/" target="_blank">
+    <img src="logo-maximylian.png"
+         alt="Maximylian Nascimento"
+         style="width:90px;max-width:90px;transition:.3s ease;filter:drop-shadow(0 0 12px rgba(255,215,0,.35));">
   </a>
 </div>
 
@@ -5656,6 +5627,25 @@ function abrir99Premium(event){
   }
 
   return false;
+}
+</script>
+
+
+<script id="anti-pwa-fix">
+/* Corrige celular tentando instalar como aplicativo/PWA */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    registrations.forEach(function(registration) {
+      registration.unregister();
+    });
+  });
+}
+if ("caches" in window) {
+  caches.keys().then(function(names) {
+    names.forEach(function(name) {
+      caches.delete(name);
+    });
+  });
 }
 </script>
 
