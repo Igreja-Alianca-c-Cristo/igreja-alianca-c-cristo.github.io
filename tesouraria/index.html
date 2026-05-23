@@ -410,6 +410,82 @@ gap:12px !important;
 }
 </style>
 
+
+
+<style id="layout-relatorio-final-fix">
+/* Layout final: formulário à esquerda e relatório à direita, sem sobreposição */
+main{
+  max-width:1260px !important;
+  margin:0 auto !important;
+  padding-left:24px !important;
+  padding-right:24px !important;
+}
+
+.panel{
+  display:grid !important;
+  grid-template-columns:390px minmax(0,1fr) !important;
+  gap:28px !important;
+  align-items:start !important;
+  position:relative !important;
+}
+
+.panel > .box{
+  position:static !important;
+  width:auto !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+
+.panel > .box:first-child{
+  grid-column:1 !important;
+}
+
+.panel > .box:nth-child(2){
+  grid-column:2 !important;
+}
+
+.filters{
+  display:grid !important;
+  grid-template-columns:minmax(150px,1fr) minmax(170px,1fr) 210px 150px !important;
+  gap:12px !important;
+  align-items:center !important;
+}
+
+.table-wrap{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:auto !important;
+}
+
+table{
+  min-width:760px !important;
+}
+
+/* Em telas médias e celulares, fica um embaixo do outro */
+@media(max-width:1050px){
+  main{
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+
+  .panel{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:18px !important;
+  }
+
+  .panel > .box{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .filters{
+    grid-template-columns:1fr !important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -429,7 +505,7 @@ gap:12px !important;
 <header>
   <div class="header-inner">
     <div>
-      <h1>Painel da Tesouraria</h1><div style="color:#39d98a;font-weight:bold;margin-top:8px;">✨ Layout Premium Mobile</div>
+      <h1>Painel da Tesouraria</h1>
       <p class="sub">Igreja Renovada Aliança com Cristo</p>
     </div>
     <div>🔒 Área interna</div>
