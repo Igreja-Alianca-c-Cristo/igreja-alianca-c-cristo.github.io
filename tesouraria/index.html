@@ -107,7 +107,7 @@ button:hover{transform:translateY(-2px)}
 .danger{background:rgba(255,92,122,.16);color:#ffd6de;border:1px solid rgba(255,92,122,.35)}
 .filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;margin-bottom:14px}
 .table-wrap{overflow:auto;border-radius:18px;border:1px solid rgba(255,255,255,.1)}
-table{width:100%;border-collapse:collapse;min-width:930px}
+table{width:100%;border-collapse:collapse;min-width:760px}
 th,td{text-align:left;padding:13px;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px}
 th{background:rgba(0,0,0,.22);color:var(--gold)}
 td{color:#eef3ff}
@@ -128,11 +128,6 @@ td{color:#eef3ff}
   .hero h2{font-size:28px}
   .logout-btn{top:10px;right:10px}
 }
-
-.file-input{background:rgba(255,255,255,.08)!important;border:1px dashed rgba(247,201,72,.45)!important;color:#fff!important}
-.upload-status{margin-top:8px;color:#b9c4d8;font-size:13px;line-height:1.4}
-.link-comprovante{display:inline-flex;align-items:center;gap:6px;color:#ffe58a;font-weight:900;text-decoration:none}
-.link-comprovante:hover{text-decoration:underline}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -164,7 +159,7 @@ td{color:#eef3ff}
 <main>
 <section class="hero">
   <h2>Controle financeiro da igreja</h2>
-  <p>Registre dízimos, ofertas, entradas, saídas e anexe comprovantes PIX. Os dados ficam salvos online e sincronizam entre celular e computador.</p>
+  <p>Registre dízimos, ofertas, entradas e saídas. Os dados ficam salvos neste navegador. Exporte o relatório com frequência para backup.</p>
 </section>
 
 <section class="grid">
@@ -177,7 +172,6 @@ td{color:#eef3ff}
 <section class="panel">
 <div class="box">
 <h3>Novo lançamento</h3>
-<div style="background:rgba(247,201,72,.12);border:1px solid rgba(247,201,72,.35);color:#ffe58a;padding:10px 12px;border-radius:14px;margin-bottom:14px;font-size:13px;font-weight:800;">✅ Versão com comprovantes PIX ativados</div>
 <form id="formLancamento">
 <div class="row">
   <div>
@@ -210,9 +204,6 @@ td{color:#eef3ff}
   <option>Outro</option>
 </select>
 
-<label>Nome da pessoa / responsável</label>
-<input type="text" id="pessoa" placeholder="Ex.: João, Maria, irmão José...">
-
 <label>Descrição</label>
 <input type="text" id="descricao" placeholder="Ex.: Dízimo culto de domingo">
 
@@ -233,10 +224,6 @@ td{color:#eef3ff}
   </div>
 </div>
 
-<label>Comprovante PIX / recibo</label>
-<input class="file-input" type="file" id="comprovante" accept="image/*,.pdf">
-<div class="upload-status" id="statusUpload">Aceita imagem ou PDF. O comprovante ficará vinculado ao lançamento.</div>
-
 <label>Observação</label>
 <textarea id="obs" placeholder="Anote detalhes se precisar"></textarea>
 
@@ -245,7 +232,7 @@ td{color:#eef3ff}
   <button class="secondary" type="button" onclick="limparFormulario()">Limpar</button>
 </div>
 </form>
-<p class="note">Este painel salva os dados no Supabase. Para anexar comprovantes, crie o bucket comprovantes no Storage.</p>
+<p class="note">Este painel salva os dados no navegador usado. Para backup, exporte o CSV.</p>
 </div>
 
 <div class="box">
@@ -294,11 +281,9 @@ td{color:#eef3ff}
   <th>Data</th>
   <th>Tipo</th>
   <th>Categoria</th>
-  <th>Pessoa</th>
   <th>Descrição</th>
   <th>Forma</th>
   <th>Valor</th>
-  <th>Comprovante</th>
   <th>Ação</th>
 </tr>
 </thead>
@@ -312,11 +297,6 @@ td{color:#eef3ff}
 
 <script>
 const SENHA="Alianca2026";
-const SUPABASE_URL="https://zewiultocwegxkfiufcm.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpld2l1bHRvY3dlZ3hrZml1ZmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzEwMjksImV4cCI6MjA5NDQ0NzAyOX0.ybD53GGVYnPx9kZViSvs63tLxlVEqhOllTdDDq40lF0";
-const BUCKET="comprovantes";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let lancamentos=[];
 
 function entrar(){
   const s=document.getElementById("senha").value;
@@ -331,7 +311,6 @@ function entrar(){
 function liberar(){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("app").style.display="block";
-  carregarLancamentos();
 }
 
 function sair(){
@@ -343,15 +322,52 @@ document.getElementById("senha").addEventListener("keydown",e=>{
   if(e.key==="Enter") entrar();
 });
 
+if(sessionStorage.getItem("tesouraria_logada")==="sim"){
+  liberar();
+}
+
+
+const supabaseClient = supabase.createClient(
+"https://zewiultocwegxkfiufcm.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpld2l1bHRvY3dlZ3hrZml1ZmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzEwMjksImV4cCI6MjA5NDQ0NzAyOX0.ybD53GGVYnPx9kZViSvs63tLxlVEqhOllTdDDq40lF0"
+);
+
+let lancamentos=[];
+
+async function carregarLancamentos(){
+const { data, error } = await supabaseClient
+.from("tesouraria")
+.select("*")
+.order("id", { ascending:false });
+
+if(error){
+console.error(error);
+alert("Erro ao carregar dados.");
+return;
+}
+
+lancamentos=(data||[]).map(l=>({
+id:l.id,
+tipo:l.tipo,
+data:l.data,
+categoria:l.categoria,
+descricao:l.descricao,
+valor:Number(l.valor),
+forma:l.forma,
+obs:l.observacao||""
+}));
+
+carregarLancamentos();
+}
+
+
 function iniciarDatas(){
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("filtroMes").value=new Date().toISOString().slice(0,7);
 }
 iniciarDatas();
 
-if(sessionStorage.getItem("tesouraria_logada")==="sim"){
-  liberar();
-}
+
 
 function moeda(v){
   return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
@@ -361,100 +377,39 @@ function mesAtual(){
   return new Date().toISOString().slice(0,7);
 }
 
-async function carregarLancamentos(){
-  const { data, error } = await supabaseClient
-    .from("tesouraria")
-    .select("*")
-    .order("id", { ascending:false });
-
-  if(error){
-    console.error(error);
-    alert("Erro ao carregar dados do Supabase. Verifique a tabela e permissões.");
-    return;
-  }
-
-  lancamentos = (data || []).map(l => ({
-    id:l.id,
-    tipo:l.tipo,
-    data:l.data,
-    categoria:l.categoria,
-    pessoa:l.pessoa || "",
-    descricao:l.descricao || "",
-    valor:Number(l.valor || 0),
-    forma:l.forma || "",
-    obs:l.observacao || "",
-    comprovante_url:l.comprovante_url || "",
-    comprovante_nome:l.comprovante_nome || ""
-  }));
-
-  renderizar();
-}
-
-async function enviarComprovante(idTemp){
-  const arquivo=document.getElementById("comprovante").files[0];
-  if(!arquivo) return {url:"",nome:""};
-
-  document.getElementById("statusUpload").textContent="Enviando comprovante...";
-  const safeName=arquivo.name.replace(/[^a-zA-Z0-9._-]/g,"-");
-  const caminho=`${new Date().getFullYear()}/${idTemp}-${Date.now()}-${safeName}`;
-
-  const { error } = await supabaseClient.storage
-    .from(BUCKET)
-    .upload(caminho, arquivo, { upsert:false });
-
-  if(error){
-    console.error(error);
-    throw new Error("Erro ao enviar comprovante. Crie no Supabase um bucket público chamado comprovantes.");
-  }
-
-  const { data } = supabaseClient.storage.from(BUCKET).getPublicUrl(caminho);
-  return {url:data.publicUrl,nome:arquivo.name};
-}
 
 document.getElementById("formLancamento").addEventListener("submit", async e=>{
-  e.preventDefault();
-  const btn=document.querySelector('#formLancamento button[type="submit"]');
-  btn.disabled=true;
-  btn.textContent="Salvando...";
+e.preventDefault();
 
-  try{
-    const comp=await enviarComprovante(Date.now());
+const l={
+tipo:document.getElementById("tipo").value,
+data:document.getElementById("data").value,
+categoria:document.getElementById("categoria").value,
+descricao:document.getElementById("descricao").value.trim(),
+valor:Number(document.getElementById("valor").value),
+forma:document.getElementById("forma").value,
+observacao:document.getElementById("obs").value.trim()
+};
 
-    const l={
-      tipo:document.getElementById("tipo").value,
-      data:document.getElementById("data").value,
-      categoria:document.getElementById("categoria").value,
-      pessoa:document.getElementById("pessoa").value.trim(),
-      descricao:document.getElementById("descricao").value.trim(),
-      valor:Number(document.getElementById("valor").value),
-      forma:document.getElementById("forma").value,
-      observacao:document.getElementById("obs").value.trim(),
-      comprovante_url:comp.url,
-      comprovante_nome:comp.nome
-    };
+const { error } = await supabaseClient
+.from("tesouraria")
+.insert([l]);
 
-    const { error } = await supabaseClient.from("tesouraria").insert([l]);
-    if(error){
-      console.error(error);
-      alert("Erro ao salvar. Verifique se as colunas pessoa, comprovante_url e comprovante_nome existem.");
-      return;
-    }
+if(error){
+console.error(error);
+alert("Erro ao salvar.");
+return;
+}
 
-    limparFormulario();
-    await carregarLancamentos();
-  }catch(err){
-    alert(err.message || "Erro ao salvar lançamento.");
-  }finally{
-    btn.disabled=false;
-    btn.textContent="Salvar lançamento";
-  }
+limparFormulario();
+carregarLancamentos();
 });
+
 
 function limparFormulario(){
   document.getElementById("formLancamento").reset();
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("tipo").value="entrada";
-  document.getElementById("statusUpload").textContent="Aceita imagem ou PDF. O comprovante ficará vinculado ao lançamento.";
 }
 
 function filtrar(){
@@ -479,15 +434,13 @@ function renderizar(){
         <td>${formatarData(l.data)}</td>
         <td><span class="badge ${l.tipo}">${l.tipo==="entrada"?"Entrada":"Saída"}</span></td>
         <td>${l.categoria}</td>
-        <td>${l.pessoa||"-"}</td>
         <td>${l.descricao||"-"}</td>
         <td>${l.forma||"-"}</td>
         <td><strong>${moeda(l.valor)}</strong></td>
-        <td>${l.comprovante_url?`<a class="link-comprovante" href="${l.comprovante_url}" target="_blank">📎 Ver</a>`:"-"}</td>
         <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
       </tr>
     `).join("")
-    : `<tr><td colspan="9" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+    : `<tr><td colspan="7" class="empty">Nenhum lançamento encontrado.</td></tr>`;
 
   atualizarResumo();
 }
@@ -523,37 +476,44 @@ function atualizarResumo(){
   document.getElementById("saldoGeral").textContent=moeda(entradasGeral-saidasGeral);
 }
 
+
 async function excluir(id){
-  if(confirm("Deseja excluir este lançamento?")){
-    const { error } = await supabaseClient.from("tesouraria").delete().eq("id",id);
-    if(error){
-      alert("Erro ao excluir.");
-      return;
-    }
-    carregarLancamentos();
-  }
+if(confirm("Deseja excluir este lançamento?")){
+
+const { error } = await supabaseClient
+.from("tesouraria")
+.delete()
+.eq("id", id);
+
+if(error){
+alert("Erro ao excluir.");
+return;
 }
+
+carregarLancamentos();
+}
+}
+
 
 function limparFiltros(){
   document.getElementById("filtroTipo").value="";
   document.getElementById("filtroCategoria").value="";
   document.getElementById("filtroMes").value="";
-  renderizar();
+  carregarLancamentos();
 }
 
 function exportarCSV(){
   const dados=filtrar();
   const linhas=[
-    ["Data","Tipo","Categoria","Pessoa","Descrição","Forma","Valor","Comprovante","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.pessoa,l.descricao,l.forma,l.valor,l.comprovante_url,l.obs])
+    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Observação"],
+    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.obs])
   ];
 
   const csv=linhas
     .map(l=>l.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(";"))
-    .join("
-");
+    .join("\n");
 
-  const blob=new Blob(["﻿"+csv],{type:"text/csv;charset=utf-8;"});
+  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
@@ -566,16 +526,26 @@ function imprimirRelatorio(){
   window.print();
 }
 
+
 async function apagarTudo(){
-  if(confirm("ATENÇÃO: isso vai apagar todos os lançamentos online. Deseja continuar?")){
-    const { error } = await supabaseClient.from("tesouraria").delete().neq("id",0);
-    if(error){
-      alert("Erro ao apagar.");
-      return;
-    }
-    carregarLancamentos();
-  }
+if(confirm("ATENÇÃO: apagar todos os lançamentos online?")){
+
+const { error } = await supabaseClient
+.from("tesouraria")
+.delete()
+.neq("id",0);
+
+if(error){
+alert("Erro ao apagar.");
+return;
 }
+
+carregarLancamentos();
+}
+}
+
+
+carregarLancamentos();
 </script>
 </body>
 </html>
