@@ -130,6 +130,96 @@ td{color:#eef3ff}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style id="comprovante-premium-css">
+.comprovante-premium{
+  margin:16px 0 14px;
+  padding:16px;
+  border-radius:18px;
+  border:1px solid rgba(247,201,72,.28);
+  background:linear-gradient(135deg,rgba(247,201,72,.11),rgba(255,255,255,.045));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 14px 35px rgba(0,0,0,.18);
+}
+.comprovante-premium .comp-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#f7c948;
+  font-weight:900;
+  font-size:15px;
+  margin-bottom:7px;
+}
+.comprovante-premium .comp-title span{
+  display:inline-flex;
+  width:30px;
+  height:30px;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:rgba(247,201,72,.18);
+  border:1px solid rgba(247,201,72,.35);
+}
+.comprovante-premium .comp-desc{
+  color:#b9c4d8;
+  font-size:12px;
+  line-height:1.45;
+  margin:0 0 12px;
+}
+.comprovante-premium input[type="file"]{
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  background:#f4f6fb;
+  color:#111827;
+  border:2px dashed rgba(247,201,72,.45);
+  cursor:pointer;
+}
+.comprovante-premium .comp-hint{
+  margin-top:10px;
+  color:rgba(255,255,255,.72);
+  font-size:12px;
+}
+@media(max-width:700px){
+  .comprovante-premium{
+    padding:14px;
+    margin:14px 0;
+  }
+  .comprovante-premium .comp-title{
+    font-size:14px;
+  }
+}
+</style>
+
+
+<style id="mobile-comprovante-fix">
+.valor-forma-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+@media(max-width:700px){
+  .valor-forma-row{
+    grid-template-columns:1fr;
+    gap:0;
+  }
+
+  .comprovante-premium{
+    width:100%;
+    margin-top:14px;
+  }
+
+  .comprovante-premium input[type="file"]{
+    width:100%;
+    font-size:14px;
+  }
+
+  .comp-title{
+    flex-wrap:wrap;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -214,6 +304,14 @@ td{color:#eef3ff}
   </div>
   <div>
     <label>Forma</label>
+
+<div class="comprovante-premium">
+  <div class="comp-title"><span>📎</span> Anexar comprovante</div>
+  <p class="comp-desc">Adicione o print ou PDF do PIX, transferência ou recibo deste lançamento.</p>
+  <input type="file" id="comprovante" accept="image/*,.pdf">
+  <div class="comp-hint">Formatos aceitos: imagem ou PDF.</div>
+</div>
+
     <select id="forma">
       <option>PIX</option>
       <option>Dinheiro</option>
@@ -357,7 +455,7 @@ forma:l.forma,
 obs:l.observacao||""
 }));
 
-carregarLancamentos();
+renderizar();
 }
 
 
