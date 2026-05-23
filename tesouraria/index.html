@@ -191,282 +191,143 @@ td{color:#eef3ff}
 </style>
 
 
-<style id="mobile-comprovante-fix">
-.valor-forma-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
 
-@media(max-width:700px){
-  .valor-forma-row{
-    grid-template-columns:1fr;
-    gap:0;
-  }
-
-  .comprovante-premium{
-    width:100%;
-    margin-top:14px;
-  }
-
-  .comprovante-premium input[type="file"]{
-    width:100%;
-    font-size:14px;
-  }
-
-  .comp-title{
-    flex-wrap:wrap;
-  }
-}
-</style>
-
-
-<style id="mobile-fix-v2">
-@media(max-width:700px){
-.row{
-display:grid !important;
-grid-template-columns:1fr !important;
-gap:10px !important;
-}
-
-.comprovante-premium{
-width:100% !important;
-margin-top:14px !important;
-}
-
-.comprovante-premium input[type="file"]{
-width:100% !important;
-}
-}
-</style>
-
-
-<style id="premium-mobile-v3">
-@media(max-width:700px){
-
-body{
-background:
-radial-gradient(circle at top, rgba(247,201,72,.10), transparent 35%),
-linear-gradient(180deg,#020812 0%,#071c3d 100%);
-}
-
-header{
-padding:18px 16px;
-border-bottom:1px solid rgba(247,201,72,.18);
-}
-
-.header-inner{
-display:flex;
-flex-direction:column;
-align-items:flex-start;
-gap:10px;
-padding-right:70px;
-}
-
-h1{
-font-size:17px !important;
-line-height:1.3;
-}
-
-.sub{
-font-size:12px !important;
-opacity:.9;
-line-height:1.5;
-}
-
-.logout-btn{
-top:12px !important;
-right:12px !important;
-padding:10px 14px !important;
-font-size:12px !important;
-border-radius:999px !important;
-box-shadow:0 10px 30px rgba(0,0,0,.35);
-}
-
+<style id="tesouraria-premium-layout-v5">
+/* ===== LAYOUT PREMIUM FINAL — SEM SOBREPOSIÇÃO ===== */
 main{
-padding:14px !important;
-}
-
-.hero{
-padding:22px 18px !important;
-border-radius:22px !important;
-background:
-linear-gradient(135deg,
-rgba(255,255,255,.10),
-rgba(255,255,255,.03));
-backdrop-filter:blur(10px);
-}
-
-.hero h2{
-font-size:28px !important;
-line-height:1.15;
-margin-bottom:10px;
-}
-
-.hero p{
-font-size:14px !important;
-line-height:1.7;
-color:#d7e0f0 !important;
+  max-width:1180px !important;
+  margin:0 auto !important;
+  padding:30px 18px 80px !important;
 }
 
 .grid{
-gap:12px !important;
-}
-
-.card{
-border-radius:20px !important;
-padding:18px !important;
-background:
-linear-gradient(145deg,
-rgba(255,255,255,.10),
-rgba(255,255,255,.04));
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,.08);
-}
-
-.value{
-font-size:34px !important;
-}
-
-.box{
-padding:18px !important;
-border-radius:22px !important;
-background:
-linear-gradient(145deg,
-rgba(11,25,51,.96),
-rgba(5,17,39,.96));
-}
-
-.box h3{
-font-size:24px !important;
-margin-bottom:18px !important;
-}
-
-input,select,textarea{
-min-height:52px !important;
-font-size:15px !important;
-border-radius:16px !important;
-padding:14px 16px !important;
-}
-
-textarea{
-min-height:120px !important;
-}
-
-.comprovante-premium{
-padding:16px !important;
-border-radius:18px !important;
-margin-top:16px !important;
-background:
-linear-gradient(135deg,
-rgba(247,201,72,.12),
-rgba(255,255,255,.03));
-}
-
-.comp-title{
-font-size:15px !important;
-}
-
-.comp-desc{
-font-size:13px !important;
-line-height:1.5 !important;
-}
-
-.comprovante-premium input[type="file"]{
-background:#fff !important;
-padding:14px !important;
-border-radius:14px !important;
-}
-
-.actions{
-gap:12px !important;
-}
-
-.actions button{
-min-height:52px !important;
-font-size:15px !important;
-border-radius:16px !important;
-font-weight:900 !important;
-}
-
-.table-wrap{
-border-radius:20px !important;
-overflow:auto !important;
-}
-
-table{
-min-width:860px !important;
-}
-
-th,td{
-padding:13px !important;
-font-size:13px !important;
-}
-
-.filters{
-gap:12px !important;
-}
-
-}
-</style>
-
-
-
-<style id="layout-relatorio-final-fix">
-/* Layout final: formulário à esquerda e relatório à direita, sem sobreposição */
-main{
-  max-width:1260px !important;
-  margin:0 auto !important;
-  padding-left:24px !important;
-  padding-right:24px !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:18px !important;
+  margin-bottom:24px !important;
 }
 
 .panel{
   display:grid !important;
-  grid-template-columns:390px minmax(0,1fr) !important;
+  grid-template-columns:420px minmax(0,1fr) !important;
   gap:28px !important;
   align-items:start !important;
-  position:relative !important;
+  position:static !important;
 }
 
-.panel > .box{
+/* Formulário fica do lado esquerdo */
+.panel > .box:first-child{
+  grid-column:1 !important;
+  grid-row:1 !important;
+  width:100% !important;
+  max-width:420px !important;
+  margin:0 !important;
   position:static !important;
-  width:auto !important;
+}
+
+/* Relatório ocupa o espaço azul da direita */
+.panel > .box:nth-child(2){
+  grid-column:2 !important;
+  grid-row:1 !important;
+  width:100% !important;
   max-width:100% !important;
   min-width:0 !important;
   margin:0 !important;
+  position:static !important;
 }
 
-.panel > .box:first-child{
-  grid-column:1 !important;
+/* Visual mais premium dos blocos */
+.box{
+  border-radius:26px !important;
+  background:
+    linear-gradient(145deg, rgba(15,32,61,.96), rgba(7,22,48,.96)) !important;
+  border:1px solid rgba(247,201,72,.20) !important;
+  box-shadow:0 24px 70px rgba(0,0,0,.28) !important;
 }
 
-.panel > .box:nth-child(2){
-  grid-column:2 !important;
+.box h3{
+  font-size:24px !important;
+  letter-spacing:-.2px !important;
 }
 
+/* Filtros do relatório organizados */
 .filters{
   display:grid !important;
-  grid-template-columns:minmax(150px,1fr) minmax(170px,1fr) 210px 150px !important;
+  grid-template-columns:1fr 1fr 190px 140px !important;
   gap:12px !important;
   align-items:center !important;
+  margin-bottom:16px !important;
 }
 
 .table-wrap{
   width:100% !important;
   max-width:100% !important;
   overflow-x:auto !important;
+  border-radius:20px !important;
 }
 
 table{
   min-width:760px !important;
 }
 
-/* Em telas médias e celulares, fica um embaixo do outro */
-@media(max-width:1050px){
+/* Comprovante bonito e abaixo do valor/forma */
+.comprovante-premium{
+  margin:16px 0 14px !important;
+  padding:18px !important;
+  border-radius:20px !important;
+  border:1px solid rgba(247,201,72,.32) !important;
+  background:
+    radial-gradient(circle at top left, rgba(247,201,72,.14), transparent 45%),
+    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.035)) !important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035), 0 16px 38px rgba(0,0,0,.20) !important;
+}
+
+.comprovante-premium .comp-title{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  color:#f7c948 !important;
+  font-weight:900 !important;
+  font-size:15px !important;
+  margin-bottom:8px !important;
+}
+
+.comprovante-premium .comp-title span{
+  display:inline-flex !important;
+  width:32px !important;
+  height:32px !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:999px !important;
+  background:rgba(247,201,72,.16) !important;
+  border:1px solid rgba(247,201,72,.38) !important;
+}
+
+.comprovante-premium .comp-desc{
+  color:#d6deee !important;
+  font-size:13px !important;
+  line-height:1.5 !important;
+  margin:0 0 12px !important;
+}
+
+.comprovante-premium input[type="file"]{
+  width:100% !important;
+  padding:13px !important;
+  border-radius:15px !important;
+  background:#f4f6fb !important;
+  color:#111827 !important;
+  border:2px dashed rgba(247,201,72,.55) !important;
+}
+
+/* Celular e telas menores: tudo em coluna, sem quebrar */
+@media(max-width:1000px){
   main{
-    padding-left:14px !important;
-    padding-right:14px !important;
+    padding:18px 14px 80px !important;
+  }
+
+  .grid{
+    grid-template-columns:1fr !important;
+    gap:14px !important;
   }
 
   .panel{
@@ -475,13 +336,30 @@ table{
     gap:18px !important;
   }
 
-  .panel > .box{
+  .panel > .box:first-child,
+  .panel > .box:nth-child(2){
     width:100% !important;
     max-width:100% !important;
+    margin:0 !important;
   }
 
   .filters{
     grid-template-columns:1fr !important;
+  }
+
+  input,select,textarea{
+    font-size:16px !important;
+    min-height:50px !important;
+  }
+
+  .actions{
+    display:grid !important;
+    grid-template-columns:1fr !important;
+  }
+
+  button{
+    width:100% !important;
+    min-height:48px !important;
   }
 }
 </style>
