@@ -266,7 +266,7 @@ td{color:#eef3ff}
 </style>
 
 
-<style id="status-pagamento-css">
+<style id="status-e-saldo-css">
 .status-pagamento-wrap{
   margin:16px 0 14px;
   padding:14px;
@@ -274,51 +274,25 @@ td{color:#eef3ff}
   border:1px solid rgba(247,201,72,.26);
   background:linear-gradient(135deg,rgba(247,201,72,.10),rgba(255,255,255,.035));
 }
-.status-pagamento-wrap label{
-  margin-top:0;
-  color:#f7c948;
-}
-.status-hint{
-  color:#b9c4d8;
-  font-size:12px;
-  margin-top:7px;
-  line-height:1.4;
-}
+.status-pagamento-wrap label{margin-top:0;color:#f7c948;}
+.status-hint{color:#b9c4d8;font-size:12px;margin-top:7px;line-height:1.4;}
 .status-badge{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:7px 12px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:900;
-  border:1px solid rgba(255,255,255,.16);
-  white-space:nowrap;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;
+  border:1px solid rgba(255,255,255,.16);white-space:nowrap;
 }
-.status-pago{
-  background:rgba(57,217,138,.16);
-  color:#8ff0bc;
-  border-color:rgba(57,217,138,.35);
-}
-.status-pendente{
-  background:rgba(247,201,72,.16);
-  color:#ffe58a;
-  border-color:rgba(247,201,72,.38);
-}
-.status-atrasado{
-  background:rgba(255,92,122,.16);
-  color:#ffc1cc;
-  border-color:rgba(255,92,122,.38);
-}
-.status-btn{
-  cursor:pointer;
-  min-width:96px;
+.status-pago{background:rgba(57,217,138,.16);color:#8ff0bc;border-color:rgba(57,217,138,.35);}
+.status-pendente{background:rgba(247,201,72,.16);color:#ffe58a;border-color:rgba(247,201,72,.38);}
+.status-atrasado{background:rgba(255,92,122,.16);color:#ffc1cc;border-color:rgba(255,92,122,.38);}
+.status-btn{cursor:pointer;min-width:96px;}
+.sem-status{color:#b9c4d8;font-size:12px;}
+@media(min-width:901px){
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr)) !important;}
+  .grid .value{font-size:25px !important;}
 }
 @media(max-width:900px){
-  .status-badge{
-    width:100%;
-    min-height:38px;
-  }
+  .grid{grid-template-columns:1fr !important;}
+  .status-badge{width:100%;min-height:38px;}
 }
 </style>
 
@@ -356,9 +330,10 @@ td{color:#eef3ff}
 
 <section class="grid">
   <div class="card"><div class="label">Entradas do mês</div><div class="value green" id="entradasMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Saídas do mês</div><div class="value red" id="saidasMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Saldo do mês</div><div class="value gold" id="saldoMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Saldo geral</div><div class="value" id="saldoGeral">R$ 0,00</div></div>
+  <div class="card"><div class="label">Saídas pagas</div><div class="value red" id="saidasMes">R$ 0,00</div></div>
+  <div class="card"><div class="label">Pendentes</div><div class="value gold" id="pendentesMes">R$ 0,00</div></div>
+  <div class="card"><div class="label">Atrasadas</div><div class="value red" id="atrasadasMes">R$ 0,00</div></div>
+  <div class="card"><div class="label">Saldo disponível</div><div class="value" id="saldoGeral">R$ 0,00</div></div>
 </section>
 
 <section class="panel">
@@ -426,11 +401,11 @@ td{color:#eef3ff}
 <div class="status-pagamento-wrap">
   <label>Status da saída</label>
   <select id="status_pagamento">
-    <option value="Pago">Pago</option>
     <option value="Pendente">Pendente</option>
     <option value="Atrasado">Atrasado</option>
+    <option value="Pago">Pago</option>
   </select>
-  <div class="status-hint">Use principalmente em despesas como aluguel, água, luz, manutenção e compras.</div>
+  <div class="status-hint">Este status só aparece no relatório para SAÍDAS. Entradas ficam sem status.</div>
 </div>
 
 <label>Observação</label>
@@ -565,7 +540,7 @@ descricao:l.descricao,
 valor:Number(l.valor),
 forma:l.forma,
 obs:l.observacao||"",
-status_pagamento:l.status_pagamento||"Pago"
+status_pagamento:l.status_pagamento||"Pendente"
 }));
 
 renderizar();
@@ -600,7 +575,7 @@ descricao:document.getElementById("descricao").value.trim(),
 valor:Number(document.getElementById("valor").value),
 forma:document.getElementById("forma").value,
 observacao:document.getElementById("obs").value.trim(),
-status_pagamento:document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pago"
+status_pagamento:document.getElementById("tipo").value==="saida" ? document.getElementById("status_pagamento").value : "Pago"
 };
 
 const { error } = await supabaseClient
@@ -622,7 +597,7 @@ function limparFormulario(){
   document.getElementById("formLancamento").reset();
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("tipo").value="entrada";
-  if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pago";
+  if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pendente";
 }
 
 function filtrar(){
@@ -639,21 +614,20 @@ function filtrar(){
 
 
 function statusClass(status){
-  const s=(status||"Pago").toLowerCase();
-  if(s==="pendente") return "status-pendente";
+  const s=(status||"Pendente").toLowerCase();
+  if(s==="pago") return "status-pago";
   if(s==="atrasado") return "status-atrasado";
-  return "status-pago";
+  return "status-pendente";
 }
 
 function proximoStatus(status){
-  if(status==="Pago") return "Pendente";
   if(status==="Pendente") return "Atrasado";
-  return "Pago";
+  if(status==="Atrasado") return "Pago";
+  return "Pendente";
 }
 
 async function alternarStatus(id, atual){
-  const novo=proximoStatus(atual||"Pago");
-
+  const novo=proximoStatus(atual||"Pendente");
   const { error } = await supabaseClient
     .from("tesouraria")
     .update({ status_pagamento: novo })
@@ -663,7 +637,6 @@ async function alternarStatus(id, atual){
     alert("Erro ao atualizar status. Confira se a coluna status_pagamento foi criada no Supabase.");
     return;
   }
-
   carregarLancamentos();
 }
 
@@ -680,7 +653,7 @@ function renderizar(){
         <td>${l.descricao||"-"}</td>
         <td>${l.forma||"-"}</td>
         <td><strong>${moeda(l.valor)}</strong></td>
-        <td><button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pago"}')">${l.status_pagamento||"Pago"}</button></td>
+        <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
         <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
       </tr>
     `).join("")
@@ -702,22 +675,31 @@ function atualizarResumo(){
     .filter(l=>l.tipo==="entrada"&&(l.data||"").startsWith(m))
     .reduce((s,l)=>s+Number(l.valor||0),0);
 
-  const saidasMes=lancamentos
-    .filter(l=>l.tipo==="saida"&&(l.data||"").startsWith(m))
+  const saidasPagasMes=lancamentos
+    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pago"&&(l.data||"").startsWith(m))
+    .reduce((s,l)=>s+Number(l.valor||0),0);
+
+  const pendentesMes=lancamentos
+    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pendente"&&(l.data||"").startsWith(m))
+    .reduce((s,l)=>s+Number(l.valor||0),0);
+
+  const atrasadasMes=lancamentos
+    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Atrasado"&&(l.data||"").startsWith(m))
     .reduce((s,l)=>s+Number(l.valor||0),0);
 
   const entradasGeral=lancamentos
     .filter(l=>l.tipo==="entrada")
     .reduce((s,l)=>s+Number(l.valor||0),0);
 
-  const saidasGeral=lancamentos
-    .filter(l=>l.tipo==="saida")
+  const saidasPagasGeral=lancamentos
+    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pago")
     .reduce((s,l)=>s+Number(l.valor||0),0);
 
   document.getElementById("entradasMes").textContent=moeda(entradasMes);
-  document.getElementById("saidasMes").textContent=moeda(saidasMes);
-  document.getElementById("saldoMes").textContent=moeda(entradasMes-saidasMes);
-  document.getElementById("saldoGeral").textContent=moeda(entradasGeral-saidasGeral);
+  document.getElementById("saidasMes").textContent=moeda(saidasPagasMes);
+  document.getElementById("pendentesMes").textContent=moeda(pendentesMes);
+  document.getElementById("atrasadasMes").textContent=moeda(atrasadasMes);
+  document.getElementById("saldoGeral").textContent=moeda(entradasGeral-saidasPagasGeral);
 }
 
 
@@ -749,8 +731,8 @@ function limparFiltros(){
 function exportarCSV(){
   const dados=filtrar();
   const linhas=[
-    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.obs])
+    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Status","Observação"],
+    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
   ];
 
   const csv=linhas
