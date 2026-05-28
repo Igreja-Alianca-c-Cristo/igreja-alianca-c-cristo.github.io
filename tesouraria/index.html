@@ -265,6 +265,63 @@ td{color:#eef3ff}
 }
 </style>
 
+
+<style id="status-pagamento-css">
+.status-pagamento-wrap{
+  margin:16px 0 14px;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid rgba(247,201,72,.26);
+  background:linear-gradient(135deg,rgba(247,201,72,.10),rgba(255,255,255,.035));
+}
+.status-pagamento-wrap label{
+  margin-top:0;
+  color:#f7c948;
+}
+.status-hint{
+  color:#b9c4d8;
+  font-size:12px;
+  margin-top:7px;
+  line-height:1.4;
+}
+.status-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  border:1px solid rgba(255,255,255,.16);
+  white-space:nowrap;
+}
+.status-pago{
+  background:rgba(57,217,138,.16);
+  color:#8ff0bc;
+  border-color:rgba(57,217,138,.35);
+}
+.status-pendente{
+  background:rgba(247,201,72,.16);
+  color:#ffe58a;
+  border-color:rgba(247,201,72,.38);
+}
+.status-atrasado{
+  background:rgba(255,92,122,.16);
+  color:#ffc1cc;
+  border-color:rgba(255,92,122,.38);
+}
+.status-btn{
+  cursor:pointer;
+  min-width:96px;
+}
+@media(max-width:900px){
+  .status-badge{
+    width:100%;
+    min-height:38px;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -365,6 +422,17 @@ td{color:#eef3ff}
   <input type="file" id="comprovante" accept="image/*,.pdf">
 </div>
 
+
+<div class="status-pagamento-wrap">
+  <label>Status da saída</label>
+  <select id="status_pagamento">
+    <option value="Pago">Pago</option>
+    <option value="Pendente">Pendente</option>
+    <option value="Atrasado">Atrasado</option>
+  </select>
+  <div class="status-hint">Use principalmente em despesas como aluguel, água, luz, manutenção e compras.</div>
+</div>
+
 <label>Observação</label>
 <textarea id="obs" placeholder="Anote detalhes se precisar"></textarea>
 
@@ -425,6 +493,7 @@ td{color:#eef3ff}
   <th>Descrição</th>
   <th>Forma</th>
   <th>Valor</th>
+  <th>Status</th>
   <th>Ação</th>
 </tr>
 </thead>
@@ -495,7 +564,8 @@ categoria:l.categoria,
 descricao:l.descricao,
 valor:Number(l.valor),
 forma:l.forma,
-obs:l.observacao||""
+obs:l.observacao||"",
+status_pagamento:l.status_pagamento||"Pago"
 }));
 
 renderizar();
@@ -529,7 +599,8 @@ categoria:document.getElementById("categoria").value,
 descricao:document.getElementById("descricao").value.trim(),
 valor:Number(document.getElementById("valor").value),
 forma:document.getElementById("forma").value,
-observacao:document.getElementById("obs").value.trim()
+observacao:document.getElementById("obs").value.trim(),
+status_pagamento:document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pago"
 };
 
 const { error } = await supabaseClient
@@ -551,6 +622,7 @@ function limparFormulario(){
   document.getElementById("formLancamento").reset();
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("tipo").value="entrada";
+  if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pago";
 }
 
 function filtrar(){
@@ -563,6 +635,36 @@ function filtrar(){
     (!c||l.categoria===c)&&
     (!m||(l.data||"").startsWith(m))
   );
+}
+
+
+function statusClass(status){
+  const s=(status||"Pago").toLowerCase();
+  if(s==="pendente") return "status-pendente";
+  if(s==="atrasado") return "status-atrasado";
+  return "status-pago";
+}
+
+function proximoStatus(status){
+  if(status==="Pago") return "Pendente";
+  if(status==="Pendente") return "Atrasado";
+  return "Pago";
+}
+
+async function alternarStatus(id, atual){
+  const novo=proximoStatus(atual||"Pago");
+
+  const { error } = await supabaseClient
+    .from("tesouraria")
+    .update({ status_pagamento: novo })
+    .eq("id", id);
+
+  if(error){
+    alert("Erro ao atualizar status. Confira se a coluna status_pagamento foi criada no Supabase.");
+    return;
+  }
+
+  carregarLancamentos();
 }
 
 function renderizar(){
@@ -578,10 +680,11 @@ function renderizar(){
         <td>${l.descricao||"-"}</td>
         <td>${l.forma||"-"}</td>
         <td><strong>${moeda(l.valor)}</strong></td>
+        <td><button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pago"}')">${l.status_pagamento||"Pago"}</button></td>
         <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
       </tr>
     `).join("")
-    : `<tr><td colspan="7" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+    : `<tr><td colspan="8" class="empty">Nenhum lançamento encontrado.</td></tr>`;
 
   atualizarResumo();
 }
