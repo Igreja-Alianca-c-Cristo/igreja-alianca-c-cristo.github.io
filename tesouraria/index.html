@@ -499,18 +499,18 @@ document.getElementById("senha").addEventListener("keydown",e=>{
   if(e.key==="Enter") entrar();
 });
 
-if(sessionStorage.getItem("tesouraria_logada")==="sim"){
-  liberar();
-}
-
-
-
 const supabaseClient = supabase.createClient(
 "https://zewiultocwegxkfiufcm.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpld2l1bHRvY3dlZ3hrZml1ZmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzEwMjksImV4cCI6MjA5NDQ0NzAyOX0.ybD53GGVYnPx9kZViSvs63tLxlVEqhOllTdDDq40lF0"
 );
 
 let lancamentos=[];
+
+/* auto-login-seguro-tesouraria */
+if(sessionStorage.getItem("tesouraria_logada")==="sim"){
+  liberar();
+}
+
 
 async function carregarLancamentos(){
   let resposta = await supabaseClient
