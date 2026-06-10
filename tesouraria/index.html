@@ -467,7 +467,7 @@ td{color:#eef3ff}
 const SENHA="Alianca2026";
 
 function entrar(){
-  const s=document.getElementById("senha").value;
+  const s=document.getElementById("senha").value.trim();
   if(s===SENHA){
     sessionStorage.setItem("tesouraria_logada","sim");
     liberar();
@@ -479,6 +479,7 @@ function entrar(){
 function liberar(){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("app").style.display="block";
+  carregarLancamentos();
 }
 
 function sair(){
@@ -493,6 +494,7 @@ document.getElementById("senha").addEventListener("keydown",e=>{
 if(sessionStorage.getItem("tesouraria_logada")==="sim"){
   liberar();
 }
+
 
 
 const supabaseClient = supabase.createClient(
@@ -778,7 +780,6 @@ carregarLancamentos();
 }
 
 
-carregarLancamentos();
 </script>
 </body>
 </html>
