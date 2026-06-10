@@ -467,19 +467,27 @@ td{color:#eef3ff}
 const SENHA="Alianca2026";
 
 function entrar(){
-  const s=document.getElementById("senha").value.trim();
-  if(s===SENHA){
+  const campoSenha = document.getElementById("senha");
+  const s = (campoSenha.value || "").trim();
+  const erro = document.getElementById("erro");
+
+  if(s === SENHA){
     sessionStorage.setItem("tesouraria_logada","sim");
+    if(erro) erro.style.display = "none";
     liberar();
   }else{
-    document.getElementById("erro").style.display="block";
+    if(erro) erro.style.display = "block";
+    campoSenha.focus();
   }
 }
 
 function liberar(){
   document.getElementById("loginScreen").style.display="none";
   document.getElementById("app").style.display="block";
-  carregarLancamentos();
+  carregarLancamentos().catch(err=>{
+    console.error("Erro ao carregar lançamentos:", err);
+    alert("Entrou no painel, mas houve erro ao carregar os dados do Supabase: " + (err.message || err));
+  });
 }
 
 function sair(){
@@ -547,20 +555,6 @@ async function carregarLancamentos(){
   renderizar();
 }
 
-lancamentos=(data||[]).map(l=>({
-id:l.id,
-tipo:l.tipo,
-data:l.data,
-categoria:l.categoria,
-descricao:l.descricao,
-valor:Number(l.valor||0),
-forma:l.forma||"",
-obs:l.observacao||"",
-status_pagamento:l.status_pagamento||"Pendente"
-}));
-
-renderizar();
-}
 
 
 function iniciarDatas(){
