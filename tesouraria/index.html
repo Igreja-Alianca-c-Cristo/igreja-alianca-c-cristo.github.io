@@ -1,777 +1,2915 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tesouraria - Igreja Renovada Aliança com Cristo</title>
-<link rel="icon" type="image/png" href="logo-igreja.png">
-<style>
-:root{
-  --gold:#f7c948;
-  --cream:#fff6dc;
-  --green:#39d98a;
-  --red:#ff5c7a;
-  --muted:#b9c4d8;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:
-    radial-gradient(circle at top left,rgba(247,201,72,.18),transparent 35%),
-    linear-gradient(135deg,#020812,#071c3d 55%,#020812);
-  color:#fff;
-}
-.login-screen{
-  position:fixed;inset:0;z-index:9999;
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
-}
-.login-box{
-  width:min(420px,100%);
-  background:rgba(10,24,48,.94);
-  border:1px solid rgba(247,201,72,.24);
-  border-radius:28px;padding:30px;text-align:center;
-  box-shadow:0 28px 80px rgba(0,0,0,.38);
-}
-.login-box h1{margin:0 0 10px;color:var(--gold)}
-.login-box p{color:#dbe5f7}
-.login-box input{
-  width:100%;margin-top:18px;padding:14px;
-  border:none;border-radius:16px;font-size:16px;
-}
-.login-box button{
-  margin-top:16px;width:100%;border:none;border-radius:999px;
-  padding:14px;background:linear-gradient(135deg,var(--gold),#ffe58a);
-  color:#07142d;font-weight:900;cursor:pointer;
-}
-.error{color:#ff9db1;margin-top:12px;display:none}
-#app{display:none}
-.logout-btn{
-  position:fixed;top:16px;right:16px;z-index:999;
-  background:#ff5c7a;color:white;border:none;border-radius:999px;
-  padding:12px 18px;font-weight:900;cursor:pointer;
-  box-shadow:0 12px 35px rgba(0,0,0,.35);
-}
-header{
-  position:sticky;top:0;background:rgba(2,8,18,.9);
-  backdrop-filter:blur(14px);border-bottom:1px solid rgba(247,201,72,.25);
-  padding:18px 24px;z-index:5;
-}
-.header-inner{
-  max-width:1200px;margin:auto;
-  display:flex;justify-content:space-between;align-items:center;gap:16px;
-  padding-right:90px;
-}
-h1{margin:0;color:var(--gold);font-size:24px}
-.sub{margin:5px 0 0;color:var(--muted)}
-main{max-width:1200px;margin:auto;padding:28px 18px 70px}
-.hero{
-  border:1px solid rgba(247,201,72,.25);
-  background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
-  border-radius:28px;padding:24px;margin-bottom:22px;
-  box-shadow:0 28px 80px rgba(0,0,0,.28);
-}
-.hero h2{margin:0 0 8px;color:var(--cream);font-size:32px}
-.hero p{margin:0;color:var(--muted);line-height:1.6}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
-.card{
-  background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.04));
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:22px;padding:18px;
-  box-shadow:0 18px 45px rgba(0,0,0,.22);
-}
-.label{color:var(--muted);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
-.value{margin-top:8px;font-size:28px;font-weight:900}
-.green{color:var(--green)}.red{color:var(--red)}.gold{color:var(--gold)}
-.panel{display:grid;grid-template-columns:390px 1fr;gap:18px}
-.box{
-  background:rgba(16,31,56,.84);
-  border:1px solid rgba(247,201,72,.18);
-  border-radius:24px;padding:20px;
-  box-shadow:0 22px 60px rgba(0,0,0,.25);
-}
-.box h3{margin:0 0 16px;color:var(--gold);font-size:22px}
-label{display:block;margin:12px 0 6px;color:var(--cream);font-weight:700;font-size:14px}
-input,select,textarea{
-  width:100%;border:none;outline:none;border-radius:14px;
-  padding:13px 14px;background:#f4f6fb;color:#111827;font-size:15px;
-}
-textarea{min-height:84px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-button{border:none;border-radius:999px;padding:13px 18px;font-weight:900;cursor:pointer;transition:.22s ease}
-button:hover{transform:translateY(-2px)}
-.primary{background:linear-gradient(135deg,var(--gold),#ffe58a);color:#07142d}
-.secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.18)}
-.danger{background:rgba(255,92,122,.16);color:#ffd6de;border:1px solid rgba(255,92,122,.35)}
-.filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;margin-bottom:14px}
-.table-wrap{overflow:auto;border-radius:18px;border:1px solid rgba(255,255,255,.1)}
-table{width:100%;border-collapse:collapse;min-width:760px}
-th,td{text-align:left;padding:13px;border-bottom:1px solid rgba(255,255,255,.08);font-size:14px}
-th{background:rgba(0,0,0,.22);color:var(--gold)}
-td{color:#eef3ff}
-.badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900}
-.entrada{background:rgba(57,217,138,.16);color:#94f5bf}
-.saida{background:rgba(255,92,122,.16);color:#ffc1cc}
-.empty{text-align:center;color:var(--muted);padding:26px}
-.small-btn{padding:8px 11px;font-size:12px}
-.note{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.5}
-@media(max-width:900px){
-  .grid{grid-template-columns:1fr 1fr}
-  .panel{grid-template-columns:1fr}
-  .filters{grid-template-columns:1fr 1fr}
-}
-@media(max-width:560px){
-  .grid,.row,.filters{grid-template-columns:1fr}
-  .header-inner{align-items:flex-start;flex-direction:column}
-  .hero h2{font-size:28px}
-  .logout-btn{top:10px;right:10px}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Andreza Cakes - Confeitaria</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,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">
+  <style>
+    :root {
+      --bg: #fff7f3;
+      --card: #ffffff;
+      --primary: #d66a8f;
+      --primary-dark: #a83f66;
+      --secondary: #6b3f4f;
+      --soft: #ffe1ec;
+      --text: #2f1f26;
+      --muted: #8a6f79;
+      --success: #2e9d65;
+      --warning: #c58b12;
+      --danger: #c94f4f;
+      --border: #f0c9d7;
+      --shadow: 0 18px 40px rgba(107, 63, 79, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #fff7f3, #ffe7ef);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    .login-page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--primary), #ffb0c8);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 36px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 32px rgba(214,106,143,.35);
+    }
+
+    h1, h2, h3 { margin: 0; }
+    .login-card h1 { font-size: 28px; margin-bottom: 8px; }
+    .login-card p { color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 13px;
+      margin: 14px 0 8px;
+      color: var(--secondary);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: 15px;
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(214,106,143,.12);
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: .2s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-soft { background: var(--soft); color: var(--primary-dark); }
+    .btn-danger { background: #ffe0e0; color: var(--danger); }
+    .btn-full { width: 100%; margin-top: 18px; }
+
+    .hint { font-size: 12px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+    .error { color: var(--danger); font-weight: 700; font-size: 13px; margin-top: 12px; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    aside {
+      background: rgba(255,255,255,.82);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+
+    .side-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .side-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary), #ffb0c8);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .side-brand strong { display: block; font-size: 16px; }
+    .side-brand span { color: var(--muted); font-size: 12px; }
+
+    nav { display: grid; gap: 8px; }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--secondary);
+      text-align: left;
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    .nav-btn.active, .nav-btn:hover {
+      background: var(--soft);
+      color: var(--primary-dark);
+    }
+
+    main { padding: 28px; overflow: hidden; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .topbar h2 { font-size: 28px; }
+    .topbar p { margin: 6px 0 0; color: var(--muted); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card, .panel {
+      background: rgba(255,255,255,.9);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric span { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .metric strong { display: block; font-size: 26px; margin-top: 8px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .form-grid .full { grid-column: 1 / -1; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 13px 10px;
+      border-bottom: 1px solid #f3d8e2;
+      vertical-align: top;
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--secondary);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status-pendente { background: #fff1c9; color: var(--warning); }
+    .status-producao { background: #e1edff; color: #3567b7; }
+    .status-entregue { background: #ddf7e9; color: var(--success); }
+    .status-cancelado { background: #ffe0e0; color: var(--danger); }
+
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .actions button { padding: 8px 10px; border-radius: 12px; font-size: 12px; }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar input { max-width: 340px; }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px;
+      border: 1px dashed var(--border);
+      border-radius: 20px;
+      background: #fff9fb;
+    }
+
+    .small-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .app { grid-template-columns: 1fr; }
+      aside {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      nav { grid-template-columns: repeat(3, 1fr); }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      main { padding: 18px; }
+      aside { padding: 18px; }
+      nav { grid-template-columns: 1fr 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .topbar h2 { font-size: 24px; }
+      .login-card { padding: 24px; }
+      table { min-width: 680px; }
+    }
+
+    @media print {
+      body { background: #fff !important; }
+      aside, .topbar, .actions, .btn-primary, .btn-soft, .btn-danger, nav { display: none !important; }
+      .app { display: block !important; }
+      main { padding: 0 !important; }
+      .section { display: none !important; }
+      #printArea { display: block !important; }
+      .print-page {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #222;
+        padding: 24px;
+      }
+      .print-page h1 {
+        font-size: 24px;
+        margin-bottom: 6px;
+      }
+      .print-page .muted {
+        color: #666;
+        margin-bottom: 20px;
+      }
+      .print-box {
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 14px;
+      }
+      .print-row {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 10px;
+        padding: 7px 0;
+        border-bottom: 1px solid #eee;
+      }
+      .print-row:last-child { border-bottom: none; }
+      .print-label { font-weight: bold; }
+    }
+
+    #printArea { display: none; }
+
+  </style>
+
+<style id="fix-mobile-scroll-jump">
+@media (max-width: 850px){
+  html { overflow-anchor: none; }
+
+  body.modal-open-mobile {
+    position: fixed !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    touch-action: none;
+  }
+
+  .modal.open {
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+  }
+
+  .modal.open .box {
+    max-height: calc(100vh - 36px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style id="layout-forcado-final">
-/* ===== LAYOUT FINAL FORÇADO ===== */
-@media (min-width: 901px){
-  main{
-    max-width:1280px !important;
-    margin:0 auto !important;
-    padding:28px 24px 80px !important;
+
+<style id="gestao-financeira-inteligente-css">
+.finance-section{
+  background:linear-gradient(135deg,#fff7fb,#ffffff);
+  border:1px solid #f1c4d5;
+  border-radius:30px;
+  padding:24px;
+  box-shadow:0 18px 48px rgba(112,48,75,.10);
+  margin:22px 0;
+}
+
+.finance-head{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.finance-icon{
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#d96491,#ff8db4);
+  color:white;
+  font-size:28px;
+  box-shadow:0 12px 28px rgba(217,100,145,.22);
+}
+
+.finance-head h2{
+  margin:0;
+  color:#2c1b24;
+  font-size:28px;
+}
+
+.finance-head p{
+  margin:5px 0 0;
+  color:#805d70;
+  line-height:1.45;
+}
+
+.finance-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.finance-card{
+  background:white;
+  border:1px solid #f1c4d5;
+  border-radius:22px;
+  padding:18px;
+}
+
+.finance-card h3{
+  margin:0 0 12px;
+  color:#8d2b58;
+}
+
+.finance-form{
+  display:grid;
+  gap:12px;
+}
+
+.finance-form label{
+  color:#8d2b58;
+  font-weight:900;
+  font-size:14px;
+}
+
+.finance-form input{
+  width:100%;
+  height:48px;
+  border-radius:14px;
+  border:1px solid #f1c4d5;
+  padding:0 12px;
+  font-size:16px;
+}
+
+.finance-btn{
+  width:100%;
+  height:52px;
+  border:0;
+  border-radius:999px;
+  background:linear-gradient(135deg,#d96491,#ff8db4);
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 12px 26px rgba(217,100,145,.18);
+  margin-top:4px;
+}
+
+.finance-results{
+  display:grid;
+  gap:10px;
+}
+
+.finance-result{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  padding:13px 14px;
+  border-radius:17px;
+  background:#fff7fb;
+  border:1px solid #f1c4d5;
+}
+
+.finance-result span{
+  color:#805d70;
+  font-weight:800;
+}
+
+.finance-result strong{
+  color:#8d2b58;
+  font-size:18px;
+  white-space:nowrap;
+}
+
+.finance-tip{
+  margin-top:14px;
+  padding:14px;
+  border-radius:18px;
+  background:#fff3f7;
+  color:#805d70;
+  line-height:1.55;
+  border:1px solid #f1c4d5;
+}
+
+@media(max-width:850px){
+  .finance-grid{
+    grid-template-columns:1fr;
   }
 
-  .panel{
-    display:grid !important;
-    grid-template-columns:420px minmax(0, 1fr) !important;
-    column-gap:28px !important;
-    row-gap:0 !important;
-    align-items:start !important;
-    position:static !important;
-    width:100% !important;
+  .finance-head{
+    align-items:flex-start;
   }
 
-  .panel > .box{
-    position:static !important;
-    inset:auto !important;
-    top:auto !important;
-    left:auto !important;
-    right:auto !important;
-    bottom:auto !important;
-    transform:none !important;
-    float:none !important;
-    clear:none !important;
-    margin:0 !important;
+  .finance-head h2{
+    font-size:24px;
+  }
+}
+</style>
+
+
+<style id="financeiro-mensal-auto-css">
+#financeValor[readonly]{
+  background:#fff7fb !important;
+  color:#8d2b58 !important;
+  font-weight:900 !important;
+}
+
+#financeMes{
+  font-weight:900 !important;
+  color:#8d2b58 !important;
+}
+
+.finance-result:nth-child(1),
+.finance-result:nth-child(2){
+  background:linear-gradient(135deg,#fff,#fff3f8) !important;
+}
+</style>
+
+
+<style id="corrigir-tabela-pedidos-admin">
+/* Corrige tabela cortando botões do lado direito */
+#pedidos .panel{
+  overflow:visible !important;
+}
+
+#pedidos .grid-2{
+  grid-template-columns:minmax(360px,.85fr) minmax(680px,1.15fr) !important;
+  align-items:start !important;
+}
+
+#pedidos .table-wrap{
+  width:100% !important;
+  overflow-x:auto !important;
+  overflow-y:visible !important;
+  padding-bottom:12px !important;
+  -webkit-overflow-scrolling:touch !important;
+}
+
+#pedidos table{
+  min-width:1120px !important;
+}
+
+#pedidos th:last-child,
+#pedidos td:last-child{
+  min-width:150px !important;
+  width:150px !important;
+}
+
+#pedidos .actions{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:7px !important;
+  min-width:135px !important;
+}
+
+#pedidos .actions button{
+  width:100% !important;
+  white-space:nowrap !important;
+  padding:8px 9px !important;
+  font-size:12px !important;
+}
+
+@media(max-width:1200px){
+  #pedidos .grid-2{
+    grid-template-columns:1fr !important;
+  }
+
+  #pedidos .table-wrap{
+    max-width:calc(100vw - 42px) !important;
+  }
+}
+
+@media(max-width:700px){
+  #pedidos table{
+    min-width:1040px !important;
+  }
+}
+</style>
+
+
+<style id="financeiro-periodos-premium-css">
+#financePeriodo{
+  font-weight:900 !important;
+  color:#8d2b58 !important;
+}
+
+#financeiro .finance-result strong,
+#gestaoFinanceira .finance-result strong{
+  text-align:right !important;
+  max-width:55% !important;
+  overflow-wrap:anywhere !important;
+  line-height:1.25 !important;
+}
+
+#gestaoFinanceira .finance-results{
+  grid-template-columns:1fr !important;
+}
+</style>
+
+
+<style id="admin-selects-premium-ajuste">
+#orderCategory,
+#orderFlavor,
+#orderFilling{
+  cursor:pointer;
+  font-weight:600;
+}
+
+#orderCategory option,
+#orderFlavor option,
+#orderFilling option{
+  color:#2f1f26;
+}
+</style>
+
+
+<style id="admin-menu-topo-premium">
+/* Layout premium com menu superior */
+.app{
+  display:block !important;
+  min-height:100vh !important;
+}
+
+aside{
+  position:sticky !important;
+  top:0 !important;
+  z-index:1000 !important;
+  height:auto !important;
+  width:100% !important;
+  border-right:none !important;
+  border-bottom:1px solid var(--border) !important;
+  padding:16px 26px !important;
+  background:rgba(255,255,255,.94) !important;
+  backdrop-filter:blur(16px) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:18px !important;
+  box-shadow:0 12px 32px rgba(107,63,79,.08) !important;
+}
+
+.side-brand{
+  margin-bottom:0 !important;
+  min-width:210px !important;
+}
+
+.side-logo{
+  width:54px !important;
+  height:54px !important;
+  border-radius:18px !important;
+  background:#fff !important;
+  box-shadow:0 10px 24px rgba(107,63,79,.12) !important;
+}
+
+.side-brand strong{
+  font-size:18px !important;
+  color:#2f1f26 !important;
+}
+
+.side-brand span{
+  font-size:12.5px !important;
+}
+
+aside nav{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  flex:1 !important;
+  overflow-x:auto !important;
+  padding:4px 2px !important;
+  scrollbar-width:thin !important;
+}
+
+.nav-btn{
+  width:auto !important;
+  flex:0 0 auto !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  padding:12px 15px !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  color:var(--secondary) !important;
+  white-space:nowrap !important;
+  font-size:14px !important;
+  box-shadow:none !important;
+}
+
+.nav-btn.active,
+.nav-btn:hover{
+  background:linear-gradient(135deg,#ffe4ef,#ffd3e4) !important;
+  color:var(--primary-dark) !important;
+  box-shadow:0 10px 22px rgba(214,106,143,.16) !important;
+}
+
+.nav-btn:last-child{
+  margin-left:6px !important;
+  background:#fff3f8 !important;
+}
+
+main{
+  padding:28px clamp(18px,3vw,42px) !important;
+  max-width:1440px !important;
+  margin:0 auto !important;
+  width:100% !important;
+}
+
+#statusSupabaseAdmin{
+  margin-top:0 !important;
+}
+
+/* Financeiro fica mais natural dentro do conteúdo */
+#gestaoFinanceira.finance-section{
+  margin-top:18px !important;
+  margin-bottom:30px !important;
+}
+
+/* Mais espaço para pedidos */
+#pedidos .grid-2{
+  grid-template-columns:minmax(360px,.72fr) minmax(740px,1.28fr) !important;
+}
+
+#pedidos .table-wrap{
+  max-width:100% !important;
+}
+
+/* Dashboard mais bonito no layout amplo */
+.cards{
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+}
+
+/* Responsivo */
+@media(max-width:1100px){
+  aside{
+    align-items:flex-start !important;
+    flex-direction:column !important;
+    padding:16px 18px !important;
+  }
+
+  .side-brand{
     min-width:0 !important;
-    max-width:100% !important;
   }
 
-  .panel > .box:first-child{
-    grid-column:1 !important;
-    grid-row:1 !important;
-    width:420px !important;
-  }
-
-  .panel > .box:nth-child(2){
-    grid-column:2 !important;
-    grid-row:1 !important;
+  aside nav{
     width:100% !important;
-    align-self:start !important;
+    justify-content:flex-start !important;
   }
 
-  .filters{
-    display:grid !important;
-    grid-template-columns:minmax(160px,1fr) minmax(170px,1fr) 190px 140px !important;
+  main{
+    padding:20px 16px !important;
+  }
+
+  .cards{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  #pedidos .grid-2{
+    grid-template-columns:1fr !important;
+  }
+}
+
+@media(max-width:650px){
+  aside{
     gap:12px !important;
+  }
+
+  .side-logo{
+    width:48px !important;
+    height:48px !important;
+  }
+
+  .side-brand strong{
+    font-size:16px !important;
+  }
+
+  .nav-btn{
+    padding:10px 12px !important;
+    font-size:13px !important;
+  }
+
+  .cards{
+    grid-template-columns:1fr !important;
+  }
+
+  .topbar{
+    gap:12px !important;
+  }
+}
+</style>
+
+
+<style id="admin-mobile-excelente-final">
+/* =====================================================
+   ADMIN ANDREZA CAKES — AJUSTE MOBILE PREMIUM FINAL
+   Mantém desktop bonito e reorganiza tudo no celular.
+===================================================== */
+
+/* Segurança geral contra corte lateral */
+html, body{
+  max-width:100% !important;
+  overflow-x:hidden !important;
+}
+
+img, video, canvas, svg{
+  max-width:100% !important;
+}
+
+/* Melhor toque no celular */
+button,
+.nav-btn,
+input,
+select,
+textarea{
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Tablet e celular */
+@media(max-width:900px){
+
+  body{
+    background:linear-gradient(135deg,#fff7f3,#ffe7ef) !important;
+  }
+
+  .app{
+    display:block !important;
+    width:100% !important;
+    min-height:100vh !important;
+  }
+
+  aside{
+    position:sticky !important;
+    top:0 !important;
+    z-index:9999 !important;
+    width:100% !important;
+    height:auto !important;
+    padding:12px 12px 10px !important;
+    border-right:0 !important;
+    border-bottom:1px solid var(--border) !important;
+    background:rgba(255,255,255,.96) !important;
+    backdrop-filter:blur(14px) !important;
+    box-shadow:0 10px 26px rgba(107,63,79,.08) !important;
+  }
+
+  .side-brand{
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 0 10px !important;
+    gap:10px !important;
     align-items:center !important;
   }
 
-  .table-wrap{
+  .side-logo{
+    width:44px !important;
+    height:44px !important;
+    min-width:44px !important;
+    border-radius:15px !important;
+  }
+
+  .side-brand strong{
+    font-size:16px !important;
+    line-height:1.1 !important;
+  }
+
+  .side-brand span{
+    font-size:12px !important;
+  }
+
+  aside nav{
     width:100% !important;
+    display:flex !important;
+    gap:8px !important;
     overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding:2px 2px 8px !important;
+    justify-content:flex-start !important;
+    scroll-snap-type:x mandatory !important;
+    -webkit-overflow-scrolling:touch !important;
+  }
+
+  aside nav::-webkit-scrollbar{
+    height:5px !important;
+  }
+
+  aside nav::-webkit-scrollbar-thumb{
+    background:#f1c4d5 !important;
+    border-radius:999px !important;
+  }
+
+  .nav-btn{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:max-content !important;
+    scroll-snap-align:start !important;
+    padding:10px 13px !important;
+    border-radius:999px !important;
+    font-size:13px !important;
+    white-space:nowrap !important;
+    justify-content:center !important;
+  }
+
+  main{
+    width:100% !important;
+    max-width:100% !important;
+    padding:16px 12px 30px !important;
+    overflow:visible !important;
+  }
+
+  #statusSupabaseAdmin{
+    width:100% !important;
+    justify-content:center !important;
+    margin:0 0 14px !important;
+    text-align:center !important;
+    white-space:normal !important;
+  }
+
+  .topbar{
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:12px !important;
+    margin-bottom:16px !important;
+  }
+
+  .topbar h2{
+    font-size:24px !important;
+    line-height:1.15 !important;
+  }
+
+  .topbar p{
+    font-size:14px !important;
+    line-height:1.45 !important;
+  }
+
+  .topbar button,
+  .btn-primary,
+  .btn-soft,
+  .btn-danger,
+  .finance-btn{
+    width:100% !important;
+    min-height:48px !important;
+    border-radius:999px !important;
+  }
+
+  .cards{
+    grid-template-columns:1fr 1fr !important;
+    gap:12px !important;
+  }
+
+  .card,
+  .panel,
+  .finance-section,
+  .finance-card{
+    border-radius:22px !important;
+    padding:16px !important;
+    width:100% !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+  }
+
+  .metric strong{
+    font-size:22px !important;
+    overflow-wrap:anywhere !important;
+  }
+
+  .grid-2,
+  #pedidos .grid-2{
+    grid-template-columns:1fr !important;
+    gap:16px !important;
+  }
+
+  .form-grid,
+  .finance-grid{
+    grid-template-columns:1fr !important;
+    gap:12px !important;
+  }
+
+  input,
+  select,
+  textarea{
+    width:100% !important;
+    max-width:100% !important;
+    min-height:48px !important;
+    font-size:16px !important;
+    border-radius:15px !important;
+  }
+
+  textarea{
+    min-height:110px !important;
+  }
+
+  label{
+    font-size:13px !important;
+  }
+
+  .toolbar{
+    flex-direction:column !important;
+    align-items:stretch !important;
+    gap:12px !important;
+  }
+
+  .toolbar input{
+    max-width:100% !important;
+    width:100% !important;
+  }
+
+  .finance-head{
+    align-items:flex-start !important;
+    gap:12px !important;
+  }
+
+  .finance-icon{
+    width:50px !important;
+    height:50px !important;
+    min-width:50px !important;
+    border-radius:18px !important;
+    font-size:24px !important;
+  }
+
+  .finance-head h2{
+    font-size:23px !important;
+    line-height:1.15 !important;
+  }
+
+  .finance-head p{
+    font-size:14px !important;
+  }
+
+  .finance-result{
+    align-items:flex-start !important;
+    flex-direction:column !important;
+    gap:5px !important;
+  }
+
+  .finance-result strong{
+    max-width:100% !important;
+    white-space:normal !important;
+    text-align:left !important;
+    font-size:17px !important;
+  }
+
+  /* Tabelas viram cards no celular */
+  .table-wrap{
+    overflow:visible !important;
+    width:100% !important;
+    max-width:100% !important;
+    padding-bottom:0 !important;
   }
 
   table{
-    min-width:760px !important;
+    min-width:0 !important;
+    width:100% !important;
+    border-collapse:separate !important;
+    border-spacing:0 12px !important;
+  }
+
+  thead{
+    display:none !important;
+  }
+
+  tbody,
+  tr,
+  td{
+    display:block !important;
+    width:100% !important;
+  }
+
+  tr{
+    background:#fff !important;
+    border:1px solid var(--border) !important;
+    border-radius:20px !important;
+    box-shadow:0 12px 28px rgba(107,63,79,.08) !important;
+    padding:12px !important;
+    margin-bottom:12px !important;
+    overflow:hidden !important;
+  }
+
+  td{
+    border-bottom:1px solid #f4d6e1 !important;
+    padding:10px 0 !important;
+    font-size:14px !important;
+    overflow-wrap:anywhere !important;
+  }
+
+  td:last-child{
+    border-bottom:0 !important;
+  }
+
+  td::before{
+    display:block !important;
+    color:var(--primary-dark) !important;
+    font-weight:900 !important;
+    font-size:12px !important;
+    text-transform:uppercase !important;
+    letter-spacing:.04em !important;
+    margin-bottom:4px !important;
+  }
+
+  /* Labels da tabela de pedidos */
+  #pedidos td:nth-child(1)::before{content:"Cliente";}
+  #pedidos td:nth-child(2)::before{content:"Produto";}
+  #pedidos td:nth-child(3)::before{content:"Detalhes";}
+  #pedidos td:nth-child(4)::before{content:"Entrega";}
+  #pedidos td:nth-child(5)::before{content:"Valor";}
+  #pedidos td:nth-child(6)::before{content:"Restante";}
+  #pedidos td:nth-child(7)::before{content:"Status";}
+  #pedidos td:nth-child(8)::before{content:"Ações";}
+
+  /* Labels clientes */
+  #clientes td:nth-child(1)::before{content:"Cliente";}
+  #clientes td:nth-child(2)::before{content:"Telefone";}
+  #clientes td:nth-child(3)::before{content:"Total de pedidos";}
+  #clientes td:nth-child(4)::before{content:"Total comprado";}
+
+  /* Labels produtos */
+  #produtos td:nth-child(1)::before{content:"Produto";}
+  #produtos td:nth-child(2)::before{content:"Categoria";}
+  #produtos td:nth-child(3)::before{content:"Preço";}
+  #produtos td:nth-child(4)::before{content:"Ações";}
+
+  /* Labels relatório mensal */
+  #relatorio td:nth-child(1)::before{content:"Cliente";}
+  #relatorio td:nth-child(2)::before{content:"Categoria";}
+  #relatorio td:nth-child(3)::before{content:"Produto";}
+  #relatorio td:nth-child(4)::before{content:"Detalhes";}
+  #relatorio td:nth-child(5)::before{content:"Entrega";}
+  #relatorio td:nth-child(6)::before{content:"Total";}
+  #relatorio td:nth-child(7)::before{content:"Pago";}
+  #relatorio td:nth-child(8)::before{content:"Restante";}
+  #relatorio td:nth-child(9)::before{content:"Status";}
+
+  .actions,
+  #pedidos .actions{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  .actions button,
+  #pedidos .actions button{
+    width:100% !important;
+    min-height:40px !important;
+    padding:9px 8px !important;
+    font-size:12px !important;
+    border-radius:13px !important;
+    white-space:normal !important;
+  }
+
+  .badge{
+    white-space:normal !important;
+    text-align:center !important;
+  }
+
+  .empty{
+    padding:22px 14px !important;
   }
 }
 
-@media (max-width: 900px){
+/* Celulares pequenos */
+@media(max-width:520px){
   main{
-    width:100% !important;
-    padding:16px 14px 80px !important;
+    padding:14px 10px 28px !important;
   }
 
-  .panel{
-    display:flex !important;
+  aside{
+    padding:11px 10px 9px !important;
+  }
+
+  .cards{
+    grid-template-columns:1fr !important;
+  }
+
+  .card,
+  .panel,
+  .finance-section,
+  .finance-card{
+    padding:14px !important;
+    border-radius:20px !important;
+  }
+
+  .topbar h2{
+    font-size:22px !important;
+  }
+
+  .finance-head{
     flex-direction:column !important;
-    gap:18px !important;
-    width:100% !important;
   }
 
-  .panel > .box{
-    position:static !important;
-    transform:none !important;
-    width:100% !important;
-    max-width:100% !important;
-    margin:0 !important;
+  .finance-head h2{
+    font-size:21px !important;
   }
 
-  .filters{
-    display:grid !important;
+  .actions,
+  #pedidos .actions{
     grid-template-columns:1fr !important;
-    gap:10px !important;
   }
 
-  .row,
-  .valor-forma-row{
-    display:grid !important;
-    grid-template-columns:1fr !important;
-    gap:10px !important;
+  .nav-btn{
+    font-size:12.5px !important;
+    padding:9px 11px !important;
   }
 
-  input,select,textarea,button{
-    max-width:100% !important;
+  .side-brand strong{
+    font-size:15px !important;
   }
-}
 
-.comprovante-card{
-  margin:16px 0 14px !important;
-  padding:16px !important;
-  border-radius:18px !important;
-  border:1px solid rgba(247,201,72,.35) !important;
-  background:linear-gradient(135deg,rgba(247,201,72,.12),rgba(255,255,255,.04)) !important;
-}
-
-.comprovante-title{
-  color:#f7c948 !important;
-  font-weight:900 !important;
-  font-size:15px !important;
-  margin-bottom:8px !important;
-}
-
-.comprovante-card p{
-  margin:0 0 12px !important;
-  color:#cbd5e1 !important;
-  font-size:13px !important;
-}
-
-.comprovante-card input[type="file"]{
-  width:100% !important;
-  background:#f4f6fb !important;
-  color:#111827 !important;
-  border:2px dashed rgba(247,201,72,.6) !important;
-  border-radius:14px !important;
-  padding:12px !important;
+  .metric strong{
+    font-size:21px !important;
+  }
 }
 </style>
 
 
-<style id="status-e-saldo-css">
-.status-pagamento-wrap{
-  margin:16px 0 14px;
-  padding:14px;
-  border-radius:18px;
-  border:1px solid rgba(247,201,72,.26);
-  background:linear-gradient(135deg,rgba(247,201,72,.10),rgba(255,255,255,.035));
+<style id="admin-pedidos-mobile-premium-final">
+/* =====================================================
+   MELHORIA MOBILE DA ABA PEDIDOS
+   Lista primeiro + formulário compacto/abrível
+===================================================== */
+
+.mobile-open-order,
+.mobile-toggle-order,
+.mobile-form-head{
+  display:none;
 }
-.status-pagamento-wrap label{margin-top:0;color:#f7c948;}
-.status-hint{color:#b9c4d8;font-size:12px;margin-top:7px;line-height:1.4;}
-.status-badge{
-  display:inline-flex;align-items:center;justify-content:center;
-  padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;
-  border:1px solid rgba(255,255,255,.16);white-space:nowrap;
-}
-.status-pago{background:rgba(57,217,138,.16);color:#8ff0bc;border-color:rgba(57,217,138,.35);}
-.status-pendente{background:rgba(247,201,72,.16);color:#ffe58a;border-color:rgba(247,201,72,.38);}
-.status-atrasado{background:rgba(255,92,122,.16);color:#ffc1cc;border-color:rgba(255,92,122,.38);}
-.status-btn{cursor:pointer;min-width:96px;}
-.sem-status{color:#b9c4d8;font-size:12px;}
-@media(min-width:901px){
-  .grid{grid-template-columns:repeat(5,minmax(0,1fr)) !important;}
-  .grid .value{font-size:25px !important;}
-}
+
 @media(max-width:900px){
-  .grid{grid-template-columns:1fr !important;}
-  .status-badge{width:100%;min-height:38px;}
+
+  /* No celular, a lista vem primeiro e o cadastro só abre quando precisar */
+  #pedidos .pedidos-mobile-layout{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:14px !important;
+  }
+
+  #pedidos .lista-pedidos-panel{
+    order:1 !important;
+  }
+
+  #pedidos .novo-pedido-panel{
+    order:2 !important;
+  }
+
+  .mobile-open-order{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    width:100% !important;
+    min-height:46px !important;
+    border-radius:999px !important;
+  }
+
+  .mobile-form-head{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:10px !important;
+    margin-bottom:14px !important;
+  }
+
+  .mobile-form-head h3{
+    margin:0 !important;
+    font-size:19px !important;
+  }
+
+  .mobile-toggle-order{
+    display:inline-flex !important;
+    width:auto !important;
+    min-height:38px !important;
+    padding:8px 13px !important;
+    border-radius:999px !important;
+    font-size:12px !important;
+  }
+
+  #novoPedidoPanel{
+    display:none !important;
+  }
+
+  body.mobile-order-open #novoPedidoPanel{
+    display:block !important;
+  }
+
+  body.mobile-order-open .lista-pedidos-panel{
+    display:none !important;
+  }
+
+  /* Topo da aba pedidos mais limpo */
+  #pedidos .topbar{
+    background:rgba(255,255,255,.72) !important;
+    border:1px solid var(--border) !important;
+    border-radius:22px !important;
+    padding:14px !important;
+    box-shadow:0 10px 24px rgba(107,63,79,.07) !important;
+  }
+
+  #pedidos .topbar h2{
+    font-size:24px !important;
+  }
+
+  #pedidos .topbar p{
+    font-size:13px !important;
+  }
+
+  /* Formulário mais compacto */
+  #novoPedidoPanel .form-grid{
+    gap:10px !important;
+  }
+
+  #novoPedidoPanel label{
+    margin:8px 0 5px !important;
+    font-size:12px !important;
+  }
+
+  #novoPedidoPanel input,
+  #novoPedidoPanel select,
+  #novoPedidoPanel textarea{
+    min-height:44px !important;
+    padding:10px 12px !important;
+    border-radius:14px !important;
+    font-size:15px !important;
+  }
+
+  #novoPedidoPanel textarea{
+    min-height:88px !important;
+  }
+
+  #novoPedidoPanel .btn-full{
+    margin-top:8px !important;
+    min-height:48px !important;
+  }
+
+  /* Lista de pedidos mais bonita no celular */
+  #pedidos .lista-pedidos-panel{
+    padding:14px !important;
+  }
+
+  #pedidos .toolbar{
+    background:transparent !important;
+    padding:0 !important;
+  }
+
+  #pedidos .toolbar h3{
+    font-size:20px !important;
+    margin:0 !important;
+  }
+
+  #pedidos #searchOrders{
+    min-height:44px !important;
+    border-radius:999px !important;
+    background:#fff !important;
+  }
+
+  #pedidos tbody tr{
+    position:relative !important;
+    padding:14px !important;
+    border-radius:22px !important;
+    background:
+      radial-gradient(circle at top right, rgba(255,141,180,.10), transparent 34%),
+      #fff !important;
+    box-shadow:0 14px 30px rgba(107,63,79,.10) !important;
+  }
+
+  #pedidos tbody td{
+    display:grid !important;
+    grid-template-columns:95px minmax(0,1fr) !important;
+    align-items:start !important;
+    gap:8px !important;
+    padding:8px 0 !important;
+    font-size:13.5px !important;
+    line-height:1.35 !important;
+  }
+
+  #pedidos tbody td::before{
+    margin:0 !important;
+    font-size:10.5px !important;
+    line-height:1.25 !important;
+    color:#a83f66 !important;
+  }
+
+  #pedidos tbody td:nth-child(1){
+    font-weight:900 !important;
+    font-size:14px !important;
+    color:#2f1f26 !important;
+  }
+
+  #pedidos tbody td:nth-child(5),
+  #pedidos tbody td:nth-child(6){
+    font-weight:900 !important;
+    color:#8d2b58 !important;
+  }
+
+  #pedidos tbody td:nth-child(8){
+    display:block !important;
+  }
+
+  #pedidos tbody td:nth-child(8)::before{
+    display:block !important;
+    margin-bottom:8px !important;
+  }
+
+  #pedidos .actions{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:8px !important;
+    width:100% !important;
+  }
+
+  #pedidos .actions button{
+    min-height:38px !important;
+    border-radius:999px !important;
+    font-size:11.5px !important;
+    padding:8px !important;
+    background:#ffe4ef !important;
+    color:#8d2b58 !important;
+  }
+
+  #pedidos .actions button:first-child{
+    background:linear-gradient(135deg,#19b85a,#25d366) !important;
+    color:#fff !important;
+  }
+
+  #pedidos .actions .btn-danger,
+  #pedidos .actions button[onclick*="delete"],
+  #pedidos .actions button[onclick*="remove"]{
+    background:#ffe0e0 !important;
+    color:#b3304b !important;
+  }
+}
+
+@media(max-width:420px){
+  #pedidos tbody td{
+    grid-template-columns:82px minmax(0,1fr) !important;
+    font-size:13px !important;
+  }
+
+  #pedidos .actions{
+    grid-template-columns:1fr !important;
+  }
+
+  #pedidos .actions button{
+    min-height:40px !important;
+  }
+}
+</style>
+
+
+
+<style id="admin-detalhes-origem-final-css">
+#pedidos td,
+#relatorio td{
+  overflow-wrap:anywhere;
+}
+
+#pedidos td span,
+#relatorio td span{
+  line-height:1.35;
+}
+
+.finance-result strong{
+  max-width:52% !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+
+@media(max-width:900px){
+  .finance-result strong{
+    max-width:100% !important;
+    white-space:normal !important;
+  }
+}
+</style>
+
+
+<style id="supabase-diagnostico-claro">
+#statusSupabaseAdmin.local-warning::after{
+  content:" — confira se as tabelas pedidos e produtos existem no Supabase novo";
+  font-weight:700;
 }
 </style>
 
 </head>
 <body>
+  <section id="loginPage" class="login-page">
+    <div class="login-card">
+      <div class="brand-icon"><img src="logo-andreza-cakes.png" style="width:100%; height:100%; object-fit:contain;"></div>
+      <h1>Área Administrativa</h1>
+      <p>Entre com seu usuário e senha para acessar o painel.</p>
 
-<div class="login-screen" id="loginScreen">
-  <div class="login-box">
-    <h1>🔒 Área Administrativa</h1>
-    <p>Painel interno da tesouraria da igreja.</p>
-    <input type="password" id="senha" placeholder="Digite a senha">
-    <button onclick="entrar()">Entrar</button>
-    <div class="error" id="erro">Senha incorreta.</div>
-  </div>
-</div>
+      <label for="user">Usuário</label>
+      <input id="user" type="text" placeholder="Digite o usuário" autocomplete="username" />
 
-<div id="app">
-<button class="logout-btn" onclick="sair()">Sair</button>
+      <label for="pass">Senha</label>
+      <input id="pass" type="password" placeholder="Digite a senha" autocomplete="current-password" />
 
-<header>
-  <div class="header-inner">
-    <div>
-      <h1>Painel da Tesouraria</h1>
-      <p class="sub">Igreja Renovada Aliança com Cristo</p>
+      <button class="btn-primary btn-full" onclick="login()">Entrar no sistema</button>
+      <div id="loginError" class="error hidden">Usuário ou senha incorretos.</div>
+      <div class="hint">Acesso protegido. Use o usuário e senha cadastrados.</div>
     </div>
-    <div>🔒 Área interna</div>
-  </div>
-</header>
+  </section>
 
-<main>
-<section class="hero">
-  <h2>Controle financeiro da igreja</h2>
-  <p>Registre dízimos, ofertas, entradas e saídas. Os dados ficam salvos neste navegador. Exporte o relatório com frequência para backup.</p>
+  <section id="appPage" class="app hidden">
+    <aside>
+      <div class="side-brand">
+        <div class="side-logo"><img src="logo-andreza-cakes.png" style="width:100%; height:100%; object-fit:contain;"></div>
+        <div>
+          <strong>Andreza Cakes</strong>
+          <span>Confeitaria</span>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" onclick="showSection('dashboard', this)">🏠 Início</button>
+        <button class="nav-btn" onclick="showSection('pedidos', this)">🧁 Pedidos</button>
+        <button class="nav-btn" onclick="showSection('clientes', this)">👤 Clientes</button>
+        <button class="nav-btn" onclick="showSection('produtos', this)">📦 Produtos</button>
+        <button class="nav-btn" onclick="showSection('agenda', this)">📅 Agenda</button>
+        <button class="nav-btn" onclick="showSection('financeiro', this)">💰 Financeiro</button>
+        <button class="nav-btn" onclick="showSection('relatorio', this)">📊 Relatórios</button>
+        <button class="nav-btn" onclick="showSection('config', this)">⚙️ Configurações</button>
+        <button class="nav-btn" onclick="logout()">🚪 Sair</button>
+      </nav>
+    </aside>
+
+    <main>
+
+      <div id="statusSupabaseAdmin" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;font-weight:800;font-size:13px;margin-bottom:16px;background:#fff1c9;color:#c58b12;">
+        🟡 Verificando conexão...
+      </div>
+
+      
+
+<section id="dashboard" class="section active">
+        <div class="topbar">
+          <div>
+            <h2>Painel Geral</h2>
+            <p>Resumo rápido da confeitaria.</p>
+          </div>
+          <button class="btn-primary" onclick="quickNewOrder()">+ Novo pedido</button>
+        </div>
+
+        <div class="cards">
+          <div class="card metric"><span>Pedidos cadastrados</span><strong id="mTotalPedidos">0</strong></div>
+          <div class="card metric"><span>Em produção</span><strong id="mProducao">0</strong></div>
+          <div class="card metric"><span>Receita total</span><strong id="mReceita">R$ 0,00</strong></div>
+          <div class="card metric"><span>Saldo a receber</span><strong id="mReceber">R$ 0,00</strong></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Próximas entregas</h3>
+            <div id="nextDeliveries" style="margin-top:14px"></div>
+          </div>
+          <div class="panel">
+            <h3>Alertas importantes</h3>
+            <div id="alerts" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pedidos" class="section">
+        <div class="topbar">
+          <div>
+            <h2>Pedidos</h2>
+            <p>Cadastre e acompanhe os pedidos da confeitaria.</p>
+          </div>
+        </div>
+
+        <div class="grid-2 pedidos-mobile-layout">
+          <div class="panel novo-pedido-panel" id="novoPedidoPanel">
+            <div class="mobile-form-head"><h3>Novo pedido</h3><button type="button" class="btn-soft mobile-toggle-order" onclick="toggleNovoPedido()">Fechar</button></div>
+            <div class="form-grid">
+              <div><label>Cliente</label><input id="orderClient" placeholder="Nome do cliente" /></div>
+              <div><label>Telefone</label><input id="orderPhone" placeholder="WhatsApp" /></div>
+              <div><label>Categoria</label>
+                <select id="orderCategory">
+                  <option value="Bolos">Bolos</option>
+                  <option value="Salgados">Salgados</option>
+                  <option value="Doces">Doces</option>
+                  <option value="Personalizados">Personalizados</option>
+                  <option value="Kit Festa">Kit Festa</option>
+                  <option value="Cestas personalizadas">Cestas personalizadas</option>
+                  <option value="Ovo de colher">Ovo de colher</option>
+                  <option value="Outros">Outros</option>
+                </select>
+              </div>
+              <div><label>Produto</label><input id="orderProduct" placeholder="Ex: Bolo 2kg, cento de salgados..." /></div>
+              <div><label>Massa</label>
+                <select id="orderFlavor">
+                  <option value="">Selecione a massa</option>
+                  <option value="Branca">Branca</option>
+                  <option value="Chocolate">Chocolate</option>
+                  <option value="Red Velvet">Red Velvet</option>
+                </select>
+              </div>
+              <div><label>Recheio</label>
+                <select id="orderFilling">
+                  <option value="">Selecione o recheio</option>
+                  <option value="Chocolate">Chocolate</option>
+                  <option value="Chocolate branco">Chocolate branco</option>
+                  <option value="Bem casado">Bem casado</option>
+                  <option value="Prestígio">Prestígio</option>
+                  <option value="Sensação">Sensação</option>
+                  <option value="Bicho de pé">Bicho de pé</option>
+                  <option value="Doce de leite">Doce de leite</option>
+                  <option value="Maracujá">Maracujá</option>
+                  <option value="Limão">Limão</option>
+                  <option value="Napolitano">Napolitano</option>
+                  <option value="Oreo">Oreo</option>
+                  <option value="Paçoca">Paçoca</option>
+                </select>
+              </div>
+              <div><label>Tema</label><input id="orderTheme" placeholder="Ex: Princesa, futebol..." /></div>
+              <div><label>Data de entrega</label><input id="orderDate" type="date" /></div>
+              <div><label>Horário</label><input id="orderTime" type="time" /></div>
+              <div><label>Valor total</label><input id="orderTotal" type="number" min="0" step="0.01" placeholder="0,00" /></div>
+              <div><label>Entrada paga</label><input id="orderPaid" type="number" min="0" step="0.01" placeholder="0,00" /></div>
+              <div><label>Status</label><select id="orderStatus"><option value="pendente">Pendente</option><option value="producao">Em produção</option><option value="entregue">Entregue</option><option value="cancelado">Cancelado</option></select></div>
+              <div class="full"><label>Observações</label><textarea id="orderNotes" placeholder="Detalhes da decoração, recheio, entrega, referência etc."></textarea></div>
+              <div class="full"><button class="btn-primary btn-full" onclick="addOrder()">Salvar pedido</button></div>
+            </div>
+          </div>
+
+          <div class="panel lista-pedidos-panel">
+            <div class="toolbar">
+              <h3>Lista de pedidos</h3>
+              <button type="button" class="btn-primary mobile-open-order" onclick="toggleNovoPedido()">+ Novo pedido</button>
+              <input id="searchOrders" oninput="renderAll()" placeholder="Buscar pedido..." />
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Cliente</th><th>Produto</th><th>Detalhes</th><th>Entrega</th><th>Valor</th><th>Restante</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="ordersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="clientes" class="section">
+        <div class="topbar"><div><h2>Clientes</h2><p>Clientes são criados automaticamente quando você cadastra um pedido.</p></div></div>
+        <div class="panel table-wrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>Telefone</th><th>Total de pedidos</th><th>Total comprado</th></tr></thead>
+            <tbody id="clientsTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="produtos" class="section">
+        <div class="topbar"><div><h2>Produtos</h2><p>Monte sua tabela interna de produtos e preços.</p></div></div>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Novo produto</h3>
+            <label>Nome do produto</label><input id="productName" placeholder="Ex: Bolo personalizado 1kg" />
+            <label>Preço base</label><input id="productPrice" type="number" step="0.01" placeholder="0,00" />
+            <label>Categoria</label><input id="productCategory" placeholder="Bolos, salgados, doces..." />
+            <button class="btn-primary btn-full" onclick="addProduct()">Salvar produto</button>
+          </div>
+          <div class="panel table-wrap">
+            <table>
+              <thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Ações</th></tr></thead>
+              <tbody id="productsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="agenda" class="section">
+        <div class="topbar"><div><h2>Agenda</h2><p>Veja as entregas organizadas por data.</p></div></div>
+        <div class="panel" id="agendaList"></div>
+      </section>
+
+      <section id="financeiro" class="section">
+        <div class="topbar"><div><h2>Financeiro</h2><p>Resumo financeiro baseado nos pedidos cadastrados.</p></div></div>
+
+<section class="finance-section" id="gestaoFinanceira">
+  <div class="finance-head">
+    <div class="finance-icon">💰</div>
+    <div>
+      <h2>Gestão Financeira Inteligente</h2>
+      <p>Acompanhe hoje, últimos 7 dias, quinzena e mês completo com divisão automática do dinheiro.</p>
+    </div>
+  </div>
+
+  <div class="finance-grid">
+    <div class="finance-card">
+      <h3>Configurar divisão financeira</h3>
+
+      <div class="finance-form">
+        <div>
+          <label>Mês financeiro</label>
+          <input id="financeMes" type="month" onchange="atualizarFinanceiroAutomatico()">
+        </div>
+
+        <div>
+          <label>Período</label>
+          <select id="financePeriodo" onchange="atualizarFinanceiroAutomatico()">
+            <option value="mes">Mês completo</option>
+            <option value="q1">1ª quinzena</option>
+            <option value="q2">2ª quinzena</option>
+            <option value="7dias">Últimos 7 dias</option>
+            <option value="hoje">Hoje</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Total vendido no período</label>
+          <input id="financeValor" type="number" min="0" step="0.01" value="0" readonly>
+        </div>
+
+        <div>
+          <label>Reposição de produtos (%)</label>
+          <input id="financeReposicao" type="number" min="0" max="100" value="45">
+        </div>
+
+        <div>
+          <label>Custos fixos: água, luz, gás etc. (%)</label>
+          <input id="financeCustos" type="number" min="0" max="100" value="15">
+        </div>
+
+        <div>
+          <label>Reserva emergencial (%)</label>
+          <input id="financeReserva" type="number" min="0" max="100" value="10">
+        </div>
+
+        <div>
+          <label>Lucro livre (%)</label>
+          <input id="financeLucro" type="number" min="0" max="100" value="30">
+        </div>
+
+        <button class="finance-btn" onclick="calcularGestaoFinanceira()">Atualizar resumo</button>
+      </div>
+
+      <div class="finance-tip">
+        Os valores são calculados automaticamente usando os pedidos do mês selecionado. Você pode ajustar as porcentagens conforme a realidade da Andreza Cakes.
+      </div>
+    </div>
+
+    <div class="finance-card">
+      <h3>Resultado automático do período</h3>
+
+      <div class="finance-results">
+        <div class="finance-result">
+          <span>Pedidos no mês</span>
+          <strong id="resPedidosMes">0</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Ticket médio</span>
+          <strong id="resTicketMedio">R$ 0,00</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Produto mais vendido</span>
+          <strong id="resProdutoMaisVendido">-</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Melhor dia de venda</span>
+          <strong id="resMelhorDia">-</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Reposição de produtos</span>
+          <strong id="resReposicao">R$ 90,00</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Custos fixos</span>
+          <strong id="resCustos">R$ 30,00</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Reserva emergencial</span>
+          <strong id="resReserva">R$ 20,00</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Lucro livre</span>
+          <strong id="resLucro">R$ 60,00</strong>
+        </div>
+
+        <div class="finance-result">
+          <span>Total distribuído</span>
+          <strong id="resTotal">R$ 200,00</strong>
+        </div>
+      </div>
+
+      <div class="finance-tip" id="financeAviso">
+        Quando vender, separe o dinheiro antes de gastar. Assim você repõe produtos, paga despesas, cria reserva e ainda sabe o lucro real.
+      </div>
+    </div>
+  </div>
 </section>
-
-<section class="grid">
-  <div class="card"><div class="label">Entradas do mês</div><div class="value green" id="entradasMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Saídas pagas</div><div class="value red" id="saidasMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Pendentes</div><div class="value gold" id="pendentesMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Atrasadas</div><div class="value red" id="atrasadasMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Saldo disponível</div><div class="value" id="saldoGeral">R$ 0,00</div></div>
-</section>
-
-<section class="panel">
-<div class="box">
-<h3>Novo lançamento</h3>
-<form id="formLancamento">
-<div class="row">
-  <div>
-    <label>Tipo</label>
-    <select id="tipo" required>
-      <option value="entrada">Entrada</option>
-      <option value="saida">Saída</option>
-    </select>
-  </div>
-  <div>
-    <label>Data</label>
-    <input type="date" id="data" required>
-  </div>
-</div>
-
-<label>Categoria</label>
-<select id="categoria" required>
-  <option>Dízimo</option>
-  <option>Oferta</option>
-  <option>Oferta especial</option>
-  <option>Campanha</option>
-  <option>Doação</option>
-  <option>Aluguel</option>
-  <option>Água</option>
-  <option>Luz</option>
-  <option>Material de limpeza</option>
-  <option>Som/Instrumentos</option>
-  <option>Obra/Reforma</option>
-  <option>Ajuda social</option>
-  <option>Outro</option>
-</select>
-
-<label>Descrição</label>
-<input type="text" id="descricao" placeholder="Ex.: Dízimo culto de domingo">
-
-<div class="row valor-forma-row">
-  <div>
-    <label>Valor</label>
-    <input type="number" id="valor" step="0.01" min="0" placeholder="0,00" required>
-  </div>
-  <div>
-    <label>Forma</label>
-    <select id="forma">
-      <option>PIX</option>
-      <option>Dinheiro</option>
-      <option>Cartão</option>
-      <option>Transferência</option>
-      <option>Outro</option>
-    </select>
-  </div>
-</div>
-
-<div class="comprovante-card">
-  <div class="comprovante-title">📎 Anexar comprovante</div>
-  <p>PIX, transferência, recibo ou PDF.</p>
-  <input type="file" id="comprovante" accept="image/*,.pdf">
-</div>
+        <div class="cards">
+          <div class="card metric"><span>Receita prevista</span><strong id="fTotal">R$ 0,00</strong></div>
+          <div class="card metric"><span>Já recebido</span><strong id="fPaid">R$ 0,00</strong></div>
+          <div class="card metric"><span>A receber</span><strong id="fDue">R$ 0,00</strong></div>
+          <div class="card metric"><span>Pedidos entregues</span><strong id="fDelivered">0</strong></div>
+        </div>
+      </section>
 
 
-<div class="status-pagamento-wrap">
-  <label>Status da saída</label>
-  <select id="status_pagamento">
-    <option value="Pendente">Pendente</option>
-    <option value="Atrasado">Atrasado</option>
-    <option value="Pago">Pago</option>
-  </select>
-  <div class="status-hint">Este status só aparece no relatório para SAÍDAS. Entradas ficam sem status.</div>
-</div>
+      <section id="relatorio" class="section">
+        <div class="topbar">
+          <div>
+            <h2>Relatório Mensal</h2>
+            <p>Veja o resumo financeiro por mês e gere uma impressão simples.</p>
+          </div>
+          <button class="btn-primary" onclick="printMonthlyReport()">Imprimir relatório</button>
+        </div>
 
-<label>Observação</label>
-<textarea id="obs" placeholder="Anote detalhes se precisar"></textarea>
+        <div class="panel">
+          <div class="form-grid">
+            <div>
+              <label>Escolha o mês</label>
+              <input id="reportMonth" type="month" onchange="renderMonthlyReport()" />
+            </div>
+          </div>
+        </div>
 
-<div class="actions">
-  <button class="primary" type="submit">Salvar lançamento</button>
-  <button class="secondary" type="button" onclick="limparFormulario()">Limpar</button>
-</div>
-</form>
-<p class="note">Este painel salva os dados no navegador usado. Para backup, exporte o CSV.</p>
-</div>
+        <div class="cards" style="margin-top:18px">
+          <div class="card metric"><span>Pedidos no mês</span><strong id="rOrders">0</strong></div>
+          <div class="card metric"><span>Receita prevista</span><strong id="rTotal">R$ 0,00</strong></div>
+          <div class="card metric"><span>Já recebido</span><strong id="rPaid">R$ 0,00</strong></div>
+          <div class="card metric"><span>A receber</span><strong id="rDue">R$ 0,00</strong></div>
+        </div>
 
-<div class="box">
-<h3>Relatório</h3>
+        <div class="panel table-wrap">
+          <h3 style="margin-bottom:14px">Pedidos do mês</h3>
+          <table>
+            <thead>
+              <tr><th>Cliente</th><th>Categoria</th><th>Produto</th><th>Detalhes</th><th>Entrega</th><th>Total</th><th>Pago</th><th>Restante</th><th>Status</th></tr>
+            </thead>
+            <tbody id="monthlyTable"></tbody>
+          </table>
+        </div>
+      </section>
 
-<div class="filters">
-<select id="filtroTipo" onchange="renderizar()">
-  <option value="">Todos os tipos</option>
-  <option value="entrada">Entradas</option>
-  <option value="saida">Saídas</option>
-</select>
+      <div id="printArea"></div>
 
-<select id="filtroCategoria" onchange="renderizar()">
-  <option value="">Todas as categorias</option>
-  <option>Dízimo</option>
-  <option>Oferta</option>
-  <option>Oferta especial</option>
-  <option>Campanha</option>
-  <option>Doação</option>
-  <option>Aluguel</option>
-  <option>Água</option>
-  <option>Luz</option>
-  <option>Material de limpeza</option>
-  <option>Som/Instrumentos</option>
-  <option>Obra/Reforma</option>
-  <option>Ajuda social</option>
-  <option>Outro</option>
-</select>
+      <section id="config" class="section">
+        <div class="topbar"><div><h2>Configurações</h2><p>Opções do sistema.</p></div></div>
+        <div class="panel">
+          <h3>Dados e segurança</h3>
+          <p class="small-note">
+            Esta versão salva os dados no navegador do aparelho usando armazenamento local.
+            Para login real com nuvem e múltiplos aparelhos sincronizados, o próximo passo é conectar Firebase ou Supabase.
+          </p>
+          <button class="btn-soft" onclick="exportData()">Exportar backup</button>
+          <button class="btn-danger" onclick="clearData()">Apagar todos os dados</button>
+        </div>
+      </section>
+    </main>
+  </section>
 
-<input type="month" id="filtroMes" onchange="renderizar()">
-<button class="secondary" onclick="limparFiltros()">Limpar filtros</button>
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
 
-<div class="actions">
-  <button class="primary" onclick="exportarCSV()">Exportar CSV</button>
-  <button class="secondary" onclick="imprimirRelatorio()">Imprimir/PDF</button>
-  <button class="danger" onclick="apagarTudo()">Apagar tudo</button>
-</div>
+    const SUPABASE_URL = "https://zybwkqjkwpdusnxjgnfu.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_9Fe8WMnzl0geZvxGqCkjAg_PyeJC-mf";
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    let usandoSupabase = !!supabaseClient;
 
-<br>
+    async function carregarDadosSupabase() {
+      if (!supabaseClient) return false;
 
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-  <th>Data</th>
-  <th>Tipo</th>
-  <th>Categoria</th>
-  <th>Descrição</th>
-  <th>Forma</th>
-  <th>Valor</th>
-  <th>Status</th>
-  <th>Ação</th>
-</tr>
-</thead>
-<tbody id="tabela"></tbody>
-</table>
-</div>
-</div>
-</section>
-</main>
-</div>
+      try {
+        const pedidosResp = await supabaseClient
+          .from('pedidos')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-<script>
-const SENHA="Alianca2026";
+        const produtosResp = await supabaseClient
+          .from('produtos')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-function entrar(){
-  const s=document.getElementById("senha").value;
-  if(s===SENHA){
-    sessionStorage.setItem("tesouraria_logada","sim");
-    liberar();
+        if (pedidosResp.error || produtosResp.error) {
+          console.warn('Supabase ainda não está pronto. Usando modo local.', pedidosResp.error || produtosResp.error);
+          usandoSupabase = false;
+          return false;
+        }
+
+        orders = (pedidosResp.data || []).map(p => ({
+          id: p.id,
+          client: p.client || '',
+          phone: p.phone || '',
+          category: p.category || '',
+          product: p.product || '',
+          flavor: p.flavor || '',
+          filling: p.filling || '',
+          theme: p.theme || '',
+          date: p.date || '',
+          time: p.time || '',
+          total: Number(p.total || 0),
+          paid: Number(p.paid || 0),
+          status: p.status || 'pendente',
+          notes: p.notes || '',
+          device_type: p.device_type || p.dispositivo_tipo || '',
+          device_label: p.device_label || p.dispositivo || '',}));
+
+        products = (produtosResp.data || []).map(p => ({
+          id: p.id,
+          name: p.name || '',
+          price: Number(p.price || 0),
+          category: p.category || ''
+        }));
+
+        usandoSupabase = true;
+        return true;
+      } catch (e) {
+        console.warn('Erro ao carregar Supabase. Usando modo local.', e);
+        usandoSupabase = false;
+        return false;
+      }
+    }
+
+    async function salvarPedidoSupabase(order) {
+      if (!supabaseClient || !usandoSupabase) return false;
+
+      const { error } = await supabaseClient.from('pedidos').insert([{
+        id: order.id,
+        client: order.client,
+        phone: order.phone,
+        category: order.category,
+        product: order.product,
+        flavor: order.flavor,
+        filling: order.filling,
+        theme: order.theme,
+        date: order.date,
+        time: order.time,
+        total: order.total,
+        paid: order.paid,
+        status: order.status,
+        notes: order.notes
+      }]);
+
+      if (error) {
+        console.warn('Pedido não salvou no Supabase. Salvando local.', error);
+        return false;
+      }
+
+      return true;
+    }
+
+    async function apagarPedidoSupabase(id) {
+      if (!supabaseClient || !usandoSupabase) return false;
+      const { error } = await supabaseClient.from('pedidos').delete().eq('id', id);
+      if (error) console.warn('Erro ao apagar pedido no Supabase.', error);
+      return !error;
+    }
+
+    async function atualizarStatusSupabase(id, status) {
+      if (!supabaseClient || !usandoSupabase) return false;
+      const { error } = await supabaseClient.from('pedidos').update({ status }).eq('id', id);
+      if (error) console.warn('Erro ao atualizar status no Supabase.', error);
+      return !error;
+    }
+
+    async function salvarProdutoSupabase(product) {
+      if (!supabaseClient || !usandoSupabase) return false;
+
+      const { error } = await supabaseClient.from('produtos').insert([{
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        category: product.category
+      }]);
+
+      if (error) {
+        console.warn('Produto não salvou no Supabase. Salvando local.', error);
+        return false;
+      }
+
+      return true;
+    }
+
+    async function apagarProdutoSupabase(id) {
+      if (!supabaseClient || !usandoSupabase) return false;
+      const { error } = await supabaseClient.from('produtos').delete().eq('id', id);
+      if (error) console.warn('Erro ao apagar produto no Supabase.', error);
+      return !error;
+    }
+
+    function indicadorSupabase() {
+      const el = document.getElementById('statusSupabaseAdmin');
+      if (!el) return;
+
+      if (usandoSupabase) {
+        el.innerHTML = '🟢 Conectado ao Supabase';
+        el.style.background = '#ddf7e9';
+        el.style.color = '#2e9d65';
+      } else {
+        el.innerHTML = '🟡 Modo local ativo';
+        el.style.background = '#fff1c9';
+        el.style.color = '#c58b12';
+      }
+    }
+
+
+    const USUARIOS = [
+      { usuario: 'Andreza', senha: 'Andreza2026@' },
+      { usuario: 'Maximylian', senha: 'Max2026@' }
+    ];
+    
+    let orders = JSON.parse(localStorage.getItem('ac_orders') || '[]');
+    let products = JSON.parse(localStorage.getItem('ac_products') || '[]');
+
+    function money(v) {
+      return Number(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function save() {
+      localStorage.setItem('ac_orders', JSON.stringify(orders));
+      localStorage.setItem('ac_products', JSON.stringify(products));
+    }
+
+    function login() {
+      const u = document.getElementById('user').value.trim();
+      const p = document.getElementById('pass').value.trim();
+
+      const autorizado = USUARIOS.some(user =>
+        user.usuario === u && user.senha === p
+      );
+
+      if (autorizado) {
+        localStorage.setItem('ac_logged', 'yes');
+        document.getElementById('loginPage').classList.add('hidden');
+        document.getElementById('appPage').classList.remove('hidden');
+        carregarDadosSupabase().then(() => {
+          indicadorSupabase();
+          renderAll();
+        });
+      } else {
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !document.getElementById('loginPage').classList.contains('hidden')) {
+        login();
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('ac_logged');
+      location.reload();
+    }
+
+    function showSection(id, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderAll();
+    }
+
+    function quickNewOrder() {
+      showSection('pedidos', document.querySelectorAll('.nav-btn')[1]);
+      document.getElementById('orderClient').focus();
+    }
+
+    async function addOrder() {
+      const order = {
+        id: Date.now(),
+        client: document.getElementById('orderClient').value.trim(),
+        phone: document.getElementById('orderPhone').value.trim(),
+        category: document.getElementById('orderCategory').value,
+        product: document.getElementById('orderProduct').value.trim(),
+        flavor: document.getElementById('orderFlavor').value.trim(),
+        filling: document.getElementById('orderFilling').value.trim(),
+        theme: document.getElementById('orderTheme').value.trim(),
+        date: document.getElementById('orderDate').value,
+        time: document.getElementById('orderTime').value,
+        total: Number(document.getElementById('orderTotal').value || 0),
+        paid: Number(document.getElementById('orderPaid').value || 0),
+        status: document.getElementById('orderStatus').value,
+        notes: document.getElementById('orderNotes').value.trim(),
+        device_type: 'admin',
+        device_label: '🛠️ Admin'
+      };
+
+      if (!order.client || !order.product || !order.date) {
+        alert('Preencha pelo menos cliente, produto e data de entrega.');
+        return;
+      }
+
+      await salvarPedidoSupabase(order);
+      orders.push(order);
+      save();
+
+      ['orderClient','orderPhone','orderProduct','orderTheme','orderDate','orderTime','orderTotal','orderPaid','orderNotes'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('orderFlavor').value = '';
+      document.getElementById('orderFilling').value = '';
+      document.getElementById('orderCategory').value = 'Bolos';
+      document.getElementById('orderStatus').value = 'pendente';
+      renderAll();
+    }
+
+    async function deleteOrder(id) {
+      if (!confirm('Deseja apagar este pedido?')) return;
+      await apagarPedidoSupabase(id);
+      orders = orders.filter(o => o.id !== id);
+      save();
+      renderAll();
+    }
+
+    async function changeStatus(id, status) {
+      await atualizarStatusSupabase(id, status);
+      orders = orders.map(o => o.id === id ? { ...o, status } : o);
+      save();
+      renderAll();
+    }
+
+    async function addProduct() {
+      const product = {
+        id: Date.now(),
+        name: document.getElementById('productName').value.trim(),
+        price: Number(document.getElementById('productPrice').value || 0),
+        category: document.getElementById('productCategory').value.trim()
+      };
+      if (!product.name) {
+        alert('Digite o nome do produto.');
+        return;
+      }
+      await salvarProdutoSupabase(product);
+      products.push(product);
+      save();
+      document.getElementById('productName').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productCategory').value = '';
+      renderAll();
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Deseja apagar este produto?')) return;
+      await apagarProdutoSupabase(id);
+      products = products.filter(p => p.id !== id);
+      save();
+      renderAll();
+    }
+
+
+    function deviceLabel(order){
+      if(!order) return '—';
+
+      const raw = String(
+        (order.device_label || '') + ' ' +
+        (order.dispositivo || '') + ' ' +
+        (order.device_type || '') + ' ' +
+        (order.dispositivo_tipo || '')
+      ).toLowerCase();
+
+      if(raw.includes('admin')) return '🛠️ Admin';
+      if(raw.includes('tablet')) return '📲 Tablet';
+      if(raw.includes('celular') || raw.includes('mobile')) return '📱 Celular';
+      if(raw.includes('computador') || raw.includes('desktop')) return '💻 Computador';
+
+      return '—';
+    }
+
+    function massaDoPedido(order){
+      if(!order) return '-';
+
+      const valoresDiretos = [
+        order.flavor,
+        order.massa,
+        order.sabor,
+        order.mass
+      ];
+
+      for(const valor of valoresDiretos){
+        if(valor && String(valor).trim() && String(valor).trim() !== '-') {
+          return String(valor).trim();
+        }
+      }
+
+      const texto = String(
+        (order.details || '') + ' ' +
+        (order.detalhes || '') + ' ' +
+        (order.notes || '') + ' ' +
+        (order.product || '')
+      );
+
+      const match = texto.match(/(?:massa|sabor)\s*[:\-]\s*([^<\n\r,;]+)/i);
+      if(match && match[1] && match[1].trim() && match[1].trim() !== '-') {
+        return match[1].trim();
+      }
+
+      if(/red\s*velvet/i.test(texto)) return 'Red Velvet';
+      if(/massa\s*branca|bolo\s*branco|branca/i.test(texto)) return 'Branca';
+      if(/chocolate/i.test(texto)) return 'Chocolate';
+
+      return '-';
+    }
+
+    function recheioDoPedido(order){
+      if(!order) return '-';
+
+      const valoresDiretos = [
+        order.filling,
+        order.recheio
+      ];
+
+      for(const valor of valoresDiretos){
+        if(valor && String(valor).trim() && String(valor).trim() !== '-') {
+          return String(valor).trim();
+        }
+      }
+
+      const texto = String(
+        (order.details || '') + ' ' +
+        (order.detalhes || '') + ' ' +
+        (order.notes || '') + ' ' +
+        (order.product || '')
+      );
+
+      const match = texto.match(/recheio\s*[:\-]\s*([^<\n\r,;]+)/i);
+      if(match && match[1] && match[1].trim() && match[1].trim() !== '-') {
+        return match[1].trim();
+      }
+
+      return '-';
+    }
+
+    function detalhesPedidoHtml(order){
+      const massa = massaDoPedido(order);
+      const recheio = recheioDoPedido(order);
+      const tema = order.theme || order.tema || '-';
+      const origem = deviceLabel(order);
+
+      return `
+        <span style="color:var(--muted)">Sabor/Massa:</span> ${escapeHtml(massa)}<br>
+        <span style="color:var(--muted)">Recheio:</span> ${escapeHtml(recheio)}<br>
+        <span style="color:var(--muted)">Tema:</span> ${escapeHtml(tema || '-')}<br>
+        <span style="color:var(--muted)">Origem:</span> ${escapeHtml(origem)}
+      `;
+    }
+
+
+    function statusLabel(status) {
+      const labels = { pendente: 'Pendente', producao: 'Em produção', entregue: 'Entregue', cancelado: 'Cancelado' };
+      return labels[status] || status;
+    }
+
+    function renderOrders() {
+      const search = document.getElementById('searchOrders');
+      const q = (search ? search.value : '').toLowerCase();
+      const filtered = orders.filter(o => `${o.client} ${o.category || ''} ${o.product} ${o.flavor || ''} ${o.filling || ''} ${o.theme} ${o.phone}`.toLowerCase().includes(q));
+      const tbody = document.getElementById('ordersTable');
+      if (!tbody) return;
+
+      tbody.innerHTML = filtered.map(o => {
+        const due = Math.max(0, Number(o.total || 0) - Number(o.paid || 0));
+        return `<tr>
+          <td><strong>${escapeHtml(o.client)}</strong><br><span style="color:var(--muted)">${escapeHtml(o.phone || '-')}</span></td>
+          <td><strong>${escapeHtml(o.category || 'Bolos')}</strong><br>${escapeHtml(o.product)}</td>
+          <td>${detalhesPedidoHtml(o)}</td>
+          <td>${formatDate(o.date)} ${escapeHtml(o.time || '')}</td>
+          <td>${money(o.total)}</td>
+          <td>${money(due)}</td>
+          <td><span class="badge status-${o.status}">${statusLabel(o.status)}</span></td>
+          <td class="actions">
+            <button class="btn-soft" onclick="openWhatsApp(${o.id})">WhatsApp</button>
+            <button class="btn-soft" onclick="printOrder(${o.id})">Imprimir</button>
+            <button class="btn-soft" onclick="changeStatus(${o.id}, 'producao')">Produção</button>
+            <button class="btn-soft" onclick="changeStatus(${o.id}, 'entregue')">Entregue</button>
+            <button class="btn-danger" onclick="deleteOrder(${o.id})">Apagar</button>
+          </td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="8"><div class="empty">Nenhum pedido cadastrado ainda.</div></td></tr>`;
+    }
+
+    function renderProducts() {
+      const tbody = document.getElementById('productsTable');
+      if (!tbody) return;
+      tbody.innerHTML = products.map(p => `<tr>
+        <td><strong>${escapeHtml(p.name)}</strong></td>
+        <td>${escapeHtml(p.category || '-')}</td>
+        <td>${money(p.price)}</td>
+        <td><button class="btn-danger" onclick="deleteProduct(${p.id})">Apagar</button></td>
+      </tr>`).join('') || `<tr><td colspan="4"><div class="empty">Nenhum produto cadastrado.</div></td></tr>`;
+    }
+
+    function renderClients() {
+      const map = {};
+      orders.forEach(o => {
+        const key = o.client.toLowerCase();
+        if (!map[key]) map[key] = { name: o.client, phone: o.phone, count: 0, total: 0 };
+        map[key].count++;
+        map[key].total += Number(o.total || 0);
+      });
+      const clients = Object.values(map);
+      const tbody = document.getElementById('clientsTable');
+      if (!tbody) return;
+      tbody.innerHTML = clients.map(c => `<tr>
+        <td><strong>${escapeHtml(c.name)}</strong></td>
+        <td>${escapeHtml(c.phone || '-')}</td>
+        <td>${c.count}</td>
+        <td>${money(c.total)}</td>
+      </tr>`).join('') || `<tr><td colspan="4"><div class="empty">Clientes aparecerão aqui depois dos pedidos.</div></td></tr>`;
+    }
+
+    function renderAgenda() {
+      const sorted = [...orders]
+        .filter(o => o.date)
+        .sort((a,b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
+      const groups = {};
+      sorted.forEach(o => {
+        if (!groups[o.date]) groups[o.date] = [];
+        groups[o.date].push(o);
+      });
+
+      const agenda = document.getElementById('agendaList');
+      if (!agenda) return;
+
+      const html = Object.keys(groups).map(date => `<div style="margin-bottom:18px">
+        <h3 style="margin-bottom:10px">${formatDate(date)}</h3>
+        ${groups[date].map(o => `<div class="card" style="box-shadow:none;margin-bottom:10px">
+          <strong>${escapeHtml(o.time || '--:--')} - ${escapeHtml(o.client)}</strong><br>
+          <span>${escapeHtml(o.category || 'Bolos')} - ${escapeHtml(o.product)}</span><br>
+          <span style="color:var(--muted)">Sabor: ${escapeHtml(o.flavor || '-')} | Recheio: ${escapeHtml(o.filling || '-')}</span><br>
+          <span class="badge status-${o.status}" style="margin-top:8px">${statusLabel(o.status)}</span>
+        </div>`).join('')}
+      </div>`).join('');
+
+      agenda.innerHTML = html || `<div class="empty">Nenhuma entrega na agenda.</div>`;
+    }
+
+    function atualizarFinanceiroAutomatico() {
+      const mesInput = document.getElementById('financeMes');
+      const periodoInput = document.getElementById('financePeriodo');
+
+      if (mesInput && !mesInput.value) {
+        const hoje = new Date();
+        mesInput.value = hoje.toISOString().slice(0, 7);
+      }
+
+      const mesSelecionado = mesInput ? mesInput.value : new Date().toISOString().slice(0, 7);
+      const periodo = periodoInput ? periodoInput.value : 'mes';
+
+      const hoje = new Date();
+      const hojeISO = hoje.toISOString().slice(0, 10);
+
+      const pedidosValidos = orders.filter(o => o.date && o.status !== 'cancelado');
+
+      let pedidosDoPeriodo = pedidosValidos.filter(o => String(o.date).slice(0, 7) === mesSelecionado);
+
+      if (periodo === 'q1') {
+        pedidosDoPeriodo = pedidosDoPeriodo.filter(o => {
+          const dia = Number(String(o.date).slice(8, 10));
+          return dia >= 1 && dia <= 15;
+        });
+      }
+
+      if (periodo === 'q2') {
+        pedidosDoPeriodo = pedidosDoPeriodo.filter(o => {
+          const dia = Number(String(o.date).slice(8, 10));
+          return dia >= 16;
+        });
+      }
+
+      if (periodo === 'hoje') {
+        pedidosDoPeriodo = pedidosValidos.filter(o => String(o.date).slice(0, 10) === hojeISO);
+      }
+
+      if (periodo === '7dias') {
+        const limite = new Date();
+        limite.setDate(limite.getDate() - 6);
+        const limiteISO = limite.toISOString().slice(0, 10);
+        pedidosDoPeriodo = pedidosValidos.filter(o => {
+          const data = String(o.date).slice(0, 10);
+          return data >= limiteISO && data <= hojeISO;
+        });
+      }
+
+      const totalVendas = pedidosDoPeriodo.reduce((s,o) => s + Number(o.total || 0), 0);
+
+      const porcentReposicao = Number(document.getElementById('financeReposicao')?.value || 45);
+      const porcentCustos = Number(document.getElementById('financeCustos')?.value || 15);
+      const porcentReserva = Number(document.getElementById('financeReserva')?.value || 10);
+      const porcentLucro = Number(document.getElementById('financeLucro')?.value || 30);
+
+      const reposicao = totalVendas * (porcentReposicao / 100);
+      const custos = totalVendas * (porcentCustos / 100);
+      const reserva = totalVendas * (porcentReserva / 100);
+      const lucro = totalVendas * (porcentLucro / 100);
+      const ticketMedio = pedidosDoPeriodo.length ? totalVendas / pedidosDoPeriodo.length : 0;
+
+      const produtos = {};
+      pedidosDoPeriodo.forEach(o => {
+        const nome = o.product || o.category || 'Pedido';
+        produtos[nome] = (produtos[nome] || 0) + 1;
+      });
+
+      const produtoMaisVendido = Object.entries(produtos).sort((a,b) => b[1] - a[1])[0];
+
+      const dias = {};
+      pedidosDoPeriodo.forEach(o => {
+        const dia = String(o.date).slice(0, 10);
+        dias[dia] = (dias[dia] || 0) + Number(o.total || 0);
+      });
+
+      const melhorDia = Object.entries(dias).sort((a,b) => b[1] - a[1])[0];
+
+      const valorInput = document.getElementById('financeValor');
+      if (valorInput) valorInput.value = totalVendas.toFixed(2);
+
+      setText('resPedidosMes', pedidosDoPeriodo.length);
+      setText('resTicketMedio', money(ticketMedio));
+      setText('resProdutoMaisVendido', produtoMaisVendido ? `${produtoMaisVendido[0]} (${produtoMaisVendido[1]})` : '-');
+      setText('resMelhorDia', melhorDia ? `${formatDate(melhorDia[0])} • ${money(melhorDia[1])}` : '-');
+      setText('resReposicao', money(reposicao));
+      setText('resCustos', money(custos));
+      setText('resReserva', money(reserva));
+      setText('resLucro', money(lucro));
+      setText('resTotal', money(totalVendas));
+
+      const nomesPeriodo = {
+        mes: 'mês completo',
+        q1: '1ª quinzena',
+        q2: '2ª quinzena',
+        '7dias': 'últimos 7 dias',
+        hoje: 'hoje'
+      };
+
+      const aviso = document.getElementById('financeAviso');
+      if (aviso) {
+        if (totalVendas > 0) {
+          aviso.innerHTML = `
+            <strong>Resumo automático do período ✨</strong><br>
+            No período <strong>${nomesPeriodo[periodo] || 'selecionado'}</strong>, você teve
+            <strong>${pedidosDoPeriodo.length}</strong> pedido(s), totalizando
+            <strong>${money(totalVendas)}</strong>. Separe os valores acima antes de usar o dinheiro.
+          `;
+        } else {
+          aviso.innerHTML = `
+            <strong>Nenhum pedido neste período ainda.</strong><br>
+            Quando um pedido com data dentro deste período entrar no sistema, o resumo financeiro será atualizado automaticamente.
+          `;
+        }
+      }
+    }
+
+
+
+
+
+
+    function renderDashboard() {
+      const total = orders.reduce((s,o) => s + Number(o.total || 0), 0);
+      const paid = orders.reduce((s,o) => s + Number(o.paid || 0), 0);
+      const due = Math.max(0, total - paid);
+      const producao = orders.filter(o => o.status === 'producao').length;
+      const delivered = orders.filter(o => o.status === 'entregue').length;
+
+      setText('mTotalPedidos', orders.length);
+      setText('mProducao', producao);
+      setText('mReceita', money(total));
+      setText('mReceber', money(due));
+      setText('fTotal', money(total));
+      setText('fPaid', money(paid));
+      setText('fDue', money(due));
+      setText('fDelivered', delivered);
+
+      const upcoming = [...orders]
+        .filter(o => o.date && o.status !== 'entregue' && o.status !== 'cancelado')
+        .sort((a,b) => a.date.localeCompare(b.date))
+        .slice(0, 5);
+
+      const next = document.getElementById('nextDeliveries');
+      if (next) {
+        next.innerHTML = upcoming.map(o => `<div class="card" style="box-shadow:none;margin-bottom:10px">
+          <strong>${formatDate(o.date)} ${escapeHtml(o.time || '')}</strong><br>
+          ${escapeHtml(o.client)} - ${escapeHtml(o.category || 'Bolos')} - ${escapeHtml(o.product)}
+        </div>`).join('') || `<div class="empty">Sem entregas pendentes.</div>`;
+      }
+
+      const unpaid = orders.filter(o => Number(o.total || 0) > Number(o.paid || 0) && o.status !== 'cancelado').length;
+      const pending = orders.filter(o => o.status === 'pendente').length;
+
+      const alerts = document.getElementById('alerts');
+      if (alerts) {
+        alerts.innerHTML = `
+          <div class="card" style="box-shadow:none;margin-bottom:10px"><strong>${pending}</strong> pedido(s) ainda pendente(s).</div>
+          <div class="card" style="box-shadow:none"><strong>${unpaid}</strong> pedido(s) com saldo a receber.</div>
+        `;
+      }
+    }
+
+    function setText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    function formatDate(date) {
+      if (!date) return '-';
+      const parts = date.split('-');
+      if (parts.length !== 3) return date;
+      const [y,m,d] = parts;
+      return `${d}/${m}/${y}`;
+    }
+
+    function exportData() {
+      const data = { orders, products, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'backup-andreza-cakes.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function clearData() {
+      if (!confirm('Tem certeza? Isso apagará todos os pedidos e produtos deste aparelho.')) return;
+      orders = [];
+      products = [];
+      save();
+      renderAll();
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+
+    function onlyNumbers(text) {
+      return String(text || '').replace(/\D/g, '');
+    }
+
+    function openWhatsApp(id) {
+      const o = orders.find(item => item.id === id);
+      if (!o) return;
+
+      const phone = onlyNumbers(o.phone);
+      if (!phone) {
+        alert('Esse pedido não tem telefone/WhatsApp cadastrado.');
+        return;
+      }
+
+      const total = money(o.total);
+      const paid = money(o.paid);
+      const due = money(Math.max(0, Number(o.total || 0) - Number(o.paid || 0)));
+
+      const msg = `Olá, ${o.client}! Aqui é da Andreza Cakes.%0A%0A` +
+        `Passando para confirmar seu pedido:%0A` +
+        `Categoria: ${o.category || 'Bolos'}%0A` +
+        `Produto: ${o.product}%0A` +
+        `Sabor: ${o.flavor || '-'}%0A` +
+        `Recheio: ${o.filling || '-'}%0A` +
+        `Tema/Detalhes: ${o.theme || '-'}%0A` +
+        `Entrega: ${formatDate(o.date)} ${o.time || ''}%0A` +
+        `Valor total: ${total}%0A` +
+        `Entrada paga: ${paid}%0A` +
+        `Restante: ${due}%0A%0A` +
+        `Qualquer ajuste, pode responder por aqui. Obrigado(a)!`;
+
+      const finalPhone = phone.startsWith('55') ? phone : '55' + phone;
+      window.open(`https://wa.me/${finalPhone}?text=${msg}`, '_blank');
+    }
+
+    function printOrder(id) {
+      const o = orders.find(item => item.id === id);
+      if (!o) return;
+
+      const due = Math.max(0, Number(o.total || 0) - Number(o.paid || 0));
+      const area = document.getElementById('printArea');
+
+      area.innerHTML = `
+        <div class="print-page">
+          <h1>Andreza Cakes - Pedido</h1>
+          <div class="muted">Comprovante interno da confeitaria</div>
+
+          <div class="print-box">
+            <div class="print-row"><div class="print-label">Cliente:</div><div>${escapeHtml(o.client)}</div></div>
+            <div class="print-row"><div class="print-label">Telefone:</div><div>${escapeHtml(o.phone || '-')}</div></div>
+            <div class="print-row"><div class="print-label">Categoria:</div><div>${escapeHtml(o.category || 'Bolos')}</div></div>
+            <div class="print-row"><div class="print-label">Produto:</div><div>${escapeHtml(o.product)}</div></div>
+            <div class="print-row"><div class="print-label">Sabor:</div><div>${escapeHtml(o.flavor || '-')}</div></div>
+            <div class="print-row"><div class="print-label">Recheio:</div><div>${escapeHtml(o.filling || '-')}</div></div>
+            <div class="print-row"><div class="print-label">Tema:</div><div>${escapeHtml(o.theme || '-')}</div></div>
+            <div class="print-row"><div class="print-label">Entrega:</div><div>${formatDate(o.date)} ${escapeHtml(o.time || '')}</div></div>
+            <div class="print-row"><div class="print-label">Status:</div><div>${statusLabel(o.status)}</div></div>
+          </div>
+
+          <div class="print-box">
+            <div class="print-row"><div class="print-label">Valor total:</div><div>${money(o.total)}</div></div>
+            <div class="print-row"><div class="print-label">Entrada paga:</div><div>${money(o.paid)}</div></div>
+            <div class="print-row"><div class="print-label">Restante:</div><div>${money(due)}</div></div>
+          </div>
+
+          <div class="print-box">
+            <div class="print-label">Observações:</div>
+            <div style="margin-top:10px; line-height:1.6">${escapeHtml(o.notes || '-')}</div>
+          </div>
+        </div>
+      `;
+
+      window.print();
+    }
+
+    function getSelectedMonth() {
+      const input = document.getElementById('reportMonth');
+      if (!input) return '';
+      if (!input.value) {
+        const now = new Date();
+        input.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      }
+      return input.value;
+    }
+
+    function getMonthlyOrders() {
+      const month = getSelectedMonth();
+      return orders.filter(o => o.date && o.date.startsWith(month));
+    }
+
+    function renderMonthlyReport() {
+      const list = getMonthlyOrders();
+      const total = list.reduce((s,o) => s + Number(o.total || 0), 0);
+      const paid = list.reduce((s,o) => s + Number(o.paid || 0), 0);
+      const due = Math.max(0, total - paid);
+
+      setText('rOrders', list.length);
+      setText('rTotal', money(total));
+      setText('rPaid', money(paid));
+      setText('rDue', money(due));
+
+      const tbody = document.getElementById('monthlyTable');
+      if (!tbody) return;
+
+      tbody.innerHTML = list
+        .sort((a,b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
+        .map(o => {
+          const rest = Math.max(0, Number(o.total || 0) - Number(o.paid || 0));
+          return `<tr>
+            <td><strong>${escapeHtml(o.client)}</strong></td>
+            <td>${escapeHtml(o.category || 'Bolos')}</td>
+            <td>${escapeHtml(o.product)}</td>
+            <td>${detalhesPedidoHtml(o)}</td>
+            <td>${formatDate(o.date)} ${escapeHtml(o.time || '')}</td>
+            <td>${money(o.total)}</td>
+            <td>${money(o.paid)}</td>
+            <td>${money(rest)}</td>
+            <td><span class="badge status-${o.status}">${statusLabel(o.status)}</span></td>
+          </tr>`;
+        }).join('') || `<tr><td colspan="9"><div class="empty">Nenhum pedido neste mês.</div></td></tr>`;
+    }
+
+    function printMonthlyReport() {
+      const list = getMonthlyOrders();
+      const month = getSelectedMonth();
+      const total = list.reduce((s,o) => s + Number(o.total || 0), 0);
+      const paid = list.reduce((s,o) => s + Number(o.paid || 0), 0);
+      const due = Math.max(0, total - paid);
+      const [year, monthNum] = month.split('-');
+      const area = document.getElementById('printArea');
+
+      area.innerHTML = `
+        <div class="print-page">
+          <h1>Andreza Cakes - Relatório Mensal</h1>
+          <div class="muted">Mês: ${monthNum}/${year}</div>
+
+          <div class="print-box">
+            <div class="print-row"><div class="print-label">Pedidos:</div><div>${list.length}</div></div>
+            <div class="print-row"><div class="print-label">Receita prevista:</div><div>${money(total)}</div></div>
+            <div class="print-row"><div class="print-label">Já recebido:</div><div>${money(paid)}</div></div>
+            <div class="print-row"><div class="print-label">A receber:</div><div>${money(due)}</div></div>
+          </div>
+
+          <div class="print-box">
+            ${list.map(o => {
+              const rest = Math.max(0, Number(o.total || 0) - Number(o.paid || 0));
+              return `<div style="border-bottom:1px solid #eee; padding:10px 0">
+                <strong>${escapeHtml(o.client)}</strong> - ${escapeHtml(o.category || 'Bolos')} - ${escapeHtml(o.product)}<br>
+                Sabor/Massa: ${escapeHtml(massaDoPedido(o))} | Recheio: ${escapeHtml(recheioDoPedido(o))} | Origem: ${escapeHtml(deviceLabel(o))}<br>
+                Entrega: ${formatDate(o.date)} ${escapeHtml(o.time || '')}<br>
+                Total: ${money(o.total)} | Pago: ${money(o.paid)} | Restante: ${money(rest)} | Status: ${statusLabel(o.status)}
+              </div>`;
+            }).join('') || 'Nenhum pedido neste mês.'}
+          </div>
+        </div>
+      `;
+
+      window.print();
+    }
+
+    function renderAll() {
+      atualizarFinanceiroAutomatico();
+      renderDashboard();
+      renderOrders();
+      renderProducts();
+      renderClients();
+      renderAgenda();
+      renderMonthlyReport();
+      indicadorSupabase();
+    }
+
+    if (localStorage.getItem('ac_logged') === 'yes') {
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('appPage').classList.remove('hidden');
+      carregarDadosSupabase().then(() => {
+        indicadorSupabase();
+        renderAll();
+      });
+    }
+  </script>
+
+<script id="fix-mobile-scroll-jump-admin-js">
+(function(){
+  let lastScroll = 0;
+
+  function isMobile(){
+    return window.matchMedia("(max-width: 850px)").matches;
+  }
+
+  function rememberScroll(){
+    if(isMobile()){
+      lastScroll = window.scrollY || document.documentElement.scrollTop || 0;
+    }
+  }
+
+  function restoreScroll(){
+    if(isMobile()){
+      setTimeout(function(){ window.scrollTo(0, lastScroll); }, 30);
+    }
+  }
+
+  document.addEventListener("focusin", rememberScroll);
+  document.addEventListener("change", restoreScroll);
+
+  const oldAddOrder = window.addOrder;
+  if(typeof oldAddOrder === "function"){
+    window.addOrder = function(){
+      rememberScroll();
+      const result = oldAddOrder.apply(this, arguments);
+      restoreScroll();
+      return result;
+    };
+  }
+})();
+</script>
+
+
+<script id="gestao-financeira-inteligente-js">
+function dinheiroBR(v){
+  return Number(v || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+}
+
+function calcularGestaoFinanceira(){
+  const valor = Number(document.getElementById('financeValor')?.value || 0);
+  const pReposicao = Number(document.getElementById('financeReposicao')?.value || 0);
+  const pCustos = Number(document.getElementById('financeCustos')?.value || 0);
+  const pReserva = Number(document.getElementById('financeReserva')?.value || 0);
+  const pLucro = Number(document.getElementById('financeLucro')?.value || 0);
+
+  const totalPercentual = pReposicao + pCustos + pReserva + pLucro;
+
+  const reposicao = valor * pReposicao / 100;
+  const custos = valor * pCustos / 100;
+  const reserva = valor * pReserva / 100;
+  const lucro = valor * pLucro / 100;
+  const total = reposicao + custos + reserva + lucro;
+
+  document.getElementById('resReposicao').textContent = dinheiroBR(reposicao);
+  document.getElementById('resCustos').textContent = dinheiroBR(custos);
+  document.getElementById('resReserva').textContent = dinheiroBR(reserva);
+  document.getElementById('resLucro').textContent = dinheiroBR(lucro);
+  document.getElementById('resTotal').textContent = dinheiroBR(total);
+
+  const aviso = document.getElementById('financeAviso');
+
+  if(totalPercentual !== 100){
+    aviso.innerHTML = '⚠️ Atenção: os percentuais somam <strong>' + totalPercentual + '%</strong>. O ideal é somar 100% para dividir a venda certinho.';
+    aviso.style.background = '#fff1f1';
   }else{
-    document.getElementById("erro").style.display="block";
+    aviso.innerHTML = '✅ Divisão equilibrada. Agora fica claro quanto é para repor, pagar despesas, guardar e quanto sobra de lucro.';
+    aviso.style.background = '#fff3f7';
   }
 }
 
-function liberar(){
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("app").style.display="block";
-}
-
-function sair(){
-  sessionStorage.removeItem("tesouraria_logada");
-  location.reload();
-}
-
-document.getElementById("senha").addEventListener("keydown",e=>{
-  if(e.key==="Enter") entrar();
+document.addEventListener('DOMContentLoaded', function(){
+  if(document.getElementById('financeValor')){
+    calcularGestaoFinanceira();
+    ['financeValor','financeReposicao','financeCustos','financeReserva','financeLucro'].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('input', calcularGestaoFinanceira);
+    });
+  }
 });
-
-if(sessionStorage.getItem("tesouraria_logada")==="sim"){
-  liberar();
-}
+</script>
 
 
-const supabaseClient = supabase.createClient(
-"https://zewiultocwegxkfiufcm.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpld2l1bHRvY3dlZ3hrZml1ZmNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NzEwMjksImV4cCI6MjA5NDQ0NzAyOX0.ybD53GGVYnPx9kZViSvs63tLxlVEqhOllTdDDq40lF0"
+<!--
+TABELAS NECESSÁRIAS NO SUPABASE:
+
+create table if not exists pedidos (
+  id bigint primary key,
+  client text,
+  phone text,
+  category text,
+  product text,
+  flavor text,
+  filling text,
+  theme text,
+  date date,
+  time text,
+  total numeric default 0,
+  paid numeric default 0,
+  status text default 'pendente',
+  notes text,
+  created_at timestamptz default now()
 );
 
-let lancamentos=[];
+create table if not exists produtos (
+  id bigint primary key,
+  name text,
+  price numeric default 0,
+  category text,
+  created_at timestamptz default now()
+);
 
-async function carregarLancamentos(){
-const { data, error } = await supabaseClient
-.from("tesouraria")
-.select("*")
-.order("id", { ascending:false });
+alter table pedidos enable row level security;
+alter table produtos enable row level security;
 
-if(error){
-console.error(error);
-alert("Erro ao carregar dados.");
-return;
-}
+create policy "Permitir leitura pedidos" on pedidos for select using (true);
+create policy "Permitir inserir pedidos" on pedidos for insert with check (true);
+create policy "Permitir atualizar pedidos" on pedidos for update using (true);
+create policy "Permitir apagar pedidos" on pedidos for delete using (true);
 
-lancamentos=(data||[]).map(l=>({
-id:l.id,
-tipo:l.tipo,
-data:l.data,
-categoria:l.categoria,
-descricao:l.descricao,
-valor:Number(l.valor),
-forma:l.forma,
-obs:l.observacao||"",
-status_pagamento:l.status_pagamento||"Pendente"
-}));
-
-renderizar();
-}
+create policy "Permitir leitura produtos" on produtos for select using (true);
+create policy "Permitir inserir produtos" on produtos for insert with check (true);
+create policy "Permitir atualizar produtos" on produtos for update using (true);
+create policy "Permitir apagar produtos" on produtos for delete using (true);
+-->
 
 
-function iniciarDatas(){
-  document.getElementById("data").valueAsDate=new Date();
-  document.getElementById("filtroMes").value=new Date().toISOString().slice(0,7);
-}
-iniciarDatas();
-
-
-
-function moeda(v){
-  return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-}
-
-function mesAtual(){
-  return new Date().toISOString().slice(0,7);
-}
-
-
-document.getElementById("formLancamento").addEventListener("submit", async e=>{
-e.preventDefault();
-
-const l={
-tipo:document.getElementById("tipo").value,
-data:document.getElementById("data").value,
-categoria:document.getElementById("categoria").value,
-descricao:document.getElementById("descricao").value.trim(),
-valor:Number(document.getElementById("valor").value),
-forma:document.getElementById("forma").value,
-observacao:document.getElementById("obs").value.trim(),
-status_pagamento:document.getElementById("tipo").value==="saida" ? document.getElementById("status_pagamento").value : "Pago"
-};
-
-const { error } = await supabaseClient
-.from("tesouraria")
-.insert([l]);
-
-if(error){
-console.error(error);
-alert("Erro ao salvar.");
-return;
-}
-
-limparFormulario();
-carregarLancamentos();
-});
-
-
-function limparFormulario(){
-  document.getElementById("formLancamento").reset();
-  document.getElementById("data").valueAsDate=new Date();
-  document.getElementById("tipo").value="entrada";
-  if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pendente";
-}
-
-function filtrar(){
-  const t=document.getElementById("filtroTipo").value;
-  const c=document.getElementById("filtroCategoria").value;
-  const m=document.getElementById("filtroMes").value;
-
-  return lancamentos.filter(l=>
-    (!t||l.tipo===t)&&
-    (!c||l.categoria===c)&&
-    (!m||(l.data||"").startsWith(m))
-  );
-}
-
-
-function statusClass(status){
-  const s=(status||"Pendente").toLowerCase();
-  if(s==="pago") return "status-pago";
-  if(s==="atrasado") return "status-atrasado";
-  return "status-pendente";
-}
-
-function proximoStatus(status){
-  if(status==="Pendente") return "Atrasado";
-  if(status==="Atrasado") return "Pago";
-  return "Pendente";
-}
-
-async function alternarStatus(id, atual){
-  const novo=proximoStatus(atual||"Pendente");
-  const { error } = await supabaseClient
-    .from("tesouraria")
-    .update({ status_pagamento: novo })
-    .eq("id", id);
-
-  if(error){
-    alert("Erro ao atualizar status. Confira se a coluna status_pagamento foi criada no Supabase.");
-    return;
+<script id="financeiro-mensal-auto-inputs">
+document.addEventListener('input', function(e){
+  if(['financeReposicao','financeCustos','financeReserva','financeLucro'].includes(e.target.id)){
+    if(typeof atualizarFinanceiroAutomatico === 'function'){
+      atualizarFinanceiroAutomatico();
+    }
   }
-  carregarLancamentos();
-}
-
-function renderizar(){
-  const dados=filtrar();
-  const tabela=document.getElementById("tabela");
-
-  tabela.innerHTML=dados.length
-    ? dados.map(l=>`
-      <tr>
-        <td>${formatarData(l.data)}</td>
-        <td><span class="badge ${l.tipo}">${l.tipo==="entrada"?"Entrada":"Saída"}</span></td>
-        <td>${l.categoria}</td>
-        <td>${l.descricao||"-"}</td>
-        <td>${l.forma||"-"}</td>
-        <td><strong>${moeda(l.valor)}</strong></td>
-        <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
-        <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
-      </tr>
-    `).join("")
-    : `<tr><td colspan="8" class="empty">Nenhum lançamento encontrado.</td></tr>`;
-
-  atualizarResumo();
-}
-
-function formatarData(d){
-  if(!d) return "-";
-  const [a,m,di]=d.split("-");
-  return `${di}/${m}/${a}`;
-}
-
-function atualizarResumo(){
-  const m=mesAtual();
-
-  const entradasMes=lancamentos
-    .filter(l=>l.tipo==="entrada"&&(l.data||"").startsWith(m))
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  const saidasPagasMes=lancamentos
-    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pago"&&(l.data||"").startsWith(m))
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  const pendentesMes=lancamentos
-    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pendente"&&(l.data||"").startsWith(m))
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  const atrasadasMes=lancamentos
-    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Atrasado"&&(l.data||"").startsWith(m))
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  const entradasGeral=lancamentos
-    .filter(l=>l.tipo==="entrada")
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  const saidasPagasGeral=lancamentos
-    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pago")
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  document.getElementById("entradasMes").textContent=moeda(entradasMes);
-  document.getElementById("saidasMes").textContent=moeda(saidasPagasMes);
-  document.getElementById("pendentesMes").textContent=moeda(pendentesMes);
-  document.getElementById("atrasadasMes").textContent=moeda(atrasadasMes);
-  document.getElementById("saldoGeral").textContent=moeda(entradasGeral-saidasPagasGeral);
-}
-
-
-async function excluir(id){
-if(confirm("Deseja excluir este lançamento?")){
-
-const { error } = await supabaseClient
-.from("tesouraria")
-.delete()
-.eq("id", id);
-
-if(error){
-alert("Erro ao excluir.");
-return;
-}
-
-carregarLancamentos();
-}
-}
-
-
-function limparFiltros(){
-  document.getElementById("filtroTipo").value="";
-  document.getElementById("filtroCategoria").value="";
-  document.getElementById("filtroMes").value="";
-  carregarLancamentos();
-}
-
-function exportarCSV(){
-  const dados=filtrar();
-  const linhas=[
-    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Status","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
-  ];
-
-  const csv=linhas
-    .map(l=>l.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(";"))
-    .join("\n");
-
-  const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="relatorio-tesouraria-igreja.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function imprimirRelatorio(){
-  window.print();
-}
-
-
-async function apagarTudo(){
-if(confirm("ATENÇÃO: apagar todos os lançamentos online?")){
-
-const { error } = await supabaseClient
-.from("tesouraria")
-.delete()
-.neq("id",0);
-
-if(error){
-alert("Erro ao apagar.");
-return;
-}
-
-carregarLancamentos();
-}
-}
-
-
-carregarLancamentos();
+});
 </script>
+
+
+<script id="admin-pedidos-mobile-premium-js">
+function toggleNovoPedido(){
+  document.body.classList.toggle('mobile-order-open');
+
+  setTimeout(function(){
+    const destino = document.body.classList.contains('mobile-order-open')
+      ? document.getElementById('novoPedidoPanel')
+      : document.querySelector('#pedidos .lista-pedidos-panel');
+
+    if(destino){
+      destino.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 80);
+}
+</script>
+
+
+
+<script id="diagnostico-supabase-novo">
+setTimeout(function(){
+  const status = document.getElementById('statusSupabaseAdmin');
+  if(status && status.textContent && status.textContent.toLowerCase().includes('modo local')){
+    status.classList.add('local-warning');
+    console.warn('Supabase não conectou. Verifique: URL/key, tabelas pedidos/produtos, RLS policies e se o projeto está ativo.');
+  }
+}, 3000);
+</script>
+
 </body>
 </html>
