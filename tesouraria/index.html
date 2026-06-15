@@ -280,6 +280,22 @@ td{color:#eef3ff}
 @media(max-width:900px){.grid{grid-template-columns:1fr!important}.status-badge{width:100%;min-height:38px}}
 </style>
 
+
+<style id="dashboard-profissional-final-css">
+.dashboard-note{margin:-10px 0 18px;color:#b9c4d8;font-size:13px;}
+.status-pagamento-wrap{margin:16px 0 14px;padding:14px;border-radius:18px;border:1px solid rgba(247,201,72,.26);background:linear-gradient(135deg,rgba(247,201,72,.10),rgba(255,255,255,.035));}
+.status-pagamento-wrap label{margin-top:0;color:#f7c948;}
+.status-hint{color:#b9c4d8;font-size:12px;margin-top:7px;line-height:1.4;}
+.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:900;border:1px solid rgba(255,255,255,.16);white-space:nowrap;}
+.status-pago{background:rgba(57,217,138,.16);color:#8ff0bc;border-color:rgba(57,217,138,.35);}
+.status-pendente{background:rgba(247,201,72,.16);color:#ffe58a;border-color:rgba(247,201,72,.38);}
+.status-atrasado{background:rgba(255,92,122,.16);color:#ffc1cc;border-color:rgba(255,92,122,.38);}
+.status-btn{cursor:pointer;min-width:96px;}
+.sem-status{color:#b9c4d8;font-size:12px;}
+@media(min-width:901px){.grid{grid-template-columns:repeat(6,minmax(0,1fr)) !important}.grid .value{font-size:22px!important}}
+@media(max-width:900px){.grid{grid-template-columns:1fr!important}.status-badge{width:100%;min-height:38px}}
+</style>
+
 </head>
 <body>
 
@@ -317,8 +333,10 @@ td{color:#eef3ff}
   <div class="card"><div class="label">Saídas pagas</div><div class="value red" id="saidasMes">R$ 0,00</div></div>
   <div class="card"><div class="label">Pendentes</div><div class="value gold" id="pendentesMes">R$ 0,00</div></div>
   <div class="card"><div class="label">Atrasadas</div><div class="value red" id="atrasadasMes">R$ 0,00</div></div>
-  <div class="card"><div class="label">Saldo disponível</div><div class="value" id="saldoGeral">R$ 0,00</div></div>
+  <div class="card"><div class="label">Saldo em caixa</div><div class="value" id="saldoCaixa">R$ 0,00</div></div>
+  <div class="card"><div class="label">Saldo projetado</div><div class="value gold" id="saldoProjetado">R$ 0,00</div></div>
 </section>
+<p class="dashboard-note" id="dashboardMesInfo">Resumo do mês selecionado.</p>
 
 <section class="panel">
 <div class="box">
@@ -521,10 +539,8 @@ async function carregarLancamentos(){
   let data = resposta.data;
   let error = resposta.error;
 
-  // Fallback: se alguma coluna nova causar conflito, tenta carregar só as colunas antigas.
   if(error){
     console.warn("Erro no select completo:", error);
-
     const fallback = await supabaseClient
       .from("tesouraria")
       .select("id,tipo,data,categoria,descricao,valor,forma,observacao")
@@ -554,7 +570,6 @@ async function carregarLancamentos(){
 
   renderizar();
 }
-
 
 
 function iniciarDatas(){
@@ -632,15 +647,20 @@ function statusClass(status){
   if(s==="atrasado") return "status-atrasado";
   return "status-pendente";
 }
+
 function proximoStatus(status){
   if(status==="Pendente") return "Atrasado";
   if(status==="Atrasado") return "Pago";
   return "Pendente";
 }
+
 async function alternarStatus(id, atual){
   const novo=proximoStatus(atual||"Pendente");
   const { error } = await supabaseClient.from("tesouraria").update({ status_pagamento: novo }).eq("id", id);
-  if(error){ alert("Erro ao atualizar status. Rode o SQL da coluna status_pagamento no Supabase."); return; }
+  if(error){
+    alert("Erro ao atualizar status. Verifique a coluna status_pagamento no Supabase.");
+    return;
+  }
   carregarLancamentos();
 }
 
@@ -673,7 +693,8 @@ function formatarData(d){
 }
 
 function atualizarResumo(){
-  const m=mesAtual();
+  const filtroMesEl=document.getElementById("filtroMes");
+  const m=(filtroMesEl && filtroMesEl.value) ? filtroMesEl.value : mesAtual();
 
   const entradasMes=lancamentos
     .filter(l=>l.tipo==="entrada"&&(l.data||"").startsWith(m))
@@ -691,20 +712,23 @@ function atualizarResumo(){
     .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Atrasado"&&(l.data||"").startsWith(m))
     .reduce((s,l)=>s+Number(l.valor||0),0);
 
-  const entradasGeral=lancamentos
-    .filter(l=>l.tipo==="entrada")
-    .reduce((s,l)=>s+Number(l.valor||0),0);
-
-  const saidasPagasGeral=lancamentos
-    .filter(l=>l.tipo==="saida"&&(l.status_pagamento||"Pendente")==="Pago")
-    .reduce((s,l)=>s+Number(l.valor||0),0);
+  const saldoCaixa = entradasMes - saidasPagasMes;
+  const saldoProjetado = entradasMes - saidasPagasMes - pendentesMes - atrasadasMes;
 
   if(document.getElementById("entradasMes")) document.getElementById("entradasMes").textContent=moeda(entradasMes);
   if(document.getElementById("saidasMes")) document.getElementById("saidasMes").textContent=moeda(saidasPagasMes);
   if(document.getElementById("pendentesMes")) document.getElementById("pendentesMes").textContent=moeda(pendentesMes);
   if(document.getElementById("atrasadasMes")) document.getElementById("atrasadasMes").textContent=moeda(atrasadasMes);
-  if(document.getElementById("saldoGeral")) document.getElementById("saldoGeral").textContent=moeda(entradasGeral-saidasPagasGeral);
+  if(document.getElementById("saldoCaixa")) document.getElementById("saldoCaixa").textContent=moeda(saldoCaixa);
+  if(document.getElementById("saldoProjetado")) document.getElementById("saldoProjetado").textContent=moeda(saldoProjetado);
+
+  const info=document.getElementById("dashboardMesInfo");
+  if(info){
+    const partes=m.split("-");
+    info.textContent=`Resumo financeiro de ${partes[1]}/${partes[0]}: saldo em caixa desconta apenas contas pagas; saldo projetado desconta pendentes e atrasadas.`;
+  }
 }
+
 
 async function excluir(id){
 if(confirm("Deseja excluir este lançamento?")){
@@ -727,15 +751,16 @@ carregarLancamentos();
 function limparFiltros(){
   document.getElementById("filtroTipo").value="";
   document.getElementById("filtroCategoria").value="";
-  document.getElementById("filtroMes").value="";
+  document.getElementById("filtroMes").value=new Date().toISOString().slice(0,7);
   renderizar();
 }
+
 
 function exportarCSV(){
   const dados=filtrar();
   const linhas=[
-    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.obs])
+    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Status","Observação"],
+    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
   ];
 
   const csv=linhas
