@@ -296,6 +296,13 @@ td{color:#eef3ff}
 @media(max-width:900px){.grid{grid-template-columns:1fr!important}.status-badge{width:100%;min-height:38px}}
 </style>
 
+
+<style id="comprovantes-relatorio-css">
+.link-comprovante{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 12px;border-radius:999px;background:rgba(247,201,72,.14);border:1px solid rgba(247,201,72,.35);color:#ffe58a;font-size:12px;font-weight:900;text-decoration:none;white-space:nowrap;}
+.sem-comprovante{color:#b9c4d8;font-size:12px;}
+.upload-status{margin-top:8px;color:#b9c4d8;font-size:12px;line-height:1.4;}
+</style>
+
 </head>
 <body>
 
@@ -398,6 +405,7 @@ td{color:#eef3ff}
   <div class="comprovante-title">📎 Anexar comprovante</div>
   <p>PIX, transferência, recibo ou PDF.</p>
   <input type="file" id="comprovante" accept="image/*,.pdf">
+  <div class="upload-status" id="statusComprovante">O comprovante aparecerá no relatório após salvar.</div>
 </div>
 
 <div class="status-pagamento-wrap">
@@ -470,6 +478,7 @@ td{color:#eef3ff}
   <th>Descrição</th>
   <th>Forma</th>
   <th>Valor</th>
+  <th>Comprovante</th>
   <th>Status</th>
   <th>Ação</th>
 </tr>
@@ -566,7 +575,9 @@ async function carregarLancamentos(){
     valor:Number(l.valor||0),
     forma:l.forma||"",
     obs:l.observacao||"",
-    status_pagamento:l.status_pagamento||"Pendente"
+    status_pagamento:l.status_pagamento||"Pendente",
+    comprovante_url:l.comprovante_url||"",
+    comprovante_nome:l.comprovante_nome||""
   }));
 
   renderizar();
@@ -590,8 +601,44 @@ function mesAtual(){
 }
 
 
+
+async function enviarComprovante(){
+  const input=document.getElementById("comprovante");
+  const status=document.getElementById("statusComprovante");
+  const arquivo=input && input.files ? input.files[0] : null;
+  if(!arquivo) return {url:"",nome:""};
+
+  if(status) status.textContent="Enviando comprovante...";
+
+  const nomeSeguro=arquivo.name.replace(/[^a-zA-Z0-9._-]/g,"-");
+  const caminho=`${new Date().getFullYear()}/${Date.now()}-${nomeSeguro}`;
+
+  const { error } = await supabaseClient.storage
+    .from("comprovantes")
+    .upload(caminho, arquivo, { upsert:false });
+
+  if(error){
+    console.error(error);
+    if(status) status.textContent="Erro ao enviar comprovante.";
+    throw new Error("Erro ao enviar comprovante. Verifique o bucket comprovantes no Supabase.");
+  }
+
+  const { data } = supabaseClient.storage.from("comprovantes").getPublicUrl(caminho);
+  if(status) status.textContent="Comprovante enviado com sucesso.";
+
+  return {url:data.publicUrl,nome:arquivo.name};
+}
+
 document.getElementById("formLancamento").addEventListener("submit", async e=>{
 e.preventDefault();
+
+let comprovante={url:"",nome:""};
+try{
+  comprovante=await enviarComprovante();
+}catch(err){
+  alert(err.message || "Erro ao enviar comprovante.");
+  return;
+}
 
 const l={
 tipo:document.getElementById("tipo").value,
@@ -601,15 +648,16 @@ descricao:document.getElementById("descricao").value.trim(),
 valor:Number(document.getElementById("valor").value),
 forma:document.getElementById("forma").value,
 observacao:document.getElementById("obs").value.trim(),
-status_pagamento:document.getElementById("tipo").value==="saida" ? (document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pendente") : "Pago"
+status_pagamento:document.getElementById("tipo").value==="saida" ? (document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pendente") : "Pago",
+comprovante_url:comprovante.url,
+comprovante_nome:comprovante.nome
 };
 
 let { error } = await supabaseClient.from("tesouraria").insert([l]);
 
-if(error && String(error.message||"").includes("status_pagamento")){
-  const { status_pagamento, ...lSemStatus } = l;
-  const tentativa = await supabaseClient.from("tesouraria").insert([lSemStatus]);
-  error = tentativa.error;
+if(error && (String(error.message||"").includes("comprovante_url") || String(error.message||"").includes("comprovante_nome"))){
+  alert("Faltam as colunas comprovante_url e comprovante_nome no Supabase. Rode o SQL que te passei.");
+  return;
 }
 
 if(error){
@@ -628,6 +676,7 @@ function limparFormulario(){
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("tipo").value="entrada";
   if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pendente";
+  if(document.getElementById("statusComprovante")) document.getElementById("statusComprovante").textContent="O comprovante aparecerá no relatório após salvar.";
 }
 
 function filtrar(){
@@ -678,11 +727,12 @@ function renderizar(){
         <td>${l.descricao||"-"}</td>
         <td>${l.forma||"-"}</td>
         <td><strong>${moeda(l.valor)}</strong></td>
+        <td>${l.comprovante_url ? `<a class="link-comprovante" href="${l.comprovante_url}" target="_blank" rel="noopener">📎 Ver</a>` : `<span class="sem-comprovante">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
         <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
       </tr>
     `).join("")
-    : `<tr><td colspan="8" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+    : `<tr><td colspan="9" class="empty">Nenhum lançamento encontrado.</td></tr>`;
 
   atualizarResumo();
 }
@@ -779,8 +829,8 @@ function limparFiltros(){
 function exportarCSV(){
   const dados=filtrar();
   const linhas=[
-    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Status","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
+    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Comprovante","Status","Observação"],
+    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.comprovante_url||"",l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
   ];
 
   const csv=linhas
