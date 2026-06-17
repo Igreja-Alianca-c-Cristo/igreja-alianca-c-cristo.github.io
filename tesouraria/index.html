@@ -521,10 +521,7 @@ td{color:#eef3ff}
     font-weight:900 !important;
   }
 
-  .link-comprovante::after {
-    content:" (anexado)";
-    font-weight:400;
-  }
+  .link-comprovante::after { content:"Comprovante anexado"; font-weight:900; }
 
   .sem-comprovante, .sem-status {
     color:#6b7280 !important;
@@ -534,6 +531,73 @@ td{color:#eef3ff}
   .empty { color:#374151 !important; padding:12px !important; }
 
   a[href]::after { content:"" !important; }
+}
+</style>
+
+
+<style id="comprovante-acoes-css">
+.comprovante-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.link-comprovante,
+.download-comprovante{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:7px 11px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.link-comprovante{
+  background:rgba(247,201,72,.14);
+  border:1px solid rgba(247,201,72,.35);
+  color:#ffe58a;
+}
+.download-comprovante{
+  background:rgba(57,217,138,.13);
+  border:1px solid rgba(57,217,138,.32);
+  color:#9af3c4;
+}
+.sem-comprovante{
+  color:#b9c4d8;
+  font-size:12px;
+}
+@media(max-width:700px){
+  .comprovante-actions{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+</style>
+
+
+<style id="print-comprovante-anexado-css">
+@media print {
+  .download-comprovante {
+    display:none !important;
+  }
+  .comprovante-actions {
+    display:block !important;
+  }
+  .link-comprovante {
+    font-size:0 !important;
+  }
+  .link-comprovante::before {
+    content:"Comprovante anexado";
+    font-size:8px !important;
+    color:#111827 !important;
+    font-weight:900 !important;
+  }
+  .link-comprovante::after {
+    content:"" !important;
+  }
 }
 </style>
 
@@ -811,7 +875,7 @@ async function carregarLancamentos(){
     forma:l.forma||"",
     obs:l.observacao||"",
     status_pagamento:l.status_pagamento||"Pendente",
-    comprovante_url:l.comprovante_url||"",
+    comprovante_url:l.comprovante_url ? "Comprovante anexado: " + l.comprovante_url : "",
     comprovante_nome:l.comprovante_nome||""
   }));
 
@@ -962,7 +1026,12 @@ function renderizar(){
         <td>${l.descricao||"-"}</td>
         <td>${l.forma||"-"}</td>
         <td><strong>${moeda(l.valor)}</strong></td>
-        <td>${l.comprovante_url ? `<a class="link-comprovante" href="${l.comprovante_url}" target="_blank" rel="noopener">📎 Ver</a>` : `<span class="sem-comprovante">—</span>`}</td>
+        <td>${l.comprovante_url ? `
+          <div class="comprovante-actions">
+            <a class="link-comprovante" href="${l.comprovante_url}" target="_blank" rel="noopener">📎 Ver comprovante</a>
+            <a class="download-comprovante" href="${l.comprovante_url}" download="${l.comprovante_nome||'comprovante'}" target="_blank" rel="noopener">⬇ Baixar</a>
+          </div>
+        ` : `<span class="sem-comprovante">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
         <td>${l.obs ? l.obs : "—"}</td>
         <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
@@ -1066,7 +1135,7 @@ function exportarCSV(){
   const dados=filtrar();
   const linhas=[
     ["Data","Tipo","Categoria","Descrição","Forma","Valor","Comprovante","Status","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.comprovante_url||"",l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
+    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.comprovante_url ? "Comprovante anexado: " + l.comprovante_url : "",l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
   ];
 
   const csv=linhas
