@@ -601,6 +601,34 @@ td{color:#eef3ff}
 }
 </style>
 
+
+<style id="editar-lancamento-css">
+.edit-btn{
+  background:rgba(247,201,72,.16);
+  color:#ffe58a;
+  border:1px solid rgba(247,201,72,.35);
+}
+.editing-alert{
+  margin:12px 0 0;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(247,201,72,.12);
+  border:1px solid rgba(247,201,72,.28);
+  color:#ffe58a;
+  font-size:13px;
+  font-weight:800;
+  display:none;
+}
+.cancel-edit{
+  background:rgba(255,92,122,.16);
+  color:#ffd6de;
+  border:1px solid rgba(255,92,122,.35);
+}
+@media print{
+  .edit-btn,.cancel-edit,.editing-alert{display:none!important}
+}
+</style>
+
 </head>
 <body>
 
@@ -647,6 +675,7 @@ td{color:#eef3ff}
 <section class="panel">
 <div class="box">
 <h3>Novo lançamento</h3>
+<div class="editing-alert" id="editingAlert">✏️ Modo edição ativo. Altere os dados e clique em “Salvar alterações”.</div>
 <form id="formLancamento">
 <div class="row">
   <div>
@@ -722,6 +751,7 @@ td{color:#eef3ff}
 <div class="actions">
   <button class="primary" type="submit">Salvar lançamento</button>
   <button class="secondary" type="button" onclick="limparFormulario()">Limpar</button>
+  <button class="cancel-edit" id="cancelarEdicaoBtn" type="button" onclick="cancelarEdicao()" style="display:none">Cancelar edição</button>
 </div>
 </form>
 <p class="note">Este painel salva os dados online no Supabase. Use os filtros para consultar meses anteriores.</p>
@@ -832,6 +862,7 @@ const supabaseClient = supabase.createClient(
 );
 
 let lancamentos=[];
+let editandoId=null;
 
 /* auto-login-seguro-tesouraria */
 if(sessionStorage.getItem("tesouraria_logada")==="sim"){
@@ -947,15 +978,33 @@ descricao:document.getElementById("descricao").value.trim(),
 valor:Number(document.getElementById("valor").value),
 forma:document.getElementById("forma").value,
 observacao:document.getElementById("obs").value.trim(),
-status_pagamento:document.getElementById("tipo").value==="saida" ? (document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pendente") : "Pago",
-comprovante_url:comprovante.url,
-comprovante_nome:comprovante.nome
+status_pagamento:document.getElementById("tipo").value==="saida" ? (document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pendente") : "Pago"
 };
 
-let { error } = await supabaseClient.from("tesouraria").insert([l]);
+// Só troca o comprovante se escolher um arquivo novo.
+// Se estiver editando e não escolher arquivo, mantém o comprovante antigo.
+if(comprovante.url){
+  l.comprovante_url=comprovante.url;
+  l.comprovante_nome=comprovante.nome;
+}
+
+let error=null;
+
+if(editandoId){
+  const resposta = await supabaseClient
+    .from("tesouraria")
+    .update(l)
+    .eq("id", editandoId);
+  error = resposta.error;
+}else{
+  const resposta = await supabaseClient
+    .from("tesouraria")
+    .insert([l]);
+  error = resposta.error;
+}
 
 if(error && (String(error.message||"").includes("comprovante_url") || String(error.message||"").includes("comprovante_nome"))){
-  alert("Faltam as colunas comprovante_url e comprovante_nome no Supabase. Rode o SQL que te passei.");
+  alert("Faltam as colunas comprovante_url e comprovante_nome no Supabase.");
   return;
 }
 
@@ -969,13 +1018,24 @@ limparFormulario();
 carregarLancamentos();
 });
 
-
 function limparFormulario(){
   document.getElementById("formLancamento").reset();
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("tipo").value="entrada";
   if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pendente";
   if(document.getElementById("statusComprovante")) document.getElementById("statusComprovante").textContent="O comprovante aparecerá no relatório após salvar.";
+
+  editandoId=null;
+  const alerta=document.getElementById("editingAlert");
+  const cancelar=document.getElementById("cancelarEdicaoBtn");
+  const botaoSalvar=document.querySelector('#formLancamento button[type="submit"]');
+  if(alerta) alerta.style.display="none";
+  if(cancelar) cancelar.style.display="none";
+  if(botaoSalvar) botaoSalvar.textContent="Salvar lançamento";
+}
+
+function cancelarEdicao(){
+  limparFormulario();
 }
 
 function filtrar(){
@@ -1013,6 +1073,46 @@ async function alternarStatus(id, atual){
   carregarLancamentos();
 }
 
+
+function editarLancamento(id){
+  const l=lancamentos.find(item=>Number(item.id)===Number(id));
+  if(!l){
+    alert("Lançamento não encontrado.");
+    return;
+  }
+
+  editandoId=l.id;
+
+  document.getElementById("tipo").value=l.tipo || "entrada";
+  document.getElementById("data").value=l.data || new Date().toISOString().slice(0,10);
+  document.getElementById("categoria").value=l.categoria || "Outro";
+  document.getElementById("descricao").value=l.descricao || "";
+  document.getElementById("valor").value=Number(l.valor||0).toFixed(2);
+  document.getElementById("forma").value=l.forma || "PIX";
+  document.getElementById("obs").value=l.obs || "";
+
+  if(document.getElementById("status_pagamento")){
+    document.getElementById("status_pagamento").value=l.status_pagamento || "Pendente";
+  }
+
+  if(document.getElementById("statusComprovante")){
+    document.getElementById("statusComprovante").textContent = l.comprovante_url
+      ? "Já existe comprovante anexado. Escolha outro arquivo apenas se quiser substituir."
+      : "Nenhum comprovante anexado. Escolha um arquivo se quiser anexar.";
+  }
+
+  const alerta=document.getElementById("editingAlert");
+  const cancelar=document.getElementById("cancelarEdicaoBtn");
+  const botaoSalvar=document.querySelector('#formLancamento button[type="submit"]');
+
+  if(alerta) alerta.style.display="block";
+  if(cancelar) cancelar.style.display="inline-flex";
+  if(botaoSalvar) botaoSalvar.textContent="Salvar alterações";
+
+  document.getElementById("formLancamento").scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+
 function renderizar(){
   const dados=filtrar();
   const tabela=document.getElementById("tabela");
@@ -1034,7 +1134,7 @@ function renderizar(){
         ` : `<span class="sem-comprovante">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
         <td>${l.obs ? l.obs : "—"}</td>
-        <td><button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
+        <td><button class="edit-btn small-btn" onclick="editarLancamento(${l.id})">Editar</button> <button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
       </tr>
     `).join("")
     : `<tr><td colspan="10" class="empty">Nenhum lançamento encontrado.</td></tr>`;
