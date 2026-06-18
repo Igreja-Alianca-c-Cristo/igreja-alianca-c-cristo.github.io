@@ -543,6 +543,7 @@ td{color:#eef3ff}
   align-items:center;
 }
 .link-comprovante,
+button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inherit;}
 .download-comprovante{
   display:inline-flex;
   align-items:center;
@@ -1113,6 +1114,33 @@ function editarLancamento(id){
 }
 
 
+
+async function baixarComprovante(url, nome){
+  try{
+    const linkLimpo = String(url || "").replace("Comprovante anexado: ","");
+    const nomeArquivo = nome || "comprovante";
+
+    const resposta = await fetch(linkLimpo);
+    if(!resposta.ok) throw new Error("Não foi possível baixar o arquivo.");
+
+    const blob = await resposta.blob();
+    const blobUrl = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = nomeArquivo;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    URL.revokeObjectURL(blobUrl);
+  }catch(err){
+    alert("Não consegui baixar automaticamente. O comprovante será aberto em uma nova aba para você salvar manualmente.");
+    window.open(String(url || "").replace("Comprovante anexado: ",""), "_blank");
+  }
+}
+
+
 function renderizar(){
   const dados=filtrar();
   const tabela=document.getElementById("tabela");
@@ -1129,7 +1157,7 @@ function renderizar(){
         <td>${l.comprovante_url ? `
           <div class="comprovante-actions">
             <a class="link-comprovante" href="${String(l.comprovante_url||'').replace('Comprovante anexado: ','')}" target="_blank" rel="noopener">📎 Ver comprovante</a>
-            <a class="download-comprovante" href="${String(l.comprovante_url||'').replace('Comprovante anexado: ','')}" download="${l.comprovante_nome||'comprovante'}" target="_blank" rel="noopener">⬇ Baixar</a>
+            <button type="button" class="download-comprovante" onclick="baixarComprovante(\`${String(l.comprovante_url||\'\').replace(\'Comprovante anexado: \',\'\')}\`, \`${l.comprovante_nome||\'comprovante\'}\`)">⬇ Baixar</button>
           </div>
         ` : `<span class="sem-comprovante">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
