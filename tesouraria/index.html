@@ -482,7 +482,8 @@ td{color:#eef3ff}
   th:nth-child(8), td:nth-child(8) { width:10% !important; }
   th:nth-child(9), td:nth-child(9) { width:22% !important; }
 
-  th:nth-child(10), td:nth-child(10) { display:none !important; }
+  th:nth-child(10), td:nth-child(10) { width:16% !important; }
+  th:nth-child(11), td:nth-child(11) { display:none !important; }
 
   .badge, .link-comprovante {
     background:transparent !important;
@@ -667,6 +668,35 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
 }
 </style>
 
+
+<style id="vencimento-tesouraria-css">
+.vencimento-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  background:rgba(247,201,72,.13);
+  border:1px solid rgba(247,201,72,.30);
+  color:#ffe58a;
+  white-space:nowrap;
+}
+.vencimento-ok{background:rgba(57,217,138,.12);border-color:rgba(57,217,138,.30);color:#9af3c4;}
+.vencimento-alerta{background:rgba(247,201,72,.16);border-color:rgba(247,201,72,.40);color:#ffe58a;}
+.vencimento-atrasado{background:rgba(255,92,122,.16);border-color:rgba(255,92,122,.40);color:#ffc1cc;}
+@media print{
+  .vencimento-badge{
+    background:transparent!important;
+    border:none!important;
+    color:#111827!important;
+    padding:0!important;
+    font-size:8px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 
@@ -728,6 +758,17 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
   <div>
     <label>Data</label>
     <input type="date" id="data" required>
+  </div>
+</div>
+
+<div class="row" id="linhaVencimento" style="display:none">
+  <div>
+    <label>Data de vencimento</label>
+    <input type="date" id="data_vencimento">
+  </div>
+  <div>
+    <label>Aviso</label>
+    <input type="text" value="Alerta 2 dias antes" disabled>
   </div>
 </div>
 
@@ -847,6 +888,7 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
   <th>Forma</th>
   <th>Valor</th>
   <th>Comprovante</th>
+  <th>Vencimento</th>
   <th>Status</th>
   <th>Observação</th>
   <th>Ação</th>
@@ -923,7 +965,7 @@ async function carregarLancamentos(){
     console.warn("Erro no select completo:", error);
     const fallback = await supabaseClient
       .from("tesouraria")
-      .select("id,tipo,data,categoria,descricao,valor,forma,observacao")
+      .select("id,tipo,data,categoria,descricao,valor,forma,observacao,status_pagamento,comprovante_url,comprovante_nome,data_vencimento")
       .order("id", { ascending:false });
 
     data = fallback.data;
@@ -947,7 +989,8 @@ async function carregarLancamentos(){
     obs:l.observacao||"",
     status_pagamento:l.status_pagamento||"Pendente",
     comprovante_url:l.comprovante_url||"",
-    comprovante_nome:l.comprovante_nome||""
+    comprovante_nome:l.comprovante_nome||"",
+    data_vencimento:l.data_vencimento||""
   }));
 
   renderizar();
@@ -1043,6 +1086,11 @@ if(editandoId){
   error = resposta.error;
 }
 
+if(error && String(error.message||"").includes("data_vencimento")){
+  alert("Falta a coluna data_vencimento no Supabase. Rode o SQL que te passei.");
+  return;
+}
+
 if(error && (String(error.message||"").includes("comprovante_url") || String(error.message||"").includes("comprovante_nome"))){
   alert("Faltam as colunas comprovante_url e comprovante_nome no Supabase.");
   return;
@@ -1063,6 +1111,8 @@ function limparFormulario(){
   document.getElementById("data").valueAsDate=new Date();
   document.getElementById("tipo").value="entrada";
   if(document.getElementById("status_pagamento")) document.getElementById("status_pagamento").value="Pendente";
+  if(document.getElementById("data_vencimento")) document.getElementById("data_vencimento").value="";
+  alternarCampoVencimento();
   if(document.getElementById("statusComprovante")) document.getElementById("statusComprovante").textContent="O comprovante aparecerá no relatório após salvar.";
 
   editandoId=null;
@@ -1077,6 +1127,22 @@ function limparFormulario(){
 function cancelarEdicao(){
   limparFormulario();
 }
+
+
+function alternarCampoVencimento(){
+  const tipo=document.getElementById("tipo");
+  const linha=document.getElementById("linhaVencimento");
+  if(!tipo || !linha) return;
+
+  if(tipo.value==="saida"){
+    linha.style.display="grid";
+  }else{
+    linha.style.display="none";
+    if(document.getElementById("data_vencimento")) document.getElementById("data_vencimento").value="";
+  }
+}
+
+document.getElementById("tipo").addEventListener("change", alternarCampoVencimento);
 
 function filtrar(){
   const t=document.getElementById("filtroTipo").value;
@@ -1130,6 +1196,9 @@ function editarLancamento(id){
   document.getElementById("valor").value=Number(l.valor||0).toFixed(2);
   document.getElementById("forma").value=l.forma || "PIX";
   document.getElementById("obs").value=l.obs || "";
+  if(document.getElementById("data_vencimento")) document.getElementById("data_vencimento").value=l.data_vencimento || "";
+
+  alternarCampoVencimento();
 
   if(document.getElementById("status_pagamento")){
     document.getElementById("status_pagamento").value=l.status_pagamento || "Pendente";
@@ -1190,6 +1259,38 @@ function escapeAttr(v){
 }
 
 
+
+function diasAte(dataISO){
+  if(!dataISO) return null;
+  const hoje=new Date();
+  hoje.setHours(0,0,0,0);
+  const data=new Date(dataISO + "T00:00:00");
+  const diff=data-hoje;
+  return Math.ceil(diff/(1000*60*60*24));
+}
+
+function vencimentoClasse(l){
+  if(!l.data_vencimento) return "";
+  const d=diasAte(l.data_vencimento);
+  if((l.status_pagamento||"Pendente")==="Pago") return "vencimento-ok";
+  if(d<0) return "vencimento-atrasado";
+  if(d<=2) return "vencimento-alerta";
+  return "vencimento-ok";
+}
+
+function textoVencimento(l){
+  if(!l.data_vencimento) return "—";
+  const data=formatarData(l.data_vencimento);
+  const d=diasAte(l.data_vencimento);
+  if((l.status_pagamento||"Pendente")==="Pago") return data;
+  if(d<0) return data + " • atrasado";
+  if(d===0) return data + " • vence hoje";
+  if(d===1) return data + " • falta 1 dia";
+  if(d===2) return data + " • faltam 2 dias";
+  return data;
+}
+
+
 function renderizar(){
   const dados=filtrar();
   const tabela=document.getElementById("tabela");
@@ -1214,7 +1315,7 @@ function renderizar(){
         <td><button class="edit-btn small-btn" onclick="editarLancamento(${l.id})">Editar</button> <button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
       </tr>
     `).join("")
-    : `<tr><td colspan="10" class="empty">Nenhum lançamento encontrado.</td></tr>`;
+    : `<tr><td colspan="11" class="empty">Nenhum lançamento encontrado.</td></tr>`;
 
   atualizarResumo();
   atualizarAlertaPendencias();
@@ -1246,17 +1347,26 @@ function atualizarAlertaPendencias(){
     (l.data||"").startsWith(m)
   );
 
+  const vencendoLogo=lancamentos.filter(l=>
+    l.tipo==="saida" &&
+    (l.status_pagamento||"Pendente")!=="Pago" &&
+    l.data_vencimento &&
+    diasAte(l.data_vencimento)!==null &&
+    diasAte(l.data_vencimento)>=0 &&
+    diasAte(l.data_vencimento)<=2
+  );
+
   const totalPendentes=pendentes.reduce((s,l)=>s+Number(l.valor||0),0);
   const totalAtrasadas=atrasadas.reduce((s,l)=>s+Number(l.valor||0),0);
   const total=totalPendentes+totalAtrasadas;
 
   alerta.style.display="block";
 
-  if(pendentes.length===0 && atrasadas.length===0){
+  if(pendentes.length===0 && atrasadas.length===0 && vencendoLogo.length===0){
     alerta.className="alerta-pendencias ok";
     alerta.innerHTML=`
       <h3>✅ Nenhum pagamento pendente neste mês</h3>
-      <p>Não há saídas pendentes ou atrasadas no mês selecionado.</p>
+      <p>Não há saídas pendentes, atrasadas ou vencendo nos próximos 2 dias.</p>
     `;
     return;
   }
@@ -1266,10 +1376,10 @@ function atualizarAlertaPendencias(){
     <h3>⚠️ Atenção: existem pagamentos para acompanhar</h3>
     <p>🟡 Pendentes: <strong>${pendentes.length}</strong> — <strong>${moeda(totalPendentes)}</strong></p>
     <p>🔴 Atrasadas: <strong>${atrasadas.length}</strong> — <strong>${moeda(totalAtrasadas)}</strong></p>
+    <p>⏰ Vencendo em até 2 dias: <strong>${vencendoLogo.length}</strong></p>
     <p>Total previsto a pagar: <strong>${moeda(total)}</strong></p>
   `;
 }
-
 
 function atualizarResumo(){
   const filtroMesEl=document.getElementById("filtroMes");
@@ -1357,8 +1467,8 @@ function limparFiltros(){
 function exportarCSV(){
   const dados=filtrar();
   const linhas=[
-    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Comprovante","Status","Observação"],
-    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.comprovante_url ? "Comprovante anexado: " + l.comprovante_url : "",l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
+    ["Data","Tipo","Categoria","Descrição","Forma","Valor","Comprovante","Vencimento","Status","Observação"],
+    ...dados.map(l=>[l.data,l.tipo,l.categoria,l.descricao,l.forma,l.valor,l.comprovante_url ? "Comprovante anexado: " + l.comprovante_url : "",l.tipo==="saida"?(l.data_vencimento||""):"",l.tipo==="saida"?(l.status_pagamento||"Pendente"):"",l.obs])
   ];
 
   const csv=linhas
