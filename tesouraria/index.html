@@ -105,6 +105,7 @@ button:hover{transform:translateY(-2px)}
 .primary{background:linear-gradient(135deg,var(--gold),#ffe58a);color:#07142d}
 .secondary{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.18)}
 .danger{background:rgba(255,92,122,.16);color:#ffd6de;border:1px solid rgba(255,92,122,.35)}
+.danger:hover{background:rgba(255,92,122,.28)}
 .filters{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;margin-bottom:14px}
 .table-wrap{overflow:auto;border-radius:18px;border:1px solid rgba(255,255,255,.1)}
 table{width:100%;border-collapse:collapse;min-width:760px}
@@ -792,7 +793,7 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
 <div class="actions">
   <button class="primary" onclick="exportarCSV()">Exportar CSV</button>
   <button class="secondary" onclick="imprimirRelatorio()">Imprimir/PDF</button>
-  <button class="danger" onclick="apagarTudo()">Apagar tudo</button>
+  <button class="danger" onclick="apagarTudo()">Excluir Todos os Lançamentos</button>
 </div>
 
 <br>
@@ -1295,20 +1296,61 @@ function imprimirRelatorio(){
 
 
 async function apagarTudo(){
-if(confirm("ATENÇÃO: apagar todos os lançamentos online?")){
+  const total = lancamentos.length;
 
-const { error } = await supabaseClient
-.from("tesouraria")
-.delete()
-.neq("id",0);
+  if(total === 0){
+    alert("Não há lançamentos para excluir.");
+    return;
+  }
 
-if(error){
-alert("Erro ao apagar.");
-return;
-}
+  const primeiraConfirmacao = confirm(
+    "⚠️ ATENÇÃO!\n\n" +
+    "Você está prestes a excluir TODOS os " + total + " lançamentos da tesouraria.\n\n" +
+    "Esta ação é permanente e não poderá ser desfeita.\n\n" +
+    "Deseja continuar?"
+  );
 
-carregarLancamentos();
-}
+  if(!primeiraConfirmacao){
+    alert("Operação cancelada.");
+    return;
+  }
+
+  const texto = prompt(
+    "🚨 ÚLTIMA CONFIRMAÇÃO\n\n" +
+    "Para confirmar a exclusão de TODOS os lançamentos, digite exatamente:\n\n" +
+    "APAGAR TUDO"
+  );
+
+  if(texto !== "APAGAR TUDO"){
+    alert("Operação cancelada. Nenhum lançamento foi apagado.");
+    return;
+  }
+
+  const ultimaConfirmacao = confirm(
+    "Confirma definitivamente a exclusão de todos os lançamentos?\n\n" +
+    "Depois disso não será possível recuperar pelo sistema."
+  );
+
+  if(!ultimaConfirmacao){
+    alert("Operação cancelada.");
+    return;
+  }
+
+  console.warn("Exclusão total da tesouraria iniciada em:", new Date().toISOString(), "Total:", total);
+
+  const { error } = await supabaseClient
+    .from("tesouraria")
+    .delete()
+    .neq("id",0);
+
+  if(error){
+    console.error(error);
+    alert("Erro ao apagar os lançamentos.");
+    return;
+  }
+
+  alert("✅ Todos os lançamentos foram excluídos com sucesso.");
+  carregarLancamentos();
 }
 
 
