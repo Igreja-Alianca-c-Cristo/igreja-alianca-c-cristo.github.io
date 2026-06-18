@@ -1141,6 +1141,16 @@ async function baixarComprovante(url, nome){
 }
 
 
+
+function limparUrlComprovante(url){
+  return String(url || "").replace("Comprovante anexado: ","");
+}
+
+function escapeAttr(v){
+  return String(v || "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+
 function renderizar(){
   const dados=filtrar();
   const tabela=document.getElementById("tabela");
@@ -1156,8 +1166,8 @@ function renderizar(){
         <td><strong>${moeda(l.valor)}</strong></td>
         <td>${l.comprovante_url ? `
           <div class="comprovante-actions">
-            <a class="link-comprovante" href="${String(l.comprovante_url||'').replace('Comprovante anexado: ','')}" target="_blank" rel="noopener">📎 Ver comprovante</a>
-            <button type="button" class="download-comprovante" onclick="baixarComprovante(\`${String(l.comprovante_url||\'\').replace(\'Comprovante anexado: \',\'\')}\`, \`${l.comprovante_nome||\'comprovante\'}\`)">⬇ Baixar</button>
+            <a class="link-comprovante" href="${limparUrlComprovante(l.comprovante_url)}" target="_blank" rel="noopener">📎 Ver comprovante</a>
+            <button type="button" class="download-comprovante" onclick="baixarComprovante('${escapeAttr(limparUrlComprovante(l.comprovante_url))}', '${escapeAttr(l.comprovante_nome||'comprovante')}')">⬇ Baixar</button>
           </div>
         ` : `<span class="sem-comprovante">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
