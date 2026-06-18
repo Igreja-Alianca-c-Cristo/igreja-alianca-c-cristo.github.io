@@ -906,7 +906,7 @@ async function carregarLancamentos(){
     forma:l.forma||"",
     obs:l.observacao||"",
     status_pagamento:l.status_pagamento||"Pendente",
-    comprovante_url:l.comprovante_url ? "Comprovante anexado: " + l.comprovante_url : "",
+    comprovante_url:l.comprovante_url||"",
     comprovante_nome:l.comprovante_nome||""
   }));
 
@@ -1128,8 +1128,8 @@ function renderizar(){
         <td><strong>${moeda(l.valor)}</strong></td>
         <td>${l.comprovante_url ? `
           <div class="comprovante-actions">
-            <a class="link-comprovante" href="${l.comprovante_url}" target="_blank" rel="noopener">📎 Ver comprovante</a>
-            <a class="download-comprovante" href="${l.comprovante_url}" download="${l.comprovante_nome||'comprovante'}" target="_blank" rel="noopener">⬇ Baixar</a>
+            <a class="link-comprovante" href="${String(l.comprovante_url||'').replace('Comprovante anexado: ','')}" target="_blank" rel="noopener">📎 Ver comprovante</a>
+            <a class="download-comprovante" href="${String(l.comprovante_url||'').replace('Comprovante anexado: ','')}" download="${l.comprovante_nome||'comprovante'}" target="_blank" rel="noopener">⬇ Baixar</a>
           </div>
         ` : `<span class="sem-comprovante">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
