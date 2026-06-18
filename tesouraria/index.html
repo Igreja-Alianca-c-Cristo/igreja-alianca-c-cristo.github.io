@@ -697,6 +697,27 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
 }
 </style>
 
+
+<style id="recorrentes-tesouraria-css">
+.recorrente-box{
+  margin:16px 0 14px;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid rgba(57,217,138,.25);
+  background:linear-gradient(135deg,rgba(57,217,138,.10),rgba(255,255,255,.035));
+}
+.recorrente-box h4{margin:0 0 8px;color:#8ff0bc;font-size:15px;}
+.recorrente-box p{margin:4px 0;color:#cbd5e1;font-size:13px;line-height:1.4;}
+.recorrente-tag{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:6px 10px;border-radius:999px;
+  background:rgba(57,217,138,.13);color:#9af3c4;
+  border:1px solid rgba(57,217,138,.30);
+  font-size:12px;font-weight:900;margin-top:6px;
+}
+@media print{.recorrente-box{display:none!important}}
+</style>
+
 </head>
 <body>
 
@@ -826,6 +847,12 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
   <div class="status-hint">Este status só vale para SAÍDAS. Entradas ficam sem status.</div>
 </div>
 
+<div class="recorrente-box" id="recorrenteInfoBox">
+  <h4>🔁 Despesa fixa automática</h4>
+  <p>O aluguel do templo de <strong>R$ 500,00</strong> será criado automaticamente todo mês, se ainda não existir.</p>
+  <span class="recorrente-tag">Aluguel mensal ativo</span>
+</div>
+
 <label>Observação</label>
 <textarea id="obs" placeholder="Anote detalhes se precisar"></textarea>
 
@@ -945,10 +972,79 @@ const supabaseClient = supabase.createClient(
 
 let lancamentos=[];
 let editandoId=null;
+let gerandoRecorrentes=false;
 
 /* auto-login-seguro-tesouraria */
 if(sessionStorage.getItem("tesouraria_logada")==="sim"){
   liberar();
+}
+
+
+
+function dataISOAnoMesDia(anoMes, dia){
+  const partes=anoMes.split("-");
+  const ano=Number(partes[0]);
+  const mes=Number(partes[1]);
+  const ultimoDia=new Date(ano, mes, 0).getDate();
+  const diaSeguro=Math.min(Number(dia), ultimoDia);
+  return anoMes + "-" + String(diaSeguro).padStart(2,"0");
+}
+
+async function garantirDespesasRecorrentes(){
+  if(gerandoRecorrentes) return;
+
+  const mes=mesAtual();
+
+  const despesasFixas=[
+    {
+      tipo:"saida",
+      categoria:"Aluguel",
+      descricao:"Aluguel Templo",
+      valor:500,
+      forma:"PIX",
+      observacao:"Despesa fixa criada automaticamente pelo sistema.",
+      status_pagamento:"Pendente",
+      dia_vencimento:10
+    }
+  ];
+
+  const faltantes=despesasFixas.filter(d=>{
+    return !lancamentos.some(l=>
+      l.tipo==="saida" &&
+      (l.data||"").startsWith(mes) &&
+      (l.categoria||"")===d.categoria &&
+      Number(l.valor||0)===Number(d.valor) &&
+      String(l.descricao||"").toLowerCase().includes("aluguel")
+    );
+  });
+
+  if(!faltantes.length) return;
+
+  gerandoRecorrentes=true;
+
+  const novos=faltantes.map(d=>({
+    tipo:d.tipo,
+    data:dataISOAnoMesDia(mes,d.dia_vencimento),
+    categoria:d.categoria,
+    descricao:d.descricao,
+    valor:d.valor,
+    forma:d.forma,
+    observacao:d.observacao,
+    status_pagamento:d.status_pagamento,
+    data_vencimento:dataISOAnoMesDia(mes,d.dia_vencimento)
+  }));
+
+  const resposta=await supabaseClient.from("tesouraria").insert(novos);
+
+  gerandoRecorrentes=false;
+
+  if(resposta.error){
+    console.error("Erro ao criar despesa fixa automática:", resposta.error);
+    alert("Não consegui criar a despesa fixa automática. Verifique se a coluna data_vencimento existe no Supabase.");
+    return;
+  }
+
+  await carregarLancamentos();
 }
 
 
@@ -994,6 +1090,7 @@ async function carregarLancamentos(){
   }));
 
   renderizar();
+  await garantirDespesasRecorrentes();
 }
 
 
@@ -1061,7 +1158,8 @@ descricao:document.getElementById("descricao").value.trim(),
 valor:Number(document.getElementById("valor").value),
 forma:document.getElementById("forma").value,
 observacao:document.getElementById("obs").value.trim(),
-status_pagamento:document.getElementById("tipo").value==="saida" ? (document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pendente") : "Pago"
+status_pagamento:document.getElementById("tipo").value==="saida" ? (document.getElementById("status_pagamento") ? document.getElementById("status_pagamento").value : "Pendente") : "Pago",
+data_vencimento:document.getElementById("tipo").value==="saida" ? (document.getElementById("data_vencimento") ? (document.getElementById("data_vencimento").value || null) : null) : null
 };
 
 // Só troca o comprovante se escolher um arquivo novo.
@@ -1310,6 +1408,7 @@ function renderizar(){
             <button type="button" class="download-comprovante" onclick="baixarComprovante('${escapeAttr(limparUrlComprovante(l.comprovante_url))}', '${escapeAttr(l.comprovante_nome||'comprovante')}')">⬇ Baixar</button>
           </div>
         ` : `<span class="sem-comprovante">—</span>`}</td>
+        <td>${l.tipo==="saida" ? `<span class="vencimento-badge ${vencimentoClasse(l)}">${textoVencimento(l)}</span>` : `<span class="sem-status">—</span>`}</td>
         <td>${l.tipo==="saida" ? `<button class="status-badge status-btn ${statusClass(l.status_pagamento)}" onclick="alternarStatus(${l.id}, '${l.status_pagamento||"Pendente"}')">${l.status_pagamento||"Pendente"}</button>` : `<span class="sem-status">—</span>`}</td>
         <td>${l.obs ? l.obs : "—"}</td>
         <td><button class="edit-btn small-btn" onclick="editarLancamento(${l.id})">Editar</button> <button class="danger small-btn" onclick="excluir(${l.id})">Excluir</button></td>
