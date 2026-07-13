@@ -904,6 +904,145 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
 </style>
 
 </head>
+
+<style id="central-pagamentos-css">
+.alerta-organizado{
+  padding:20px;
+}
+
+.alerta-cabecalho{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:16px;
+}
+
+.alerta-cabecalho h3{
+  margin:0 0 4px;
+}
+
+.alerta-cabecalho p{
+  margin:0;
+  color:#b9c4d8;
+}
+
+.total-aberto{
+  min-width:180px;
+  padding:12px 16px;
+  border-radius:16px;
+  text-align:right;
+  background:rgba(247,201,72,.12);
+  border:1px solid rgba(247,201,72,.30);
+}
+
+.total-aberto span{
+  display:block;
+  color:#b9c4d8;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.total-aberto strong{
+  display:block;
+  margin-top:4px;
+  color:#ffe58a;
+  font-size:22px;
+}
+
+.grupos-pagamentos{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.grupo-pagamento{
+  padding:14px;
+  border-radius:17px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+}
+
+.grupo-pagamento h4{
+  margin:0 0 10px;
+  font-size:15px;
+}
+
+.grupo-atrasado{
+  border-color:rgba(255,92,122,.36);
+  background:rgba(255,92,122,.08);
+}
+
+.grupo-hoje{
+  border-color:rgba(255,92,122,.48);
+  background:rgba(255,92,122,.12);
+}
+
+.grupo-amanha{
+  border-color:rgba(247,201,72,.40);
+  background:rgba(247,201,72,.08);
+}
+
+.grupo-dois-dias{
+  border-color:rgba(57,217,138,.36);
+  background:rgba(57,217,138,.07);
+}
+
+.pagamento-item{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+  border-top:1px solid rgba(255,255,255,.09);
+}
+
+.pagamento-item:first-of-type{
+  border-top:none;
+}
+
+.pagamento-item-info strong,
+.pagamento-item-valor strong{
+  display:block;
+  color:#fff;
+}
+
+.pagamento-item-info span,
+.pagamento-item-valor span{
+  display:block;
+  margin-top:4px;
+  color:#b9c4d8;
+  font-size:12px;
+}
+
+.pagamento-item-valor{
+  text-align:right;
+  white-space:nowrap;
+}
+
+@media(max-width:700px){
+  .alerta-cabecalho{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .total-aberto{
+    text-align:left;
+    min-width:0;
+  }
+
+  .grupos-pagamentos{
+    grid-template-columns:1fr;
+  }
+}
+
+@media print{
+  .alerta-organizado{
+    display:none !important;
+  }
+}
+</style>
+
 <body>
 
 <div class="login-screen" id="loginScreen">
@@ -1239,6 +1378,37 @@ async function garantirDespesasRecorrentes(){
   await carregarLancamentos();
 }
 
+async function sincronizarStatusVencidos(){
+  const vencidas = lancamentos.filter(l =>
+    l.tipo === "saida" &&
+    (l.status_pagamento || "Pendente") === "Pendente" &&
+    l.data_vencimento &&
+    diasAte(l.data_vencimento) < 0
+  );
+
+  if(!vencidas.length) return;
+
+  const resultados = await Promise.all(
+    vencidas.map(l =>
+      supabaseClient
+        .from("tesouraria")
+        .update({ status_pagamento: "Atrasado" })
+        .eq("id", l.id)
+    )
+  );
+
+  vencidas.forEach((l, indice) => {
+    if(!resultados[indice].error){
+      l.status_pagamento = "Atrasado";
+    }else{
+      console.error(
+        "Erro ao atualizar lançamento vencido:",
+        l.id,
+        resultados[indice].error
+      );
+    }
+  });
+}
 
 async function carregarLancamentos(){
   let resposta = await supabaseClient
@@ -1281,8 +1451,9 @@ async function carregarLancamentos(){
     data_vencimento:l.data_vencimento||""
   }));
 
-  renderizar();
-  await garantirDespesasRecorrentes();
+  await sincronizarStatusVencidos();
+renderizar();
+await garantirDespesasRecorrentes();
 }
 
 
@@ -1620,55 +1791,187 @@ function formatarData(d){
 
 
 function atualizarAlertaPendencias(){
-  const alerta=document.getElementById("alertaPendencias");
+  const alerta = document.getElementById("alertaPendencias");
   if(!alerta) return;
 
-  const filtroMesEl=document.getElementById("filtroMes");
-  const m=(filtroMesEl && filtroMesEl.value) ? filtroMesEl.value : mesAtual();
+  const filtroMesEl = document.getElementById("filtroMes");
+  const mesSelecionado =
+    filtroMesEl && filtroMesEl.value
+      ? filtroMesEl.value
+      : mesAtual();
 
-  const pendentes=lancamentos.filter(l=>
-    l.tipo==="saida" &&
-    (l.status_pagamento||"Pendente")==="Pendente" &&
-    (l.data||"").startsWith(m)
-  );
+  const abertas = lancamentos
+    .filter(l =>
+      l.tipo === "saida" &&
+      (l.status_pagamento || "Pendente") !== "Pago" &&
+      (
+        (l.data_vencimento || "").startsWith(mesSelecionado) ||
+        (!l.data_vencimento && (l.data || "").startsWith(mesSelecionado))
+      )
+    )
+    .sort((a,b) =>
+      String(a.data_vencimento || a.data || "")
+        .localeCompare(String(b.data_vencimento || b.data || ""))
+    );
 
-  const atrasadas=lancamentos.filter(l=>
-    l.tipo==="saida" &&
-    (l.status_pagamento||"Pendente")==="Atrasado" &&
-    (l.data||"").startsWith(m)
-  );
-
-  const vencendoLogo=lancamentos.filter(l=>
-    l.tipo==="saida" &&
-    (l.status_pagamento||"Pendente")!=="Pago" &&
+  const atrasadas = abertas.filter(l =>
     l.data_vencimento &&
-    diasAte(l.data_vencimento)!==null &&
-    diasAte(l.data_vencimento)>=0 &&
-    diasAte(l.data_vencimento)<=2
+    diasAte(l.data_vencimento) < 0
   );
 
-  const totalPendentes=pendentes.reduce((s,l)=>s+Number(l.valor||0),0);
-  const totalAtrasadas=atrasadas.reduce((s,l)=>s+Number(l.valor||0),0);
-  const total=totalPendentes+totalAtrasadas;
+  const venceHoje = abertas.filter(l =>
+    l.data_vencimento &&
+    diasAte(l.data_vencimento) === 0
+  );
 
-  alerta.style.display="block";
+  const venceAmanha = abertas.filter(l =>
+    l.data_vencimento &&
+    diasAte(l.data_vencimento) === 1
+  );
 
-  if(pendentes.length===0 && atrasadas.length===0 && vencendoLogo.length===0){
-    alerta.className="alerta-pendencias ok";
-    alerta.innerHTML=`
-      <h3>✅ Nenhum pagamento pendente neste mês</h3>
-      <p>Não há saídas pendentes, atrasadas ou vencendo nos próximos 2 dias.</p>
+  const venceEmDoisDias = abertas.filter(l =>
+    l.data_vencimento &&
+    diasAte(l.data_vencimento) === 2
+  );
+
+  const pendentesFuturos = abertas.filter(l =>
+    !l.data_vencimento ||
+    diasAte(l.data_vencimento) > 2
+  );
+
+  const totalAberto = abertas.reduce(
+    (s,l) => s + Number(l.valor || 0),
+    0
+  );
+
+  function linhaPagamento(l, textoPrazo){
+    return `
+      <div class="pagamento-item">
+        <div class="pagamento-item-info">
+          <strong>${l.descricao || l.categoria || "Pagamento"}</strong>
+          <span>
+            📅 ${l.data_vencimento
+              ? formatarData(l.data_vencimento)
+              : "Sem vencimento"}
+          </span>
+        </div>
+
+        <div class="pagamento-item-valor">
+          <strong>${moeda(l.valor)}</strong>
+          <span>${textoPrazo}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  if(abertas.length === 0){
+    alerta.className = "alerta-pendencias ok";
+    alerta.style.display = "block";
+
+    alerta.innerHTML = `
+      <h3>✅ Pagamentos em dia</h3>
+      <p>Não existem pagamentos pendentes ou atrasados no mês selecionado.</p>
     `;
     return;
   }
 
-  alerta.className="alerta-pendencias";
-  alerta.innerHTML=`
-    <h3>⚠️ Atenção: existem pagamentos para acompanhar</h3>
-    <p>🟡 Pendentes: <strong>${pendentes.length}</strong> — <strong>${moeda(totalPendentes)}</strong></p>
-    <p>🔴 Atrasadas: <strong>${atrasadas.length}</strong> — <strong>${moeda(totalAtrasadas)}</strong></p>
-    <p>⏰ Vencendo em até 2 dias: <strong>${vencendoLogo.length}</strong></p>
-    <p>Total previsto a pagar: <strong>${moeda(total)}</strong></p>
+  const blocos = [];
+
+  if(atrasadas.length){
+    blocos.push(`
+      <div class="grupo-pagamento grupo-atrasado">
+        <h4>🔴 Atrasados — ${atrasadas.length}</h4>
+
+        ${atrasadas.map(l => {
+          const dias = Math.abs(diasAte(l.data_vencimento));
+
+          return linhaPagamento(
+            l,
+            dias === 1
+              ? "Atrasado há 1 dia"
+              : `Atrasado há ${dias} dias`
+          );
+        }).join("")}
+      </div>
+    `);
+  }
+
+  if(venceHoje.length){
+    blocos.push(`
+      <div class="grupo-pagamento grupo-hoje">
+        <h4>🚨 Vence hoje — ${venceHoje.length}</h4>
+
+        ${venceHoje.map(l =>
+          linhaPagamento(l, "Vence hoje")
+        ).join("")}
+      </div>
+    `);
+  }
+
+  if(venceAmanha.length){
+    blocos.push(`
+      <div class="grupo-pagamento grupo-amanha">
+        <h4>🟡 Vence amanhã — ${venceAmanha.length}</h4>
+
+        ${venceAmanha.map(l =>
+          linhaPagamento(l, "Falta 1 dia")
+        ).join("")}
+      </div>
+    `);
+  }
+
+  if(venceEmDoisDias.length){
+    blocos.push(`
+      <div class="grupo-pagamento grupo-dois-dias">
+        <h4>🟢 Vence em 2 dias — ${venceEmDoisDias.length}</h4>
+
+        ${venceEmDoisDias.map(l =>
+          linhaPagamento(l, "Faltam 2 dias")
+        ).join("")}
+      </div>
+    `);
+  }
+
+  if(pendentesFuturos.length){
+    blocos.push(`
+      <div class="grupo-pagamento grupo-futuro">
+        <h4>📅 Próximos pagamentos — ${pendentesFuturos.length}</h4>
+
+        ${pendentesFuturos.slice(0,5).map(l => {
+          const dias = l.data_vencimento
+            ? diasAte(l.data_vencimento)
+            : null;
+
+          const texto =
+            dias === null
+              ? "Sem data definida"
+              : `Faltam ${dias} dias`;
+
+          return linhaPagamento(l, texto);
+        }).join("")}
+      </div>
+    `);
+  }
+
+  alerta.className = "alerta-pendencias alerta-organizado";
+  alerta.style.display = "block";
+
+  alerta.innerHTML = `
+    <div class="alerta-cabecalho">
+      <div>
+        <h3>🔔 Central de pagamentos</h3>
+        <p>Vencimentos atualizados automaticamente.</p>
+      </div>
+
+      <div class="total-aberto">
+        <span>Total previsto</span>
+        <strong>${moeda(totalAberto)}</strong>
+      </div>
+    </div>
+
+    <div class="grupos-pagamentos">
+      ${blocos.join("")}
+    </div>
   `;
 }
 
