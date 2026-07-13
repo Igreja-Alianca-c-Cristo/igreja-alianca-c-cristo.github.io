@@ -305,10 +305,42 @@ td{color:#eef3ff}
 </style>
 
 
-
+<style id="logo-relatorio-css">
+.logo-relatorio {
+  display: none;
+}
+</style>
 
 <style id="print-profissional-tesouraria">
 @media print {
+
+.logo-relatorio {
+  display: block !important;
+  grid-column: 1 !important;
+  grid-row: 1 / span 2 !important;
+  width: 27px !important;
+  height: 27px !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+}
+
+header .header-inner > div:first-child {
+  display: grid !important;
+  grid-template-columns: 30px 1fr 30px !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  column-gap: 4px !important;
+}
+
+header h1 {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+}
+
+header .sub {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+}
 
   @page {
     size: A4 landscape;
@@ -890,11 +922,18 @@ button.download-comprovante{border-radius:999px;cursor:pointer;font-family:inher
 <header>
   <div class="header-inner">
     <div>
+      <img
+        src="logo-igreja.png"
+        alt="Logo Igreja Renovada Aliança com Cristo"
+        class="logo-relatorio"
+      >
+
       <h1>Painel da Tesouraria</h1>
       <p class="sub">Igreja Renovada Aliança com Cristo</p>
     </div>
+
     <div>🔒 Área interna</div>
-  </div>
+</div>
 </header>
 
 <main>
